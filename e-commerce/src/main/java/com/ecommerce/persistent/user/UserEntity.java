@@ -2,34 +2,37 @@ package com.ecommerce.persistent.user;
 
 import com.ecommerce.persistent.location.LocationEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
-    @Entity
-    @Table(name = "users")
-    @Getter
-    @Builder
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public class UserEntity {
+@Entity
+@Table(name = "users")
+@Getter
+@Setter
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class UserEntity {
 
-        @Id
-        @GeneratedValue(strategy = GenerationType.UUID)
-        private UUID id;
+    @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
-        private String username;
+    private String username;
 
-        private String email;
+    private String email;
 
-        private String phoneNumber;
+    private String phoneNumber;
 
-        private String password;
+    private Instant createdAt;
 
-        @OneToMany(mappedBy = "user")
-        private Set<LocationEntity> locations;
-    }
+    private Instant updatedAt;
+
+    private String password;
+
+    @OneToMany(mappedBy = "user")
+    private Set<LocationEntity> locations;
+}

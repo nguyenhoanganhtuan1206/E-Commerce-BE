@@ -1,27 +1,27 @@
 package com.ecommerce.domain.user;
 
-import com.ecommerce.api.auth.dto.UserRequestDTO;
-import com.ecommerce.api.auth.dto.UserResponseDTO;
+import com.ecommerce.api.auth.dto.UserAuthRequestDTO;
+import com.ecommerce.api.auth.dto.UserAuthResponseDTO;
 import com.ecommerce.api.location.dto.LocationDTO;
-import com.ecommerce.api.user.dto.UserDTO;
-import com.ecommerce.api.user.dto.UserRequestUpdateDTO;
+import com.ecommerce.api.user.dto.UserUpdateRequestDTO;
+import com.ecommerce.api.user.dto.UserUpdateResponseDTO;
 import com.ecommerce.domain.location.LocationService;
 import com.ecommerce.domain.user.mapper.UserDTOMapper;
 import com.ecommerce.persistent.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
 
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
-import static com.ecommerce.domain.user.UserError.supplyUserExisted;
-import static com.ecommerce.domain.user.UserError.supplyUserNotFound;
+import static com.ecommerce.domain.user.UserError.*;
 import static com.ecommerce.domain.user.mapper.UserAuthMapper.*;
-import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.*;
+import static com.ecommerce.domain.user.mapper.UserUpdateMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -35,17 +35,19 @@ public class UserService {
         return toUserDTOs(userRepository.findAll());
     }
 
-    public UserResponseDTO signUp(final UserRequestDTO userRequestDTO) {
+    public UserAuthResponseDTO signUp(final UserAuthRequestDTO userRequestDTO) {
         verifyIfUserAvailable(userRequestDTO.getEmail());
 
-        return toUserResponseDTOWithoutLocations(userRepository.save(toUserEntityWithOutLocation(userRequestDTO)));
+        userRequestDTO.setCreatedAt(Instant.now());
+
+        return toUserResponseDTO(userRepository.save(toUserEntity(userRequestDTO)));
     }
 
     public UserDTO findById(final UUID userId) {
         return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound(userId)));
     }
 
-    public UserResponseDTO updateInfo(final UUID userId, final UserRequestUpdateDTO userUpdate) {
+    public UserUpdateResponseDTO updateInfo(final UUID userId, final UserUpdateRequestDTO userUpdate) {
         final UserDTO user = findById(userId);
 
         if (!user.getEmail().equals(userUpdate.getEmail())) {
@@ -56,8 +58,9 @@ public class UserService {
 
         user.setPhoneNumber(userUpdate.getPhoneNumber());
         user.setUsername(userUpdate.getUsername());
+        user.setUpdatedAt(Instant.now());
 
-        return toUserResponseDTO(userRepository.save(toUserEntity(user)));
+        return toUserUpdateDTO(userRepository.save(toUserEntity(user)));
     }
 
     public LocationDTO addLocation(final UUID userId, final LocationDTO locationDTO) {

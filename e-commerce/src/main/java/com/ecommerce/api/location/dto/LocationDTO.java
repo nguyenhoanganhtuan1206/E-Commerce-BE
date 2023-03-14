@@ -1,20 +1,22 @@
 package com.ecommerce.api.location.dto;
 
-import com.ecommerce.api.user.dto.UserDTO;
+import com.ecommerce.domain.user.UserDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.With;
 
 import java.util.UUID;
 
-@Builder
 @Getter
 @Setter
-@With
+@NoArgsConstructor
 public class LocationDTO {
+
+    /**
+     * @ DTO has represents all fields from LocationEntity
+     */
 
     private UUID id;
 

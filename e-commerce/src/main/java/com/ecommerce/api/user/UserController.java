@@ -1,9 +1,9 @@
 package com.ecommerce.api.user;
 
-import com.ecommerce.api.auth.dto.UserResponseDTO;
 import com.ecommerce.api.location.dto.LocationDTO;
-import com.ecommerce.api.user.dto.UserDTO;
-import com.ecommerce.api.user.dto.UserRequestUpdateDTO;
+import com.ecommerce.api.user.dto.UserUpdateRequestDTO;
+import com.ecommerce.api.user.dto.UserUpdateResponseDTO;
+import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -28,9 +28,9 @@ public class UserController {
     }
 
     @PutMapping("/profile/{userId}")
-    public UserResponseDTO updateInfo(final @PathVariable UUID userId,
-                                      final @Valid @RequestBody UserRequestUpdateDTO userRequestDTO,
-                                      final BindingResult bindingResult) {
+    public UserUpdateResponseDTO updateInfo(final @PathVariable UUID userId,
+                                            final @Valid @RequestBody UserUpdateRequestDTO userRequestDTO,
+                                            final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
         }

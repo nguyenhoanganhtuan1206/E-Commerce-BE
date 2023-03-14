@@ -9,6 +9,6 @@ import java.util.function.Supplier;
 public class LocationError {
 
     public static Supplier<BadRequestException> supplyAddressAvailable(final String address) {
-        return () -> new BadRequestException("Address with %s is existed");
+        return () -> new BadRequestException("Address with %s is existed", address);
     }
 }

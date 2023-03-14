@@ -2,16 +2,14 @@ package com.ecommerce.persistent.location;
 
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "location")
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
