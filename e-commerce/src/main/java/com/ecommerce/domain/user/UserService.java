@@ -19,9 +19,14 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
 import static com.ecommerce.domain.user.UserError.*;
-import static com.ecommerce.domain.user.mapper.UserAuthMapper.*;
-import static com.ecommerce.domain.user.mapper.UserDTOMapper.*;
-import static com.ecommerce.domain.user.mapper.UserUpdateMapper.*;
+import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserResponseDTO;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateDTO;
+import static io.micrometer.common.util.StringUtils.isNotBlank;
+import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -56,6 +61,12 @@ public class UserService {
             user.setEmail(userUpdate.getEmail());
         }
 
+        if (isNotBlank(userUpdate.getPassword())) {
+            validatePassword(userUpdate.getPassword());
+
+            user.setPassword(userUpdate.getPassword());
+        }
+
         user.setPhoneNumber(userUpdate.getPhoneNumber());
         user.setUsername(userUpdate.getUsername());
         user.setUpdatedAt(Instant.now());
@@ -71,6 +82,12 @@ public class UserService {
         locationDTO.setUserDTO(userDTO);
 
         return locationService.save(locationDTO);
+    }
+
+    private void validatePassword(final String password) {
+        if (password.length() < 6 || password.length() > 30) {
+            throw supplyValidationError("Password must be at between 6 to 30 characters").get();
+        }
     }
 
     private void verifyIfAddressAvailable(final Set<LocationDTO> locationDTOS, final String addressUpdate) {

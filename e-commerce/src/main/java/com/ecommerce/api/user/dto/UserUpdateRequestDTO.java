@@ -7,8 +7,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -30,4 +28,9 @@ public class UserUpdateRequestDTO {
     @NotBlank(message = "Phone number cannot be empty")
     @Size(min = 9, max = 11, message = "Phone number is invalid")
     private String phoneNumber;
+
+    /**
+     * @ Password is optional
+     * */
+    private String password;
 }
