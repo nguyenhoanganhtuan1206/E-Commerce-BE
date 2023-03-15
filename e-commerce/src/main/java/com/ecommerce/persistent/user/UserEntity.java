@@ -33,6 +33,6 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<LocationEntity> locations;
 }
