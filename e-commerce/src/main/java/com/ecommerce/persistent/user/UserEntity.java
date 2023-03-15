@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.user;
 
 import com.ecommerce.persistent.location.LocationEntity;
+import com.ecommerce.persistent.seller.SellerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -35,4 +36,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private Set<LocationEntity> locations;
+
+    @OneToOne(mappedBy = "user")
+    private SellerEntity seller;
 }

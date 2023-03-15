@@ -21,7 +21,7 @@ public class ProductEntity {
 
     private String name;
 
-    private double price;
+    private long price;
 
     private String condition;
 
