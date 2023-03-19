@@ -10,7 +10,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserAuthResponseDTO {
+public class UserSignUpResponseDTO {
 
     private UUID id;
 

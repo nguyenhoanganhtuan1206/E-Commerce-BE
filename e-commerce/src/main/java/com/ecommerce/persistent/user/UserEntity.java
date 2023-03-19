@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.user;
 
 import com.ecommerce.persistent.location.LocationEntity;
+import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
@@ -41,4 +42,8 @@ public class UserEntity {
 
     @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private SellerEntity seller;
+
+    @ManyToOne
+    @JoinColumn(name = "role_id", nullable = false)
+    private RoleEntity role;
 }

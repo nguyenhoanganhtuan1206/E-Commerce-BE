@@ -1,5 +1,6 @@
 package com.ecommerce.api.auth.dto;
 
+import com.ecommerce.domain.role.RoleDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -12,7 +13,7 @@ import java.time.Instant;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserAuthRequestDTO {
+public class UserSignUpRequestDTO {
 
     @NotBlank(message = "Username cannot be empty")
     @Size(min = 6, max = 30, message = "Username must be at between 6 to 30 characters")
@@ -40,4 +41,6 @@ public class UserAuthRequestDTO {
     private String district;
 
     private String commune;
+
+    private RoleDTO roleDTO;
 }
