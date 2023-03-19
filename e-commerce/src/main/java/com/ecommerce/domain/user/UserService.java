@@ -18,15 +18,16 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
-import static com.ecommerce.domain.user.UserError.*;
+import static com.ecommerce.domain.user.UserError.supplyUserExisted;
+import static com.ecommerce.domain.user.UserError.supplyUserNotFound;
 import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserEntity;
 import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateDTO;
+import static com.ecommerce.error.CommonError.supplyValidationError;
 import static io.micrometer.common.util.StringUtils.isNotBlank;
-import static io.micrometer.common.util.StringUtils.isNotEmpty;
 
 @Service
 @RequiredArgsConstructor
@@ -50,6 +51,10 @@ public class UserService {
 
     public UserDTO findById(final UUID userId) {
         return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound(userId)));
+    }
+
+    public UserDTO findByEmail(final String email) {
+        return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound(email)));
     }
 
     public UserUpdateResponseDTO updateInfo(final UUID userId, final UserUpdateRequestDTO userUpdate) {

@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
 import static com.ecommerce.error.CommonError.supplyValidationError;
 
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api/v1/auth")
 @RequiredArgsConstructor
 public class AuthController {
 

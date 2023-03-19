@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.location;
 
 import com.ecommerce.persistent.user.UserEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 

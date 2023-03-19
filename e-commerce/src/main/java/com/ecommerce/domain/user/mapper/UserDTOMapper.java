@@ -1,7 +1,10 @@
 package com.ecommerce.domain.user.mapper;
 
+import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.persistent.location.LocationEntity;
+import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
@@ -17,9 +20,11 @@ public class UserDTOMapper {
     public static UserEntity toUserEntity(final UserDTO userDTO) {
         final UserEntity entity = modelMapper.map(userDTO, UserEntity.class);
 
-        entity.setLocations(userDTO.getLocations().stream()
-                .map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class))
-                .collect(Collectors.toSet()));
+        entity.setLocations(userDTO.getLocations().stream().map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class)).collect(Collectors.toSet()));
+
+        if (userDTO.getSeller() != null) {
+            entity.setSeller(modelMapper.map(userDTO.getSeller(), SellerEntity.class));
+        }
 
         return entity;
     }
@@ -27,16 +32,16 @@ public class UserDTOMapper {
     public static UserDTO toUserDTO(final UserEntity entity) {
         final UserDTO userDTO = modelMapper.map(entity, UserDTO.class);
 
-        entity.setLocations(userDTO.getLocations().stream()
-                .map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class))
-                .collect(Collectors.toSet()));
+        userDTO.setLocations(entity.getLocations().stream().map(location -> modelMapper.map(location, LocationDTO.class)).collect(Collectors.toSet()));
+
+        if (entity.getSeller() != null) {
+            userDTO.setSeller(modelMapper.map(entity.getSeller(), SellerDTO.class));
+        }
 
         return userDTO;
     }
 
     public static List<UserDTO> toUserDTOs(final List<UserEntity> entity) {
-        return entity.stream()
-                .map(UserDTOMapper::toUserDTO)
-                .toList();
+        return entity.stream().map(UserDTOMapper::toUserDTO).toList();
     }
 }

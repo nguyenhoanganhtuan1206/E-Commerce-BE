@@ -1,6 +1,8 @@
 package com.ecommerce.domain.user;
 
 import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.domain.seller.SellerDTO;
+import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -31,6 +33,8 @@ public class UserDTO {
     private Instant updatedAt;
 
     private String password;
+
+    private SellerDTO seller;
 
     private Set<LocationDTO> locations;
 }

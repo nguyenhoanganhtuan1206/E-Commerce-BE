@@ -13,10 +13,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ecommerce.error.CommonError.supplyValidationError;
+import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
-@RequestMapping("/api/users")
+@RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
 public class UserController {
 
@@ -31,9 +31,7 @@ public class UserController {
     public UserUpdateResponseDTO updateInfo(final @PathVariable UUID userId,
                                             final @Valid @RequestBody UserUpdateRequestDTO userRequestDTO,
                                             final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
-        }
+        handleValidationError(bindingResult);
 
         return userService.updateInfo(userId, userRequestDTO);
     }
@@ -42,9 +40,7 @@ public class UserController {
     public LocationDTO addLocation(final @PathVariable UUID userId,
                                    final @Valid @RequestBody LocationDTO locationDTO,
                                    final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
-        }
+        handleValidationError(bindingResult);
 
         return userService.addLocation(userId, locationDTO);
     }

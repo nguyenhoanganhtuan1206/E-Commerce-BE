@@ -21,11 +21,25 @@ public class SellerEntity {
 
     private String sellerName;
 
-    private float sellerString;
+    private String emailSeller;
+
+    private String phoneNumber;
+
+    private float sellerRating;
 
     private boolean sellerStatus;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "user_id", referencedColumnName = "id")
+    private String address;
+
+    private String city;
+
+    private String district;
+
+    private String commune;
+
+    @OneToOne(cascade = CascadeType.MERGE)
+    @JoinTable(name = "user_seller",
+            joinColumns = {@JoinColumn(name = "seller_id", referencedColumnName = "id")},
+            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
     private UserEntity user;
 }

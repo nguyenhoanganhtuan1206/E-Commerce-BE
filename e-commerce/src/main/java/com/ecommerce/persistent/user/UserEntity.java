@@ -2,6 +2,7 @@ package com.ecommerce.persistent.user;
 
 import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -34,9 +35,10 @@ public class UserEntity {
 
     private String password;
 
-    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @JsonIgnore
     private Set<LocationEntity> locations;
 
-    @OneToOne(mappedBy = "user")
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private SellerEntity seller;
 }
