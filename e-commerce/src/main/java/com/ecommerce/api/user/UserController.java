@@ -7,6 +7,7 @@ import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,11 +23,19 @@ public class UserController {
 
     private final UserService userService;
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping
     public List<UserDTO> findAll() {
         return userService.findAll();
     }
 
+    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_USER')")
+    @GetMapping("/profile/{userId}")
+    public UserDTO findById(final @PathVariable UUID userId) {
+        return userService.findById(userId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("/profile/{userId}")
     public UserUpdateResponseDTO updateInfo(final @PathVariable UUID userId,
                                             final @Valid @RequestBody UserUpdateRequestDTO userRequestDTO,
@@ -36,6 +45,7 @@ public class UserController {
         return userService.updateInfo(userId, userRequestDTO);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/profile/{userId}/locations")
     public LocationDTO addLocation(final @PathVariable UUID userId,
                                    final @Valid @RequestBody LocationDTO locationDTO,

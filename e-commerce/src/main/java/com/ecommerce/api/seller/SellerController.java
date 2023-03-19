@@ -6,6 +6,7 @@ import com.ecommerce.domain.seller.SellerService;
 import jakarta.mail.MessagingException;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,6 +22,7 @@ public class SellerController {
 
     private final SellerService sellerService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("{userId}")
     public SellerDTO registerForSell(
             final @PathVariable UUID userId,
@@ -32,6 +34,7 @@ public class SellerController {
         return sellerService.registerForSell(userId, sellerCreateRequestDTO);
     }
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PutMapping("{userId}/confirm-register")
     public SellerDTO sellConfirm(
             final @PathVariable UUID userId

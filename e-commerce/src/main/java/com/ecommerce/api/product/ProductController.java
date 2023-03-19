@@ -5,6 +5,7 @@ import com.ecommerce.api.product.dto.ProductResponseDTO;
 import com.ecommerce.domain.product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -19,11 +20,13 @@ public class ProductController {
 
     public final ProductService productService;
 
+    @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("{userId}")
     public ProductResponseDTO create(
             final @PathVariable UUID userId,
             final @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
-            final BindingResult bindingResult) {
+            final BindingResult bindingResult
+    ) {
         handleValidationError(bindingResult);
 
         return productService.create(userId, productCreateRequestDTO);
