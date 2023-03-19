@@ -1,14 +1,17 @@
 package com.ecommerce.domain.user;
 
-import com.ecommerce.api.auth.dto.UserAuthRequestDTO;
-import com.ecommerce.api.auth.dto.UserAuthResponseDTO;
+import com.ecommerce.api.auth.dto.UserSignUpRequestDTO;
+import com.ecommerce.api.auth.dto.UserSignUpResponseDTO;
 import com.ecommerce.api.location.dto.LocationDTO;
 import com.ecommerce.api.user.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.user.dto.UserUpdateResponseDTO;
 import com.ecommerce.domain.location.LocationService;
+import com.ecommerce.domain.role.RoleDTO;
+import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.mapper.UserDTOMapper;
 import com.ecommerce.persistent.user.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
@@ -20,11 +23,11 @@ import java.util.UUID;
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
 import static com.ecommerce.domain.user.UserError.supplyUserExisted;
 import static com.ecommerce.domain.user.UserError.supplyUserNotFound;
-import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserEntity;
-import static com.ecommerce.domain.user.mapper.UserAuthMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateDTO;
 import static com.ecommerce.error.CommonError.supplyValidationError;
 import static io.micrometer.common.util.StringUtils.isNotBlank;
@@ -37,14 +40,22 @@ public class UserService {
 
     private final LocationService locationService;
 
+    private final RoleService roleService;
+
+    private final PasswordEncoder passwordEncoder;
+
     public List<UserDTO> findAll() {
         return toUserDTOs(userRepository.findAll());
     }
 
-    public UserAuthResponseDTO signUp(final UserAuthRequestDTO userRequestDTO) {
+    public UserSignUpResponseDTO signUp(final UserSignUpRequestDTO userRequestDTO) {
         verifyIfUserAvailable(userRequestDTO.getEmail());
 
+        final RoleDTO roleDTO = roleService.findByName("ROLE_USER");
+
+        userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         userRequestDTO.setCreatedAt(Instant.now());
+        userRequestDTO.setRoleDTO(roleDTO);
 
         return toUserResponseDTO(userRepository.save(toUserEntity(userRequestDTO)));
     }
