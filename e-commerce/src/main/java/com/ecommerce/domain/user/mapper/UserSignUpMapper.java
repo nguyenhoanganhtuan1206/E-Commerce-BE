@@ -7,6 +7,8 @@ import com.ecommerce.persistent.user.UserEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
+import java.util.Collections;
+
 @UtilityClass
 public class UserSignUpMapper {
 
@@ -19,8 +21,8 @@ public class UserSignUpMapper {
     public static UserEntity toUserEntity(final UserSignUpRequestDTO authRequestDTO) {
         final UserEntity userEntity = modelMapper.map(authRequestDTO, UserEntity.class);
 
-        userEntity.setRole(modelMapper.map(authRequestDTO.getRoleDTO(), RoleEntity.class));
+        userEntity.setRoles(Collections.singleton(modelMapper.map(authRequestDTO.getRoleDTO(), RoleEntity.class)));
 
-        return modelMapper.map(authRequestDTO, UserEntity.class);
+        return userEntity;
     }
 }

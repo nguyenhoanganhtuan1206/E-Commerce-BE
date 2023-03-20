@@ -1,6 +1,7 @@
 package com.ecommerce.domain.user.mapper;
 
 import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.persistent.location.LocationEntity;
@@ -32,7 +33,13 @@ public class UserDTOMapper {
     public static UserDTO toUserDTO(final UserEntity entity) {
         final UserDTO userDTO = modelMapper.map(entity, UserDTO.class);
 
-        userDTO.setLocations(entity.getLocations().stream().map(location -> modelMapper.map(location, LocationDTO.class)).collect(Collectors.toSet()));
+        userDTO.setLocations(entity.getLocations()
+                .stream()
+                .map(location -> modelMapper.map(location, LocationDTO.class)).collect(Collectors.toSet()));
+
+        userDTO.setRoles(entity.getRoles()
+                .stream()
+                .map(role -> modelMapper.map(role, RoleDTO.class)).collect(Collectors.toSet()));
 
         if (entity.getSeller() != null) {
             userDTO.setSeller(modelMapper.map(entity.getSeller(), SellerDTO.class));

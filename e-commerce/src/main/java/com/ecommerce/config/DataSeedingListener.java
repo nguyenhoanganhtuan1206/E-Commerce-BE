@@ -11,6 +11,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.time.Instant;
+import java.util.Collections;
+import java.util.HashSet;
 
 @Component
 @RequiredArgsConstructor
@@ -32,6 +34,10 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
             roleRepository.save(new RoleEntity("ROLE_USER"));
         }
 
+        if (roleRepository.findByName("ROLE_SELLER").isEmpty()) {
+            roleRepository.save(new RoleEntity("ROLE_SELLER"));
+        }
+
         final RoleEntity roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElse(null);
         final RoleEntity roleUser = roleRepository.findByName("ROLE_USER").orElse(null);
 
@@ -42,7 +48,7 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
                     .password(passwordEncoder.encode("123456"))
                     .phoneNumber("12323232")
                     .createdAt(Instant.now())
-                    .role(roleAdmin)
+                    .roles(new HashSet<>(Collections.singletonList(roleAdmin)))
                     .build();
 
             userRepository.save(userEntity);
@@ -56,7 +62,7 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
                     .password(passwordEncoder.encode("123456"))
                     .phoneNumber("12323232")
                     .createdAt(Instant.now())
-                    .role(roleUser)
+                    .roles(new HashSet<>(Collections.singletonList(roleUser)))
                     .build();
 
             userRepository.save(userEntity);

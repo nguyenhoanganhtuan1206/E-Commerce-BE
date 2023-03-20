@@ -1,6 +1,7 @@
 package com.ecommerce.api.product.dto;
 
 import com.ecommerce.api.category.CategoryDTO;
+import com.ecommerce.domain.seller.SellerDTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -8,6 +9,8 @@ import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -30,5 +33,9 @@ public class ProductCreateRequestDTO {
     @Size(min = 6, max = 255, message = "Product description must be at between 6 to 255 characters")
     private String description;
 
-    private CategoryDTO category;
+    private UUID categoryId;
+
+    private CategoryDTO categoryDTO;
+
+    private SellerDTO seller;
 }

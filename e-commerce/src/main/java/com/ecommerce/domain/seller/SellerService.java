@@ -1,6 +1,7 @@
 package com.ecommerce.domain.seller;
 
 import com.ecommerce.api.seller.dto.SellerCreateRequestDTO;
+import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import com.ecommerce.persistent.seller.SellerRepository;
@@ -27,9 +28,16 @@ public class SellerService {
 
     private final UserService userService;
 
+    private final RoleService roleService;
+
     private final JavaMailSender javaMailSender;
 
     private final String URL_REGISTER = "http://localhost:8080/api/v1/seller/";
+
+    public SellerDTO findById(final UUID sellerId) {
+        return toSellerDTO(sellerRepository.findById(sellerId)
+                .orElseThrow(supplySellerNotFound(sellerId)));
+    }
 
     public SellerDTO findByUserId(final UUID userId) {
         return toSellerDTO(sellerRepository.findByUserId(userId)
@@ -52,6 +60,10 @@ public class SellerService {
     }
 
     public SellerDTO sellConfirm(final UUID userId) {
+        userService.findById(userId)
+                .getRoles()
+                .add(roleService.findByName("ROLE_SELLER"));
+
         final SellerDTO sellerDTO = findByUserId(userId);
 
         sellerDTO.setSellerStatus(true);

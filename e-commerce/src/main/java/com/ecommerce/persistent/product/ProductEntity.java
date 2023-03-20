@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.product;
 
 import com.ecommerce.persistent.category.CategoryEntity;
+import com.ecommerce.persistent.seller.SellerEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -28,6 +29,10 @@ public class ProductEntity {
     private boolean productStatus;
 
     private String description;
+
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "seller_id", nullable = false)
+    private SellerEntity seller;
 
     @ManyToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id", nullable = false)

@@ -4,7 +4,7 @@ import com.ecommerce.persistent.role.RoleRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import static com.ecommerce.domain.role.RoleError.supplyRoleNotFoundError;
+import static com.ecommerce.domain.role.RoleError.supplyRoleNotFound;
 import static com.ecommerce.domain.role.mapper.RoleDTOMapper.toRoleDTO;
 
 @Service
@@ -15,6 +15,6 @@ public class RoleService {
 
     public RoleDTO findByName(final String name) {
         return toRoleDTO(roleRepository.findByName(name)
-                .orElseThrow(supplyRoleNotFoundError(name)));
+                .orElseThrow(supplyRoleNotFound(name)));
     }
 }

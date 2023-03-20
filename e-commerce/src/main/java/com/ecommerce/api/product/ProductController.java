@@ -9,6 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
@@ -20,15 +21,21 @@ public class ProductController {
 
     public final ProductService productService;
 
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("{userId}")
+    @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
+    @GetMapping("{sellerId}")
+    public Set<ProductResponseDTO> findBySellerId(final @PathVariable UUID sellerId) {
+        return productService.findBySellerId(sellerId);
+    }
+
+    @PreAuthorize("hasRole('ROLE_SELLER')")
+    @PostMapping("{sellerId}")
     public ProductResponseDTO create(
-            final @PathVariable UUID userId,
+            final @PathVariable UUID sellerId,
             final @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
             final BindingResult bindingResult
     ) {
         handleValidationError(bindingResult);
 
-        return productService.create(userId, productCreateRequestDTO);
+        return productService.create(sellerId, productCreateRequestDTO);
     }
 }

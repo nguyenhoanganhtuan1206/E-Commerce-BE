@@ -1,11 +1,13 @@
 package com.ecommerce.persistent.seller;
 
+import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -36,6 +38,9 @@ public class SellerEntity {
     private String district;
 
     private String commune;
+
+    @OneToMany(mappedBy = "seller")
+    private Set<ProductEntity> products;
 
     @OneToOne(cascade = CascadeType.MERGE)
     @JoinTable(name = "user_seller",
