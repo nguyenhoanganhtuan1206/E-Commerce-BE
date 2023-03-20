@@ -25,7 +25,7 @@ public class RoleEntity {
 
     @ManyToMany(mappedBy = "roles",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.ALL})
+            cascade = {CascadeType.MERGE, CascadeType.ALL})
     private Set<UserEntity> users;
 
     public RoleEntity(String name) {

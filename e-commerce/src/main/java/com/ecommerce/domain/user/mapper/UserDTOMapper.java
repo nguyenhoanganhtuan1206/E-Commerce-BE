@@ -1,6 +1,6 @@
 package com.ecommerce.domain.user.mapper;
 
-import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;

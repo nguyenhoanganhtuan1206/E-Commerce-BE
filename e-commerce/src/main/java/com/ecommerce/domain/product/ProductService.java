@@ -16,6 +16,7 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.product.ProductError.supplyProductExisted;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.*;
+import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTOs;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductEntity;
 
 @Service
@@ -30,6 +31,10 @@ public class ProductService {
 
     public Set<ProductResponseDTO> findBySellerId(final UUID sellerId) {
         return toProductResponseDTOs(productRepository.findBySellerId(sellerId));
+    }
+
+    public Set<ProductDTO> findByNameOrSellerName(final String searchTemp) {
+        return toProductDTOs(productRepository.findByNameOrSellerName(searchTemp));
     }
 
     public ProductResponseDTO create(

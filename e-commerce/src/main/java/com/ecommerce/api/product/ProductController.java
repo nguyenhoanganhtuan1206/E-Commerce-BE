@@ -2,6 +2,7 @@ package com.ecommerce.api.product;
 
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
+import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.product.ProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,10 +22,10 @@ public class ProductController {
 
     public final ProductService productService;
 
-//    @GetMapping
-//    public Set<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
-//        return productService
-//    }
+    @GetMapping
+    public Set<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
+        return productService.findByNameOrSellerName(searchTemp);
+    }
 
     @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
     @GetMapping("{sellerId}")

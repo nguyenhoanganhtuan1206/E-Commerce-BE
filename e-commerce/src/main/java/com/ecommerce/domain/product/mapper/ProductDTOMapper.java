@@ -9,6 +9,9 @@ import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
+import java.util.Set;
+import java.util.stream.Collectors;
+
 @UtilityClass
 public class ProductDTOMapper {
 
@@ -21,6 +24,12 @@ public class ProductDTOMapper {
         productDTO.setSeller(modelMapper.map(productEntity.getSeller(), SellerDTO.class));
 
         return productDTO;
+    }
+
+    public static Set<ProductDTO> toProductDTOs(final Set<ProductEntity> productEntities) {
+        return productEntities.stream()
+                .map(ProductDTOMapper::toProductDTO)
+                .collect(Collectors.toSet());
     }
 
     public static ProductEntity toProductEntity(final ProductDTO productDTO) {
