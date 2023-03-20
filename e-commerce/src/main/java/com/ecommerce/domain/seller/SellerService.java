@@ -43,11 +43,13 @@ public class SellerService {
     private final String URL_REGISTER = "http://localhost:8080/api/v1/seller/confirm-register?token=";
 
     public SellerDTO findById(final UUID sellerId) {
-        return toSellerDTO(sellerRepository.findById(sellerId).orElseThrow(supplySellerNotFound(sellerId)));
+        return toSellerDTO(sellerRepository.findById(sellerId)
+                .orElseThrow(supplySellerNotFound(sellerId)));
     }
 
     public SellerDTO findByToken(final String token) {
-        return toSellerDTO(sellerRepository.findByConfirmationToken(token).orElseThrow(supplySellerNotFound(token)));
+        return toSellerDTO(sellerRepository.findByConfirmationToken(token)
+                .orElseThrow(supplySellerNotFound(token)));
     }
 
     public SellerDTO registerSeller(final SellerCreateRequestDTO sellerDTO) throws MessagingException, UnsupportedEncodingException {
@@ -91,7 +93,11 @@ public class SellerService {
         return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
     }
 
-    private void sendRegistrationEmail(final UserDTO userDTO, final String emailSeller, final String registrationLink) throws MessagingException, UnsupportedEncodingException {
+    private void sendRegistrationEmail(
+            final UserDTO userDTO,
+            final String emailSeller,
+            final String registrationLink
+    ) throws MessagingException, UnsupportedEncodingException {
 
         MimeMessage message = javaMailSender.createMimeMessage();
         MimeMessageHelper messageHelper = new MimeMessageHelper(message, "UTF-8");
@@ -106,7 +112,27 @@ public class SellerService {
         messageHelper.setTo(emailSeller);
 
         String subject = "Confirm Your Registration as a Seller on Our E-commerce Platform";
-        String content = "<body style='padding: 0;margin: 0;'>" + "    <div style='width: 600px;" + "    display: flex;" + "    justify-content: center;" + "    margin: auto;" + "    flex-direction: column;'>" + "        <div style='padding: 20px;border: 1px solid #dadada;'>" + "            <p style='font-size: 16px;color: #000;'>Dear, \"" + userDTO.getUsername() + "\"</p>" + "            <p style='font-size: 16px;color: #000;'>Confirm Your Registration as a Seller on Our E-commerce Platform.<br> <strong>Click the button" + "                below to confirm it </strong>. <br />If you did not request this registration, please ignore this email.</p>" + "            <a href='" + registrationLink + "' target=\"_self\" style=\"padding: 8px;border: none;display: block;cursor: pointer; border-radius: 3px;margin: 12px 0" + "            font-size: 15px;text-decoration: none;background-color: #0167f3;color: #fff;font-weight: 500;\">Confirm" + "                Registration</a>" + "            <p>Thank you for using our service.<br>" + "            <br>If you have any question, Please contact us immediately at <a href='mailto:gridshopvn@gmail.com@gmail.com' style='color: #0167f3;'>gridshopvn@gmail.com</a>" + "            </p>" + "            <p>Thanks you.</p>" + "            <p>Grid Shop Team.</p>" + "        </div>" + "    </div>" + "</body>";
+        String content = "<body style='padding: 0;margin: 0;'>" +
+                "    <div style='width: 600px;" +
+                "    display: flex;" +
+                "    justify-content: center;" +
+                "    margin: auto;" +
+                "    flex-direction: column;'>" +
+                "        <div style='padding: 20px;border: 1px solid #dadada;'>" +
+                "            <p style='font-size: 16px;color: #000;'>Dear, \"" + userDTO.getUsername() + "\"</p>" +
+                "            <p style='font-size: 16px;color: #000;'>Confirm Your Registration as a Seller on Our E-commerce Platform.<br> <strong>Click the button" +
+                "                below to confirm it </strong>. <br />If you did not request this registration, please ignore this email.</p>" +
+                "            <a href='" + registrationLink + "' target=\"_self\" style=\"padding: 8px;border: none;display: block;cursor: pointer; border-radius: 3px;margin: 12px 0" +
+                "            font-size: 15px;text-decoration: none;background-color: #0167f3;color: #fff;font-weight: 500;\">Confirm" +
+                "                Registration</a>" +
+                "            <p>Thank you for using our service.<br>" +
+                "            <br>If you have any question, Please contact us immediately at <a href='mailto:gridshopvn@gmail.com@gmail.com' style='color: #0167f3;'>gridshopvn@gmail.com</a>" +
+                "            </p>" +
+                "            <p>Thanks you.</p>" +
+                "            <p>Grid Shop Team.</p>" +
+                "        </div>" +
+                "    </div>" +
+                "</body>";
 
         messageHelper.setSubject(subject);
         messageHelper.setText(content, true);
