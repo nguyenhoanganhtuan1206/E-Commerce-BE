@@ -39,8 +39,11 @@ public class SellerService {
     private final AuthsProvider authsProvider;
 
     private final JavaMailSender javaMailSender;
-
     private final String URL_REGISTER = "http://localhost:8080/api/v1/seller/confirm-register?token=";
+
+    public UserAuthenticationToken getCurrentUserToken() {
+        return authsProvider.getCurrentAuthentication();
+    }
 
     public SellerDTO findById(final UUID sellerId) {
         return toSellerDTO(sellerRepository.findById(sellerId)
@@ -53,10 +56,8 @@ public class SellerService {
     }
 
     public SellerDTO registerSeller(final SellerCreateRequestDTO sellerRequestDTO) throws MessagingException, UnsupportedEncodingException {
-        final UserAuthenticationToken authenticationToken = authsProvider.getCurrentAuthentication();
-
         final SellerDTO seller = toSellerDTO(sellerRequestDTO);
-        final UserDTO user = userService.findById(authenticationToken.getUserId());
+        final UserDTO user = userService.findById(getCurrentUserToken().getUserId());
         SellerDTO registeredSeller;
 
         /**
@@ -79,17 +80,15 @@ public class SellerService {
     }
 
     public SellerDTO confirmRegister(final String token) {
-        final UserAuthenticationToken authenticationToken = authsProvider.getCurrentAuthentication();
         final SellerDTO sellerDTO = findByToken(token);
 
         sellerDTO.setSellerStatus(true);
         sellerDTO.setConfirmationToken(null);
 
-
-        final UserDTO userDTO = userService.findById(authenticationToken.getUserId());
-        final Set<RoleDTO> userDTOS = userDTO.getRoles();
-        userDTOS.add(roleService.findByName("ROLE_SELLER"));
-        sellerDTO.setUser(userDTO);
+        final UserDTO userDTO = userService.findById(getCurrentUserToken().getUserId());
+        final Set<RoleDTO> roleDTOS = userDTO.getRoles();
+        roleDTOS.add(roleService.findByName("ROLE_SELLER"));
+        sellerDTO.getUser().setRoles(roleDTOS);
 
         return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
     }
