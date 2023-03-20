@@ -39,6 +39,8 @@ public class SellerEntity {
 
     private String commune;
 
+    private String confirmationToken;
+
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;
 

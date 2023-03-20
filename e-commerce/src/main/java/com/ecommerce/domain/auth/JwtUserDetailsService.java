@@ -13,7 +13,6 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.UUID;
 
 import static com.ecommerce.domain.role.RoleError.supplyRoleNotFound;
 
@@ -28,20 +27,13 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email)
-                .map(this::buildUser)
-                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return userRepository.findByEmail(email).map(this::buildUser).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
     private User buildUser(final UserEntity userEntity) {
-        final UUID roleId = userEntity.getRoles().stream().findFirst().get().getId();
-        final RoleEntity roleEntity = roleRepository.findById(roleId)
-                .orElseThrow(supplyRoleNotFound(roleId));
+        final int roleId = userEntity.getRoles().stream().findFirst().get().getId();
+        final RoleEntity roleEntity = roleRepository.findById(roleId).orElseThrow(supplyRoleNotFound(roleId));
 
-        return new JwtUserDetails(
-                userEntity.getId(),
-                userEntity.getEmail(),
-                userEntity.getPassword(),
-                List.of(new SimpleGrantedAuthority(roleEntity.getName())));
+        return new JwtUserDetails(userEntity.getId(), userEntity.getEmail(), userEntity.getPassword(), List.of(new SimpleGrantedAuthority(roleEntity.getName())));
     }
 }

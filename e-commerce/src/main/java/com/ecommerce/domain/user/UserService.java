@@ -61,7 +61,8 @@ public class UserService {
     }
 
     public UserDTO findById(final UUID userId) {
-        return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound(userId)));
+        return toUserDTO(userRepository.findById(userId)
+                .orElseThrow(supplyUserNotFound(userId)));
     }
 
     public UserDTO findByEmail(final String email) {

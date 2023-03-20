@@ -8,7 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Set;
-import java.util.UUID;
 
 @Entity
 @Table(name = "roles")
@@ -19,12 +18,14 @@ import java.util.UUID;
 public class RoleEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
 
     private String name;
 
-    @ManyToMany(mappedBy = "roles", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "roles",
+            fetch = FetchType.LAZY,
+            cascade = {CascadeType.PERSIST, CascadeType.ALL})
     private Set<UserEntity> users;
 
     public RoleEntity(String name) {

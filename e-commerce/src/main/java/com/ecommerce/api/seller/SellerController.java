@@ -11,7 +11,6 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.io.UnsupportedEncodingException;
-import java.util.UUID;
 
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
@@ -23,22 +22,21 @@ public class SellerController {
     private final SellerService sellerService;
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("{userId}")
+    @PostMapping
     public SellerDTO registerForSell(
-            final @PathVariable UUID userId,
             final @Valid @RequestBody SellerCreateRequestDTO sellerCreateRequestDTO,
             final BindingResult bindingResult
     ) throws MessagingException, UnsupportedEncodingException {
         handleValidationError(bindingResult);
 
-        return sellerService.registerForSell(userId, sellerCreateRequestDTO);
+        return sellerService.registerSeller(sellerCreateRequestDTO);
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping("{userId}/confirm-register")
-    public SellerDTO sellConfirm(
-            final @PathVariable UUID userId
+    @PutMapping("/confirm-register")
+    public SellerDTO confirmRegister(
+            final @RequestParam(name = "token") String token
     ) {
-        return sellerService.sellConfirm(userId);
+        return sellerService.confirmRegister(token);
     }
 }

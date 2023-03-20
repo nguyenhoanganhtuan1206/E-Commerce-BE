@@ -44,5 +44,7 @@ public class SellerCreateRequestDTO {
 
     private boolean sellerStatus;
 
+    private String confirmationToken;
+
     private UserDTO user;
 }

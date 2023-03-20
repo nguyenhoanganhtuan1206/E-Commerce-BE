@@ -43,7 +43,7 @@ public class UserEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private SellerEntity seller;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.PERSIST)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

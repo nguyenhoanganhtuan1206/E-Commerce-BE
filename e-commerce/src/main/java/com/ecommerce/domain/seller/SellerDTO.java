@@ -24,6 +24,8 @@ public class SellerDTO {
 
     private boolean sellerStatus;
 
+    private String confirmationToken;
+
     private String address;
 
     private String city;

@@ -17,8 +17,9 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
-import static io.jsonwebtoken.lang.Strings.split;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.split;
+
 
 @Component
 @RequiredArgsConstructor
@@ -58,8 +59,8 @@ public class JwtTokenService {
         return new UserAuthenticationToken(
                 UUID.fromString(claims.get(CLAIM_USER_ID).toString()),
                 claims.getSubject(),
-                Arrays.stream(split(claims.get(CLAIM_ROLES).toString(), ","))
-                        .map(role -> new SimpleGrantedAuthority(role))
+                Arrays.stream(split(claimRoles, ","))
+                        .map(SimpleGrantedAuthority::new)
                         .toList()
         );
     }
