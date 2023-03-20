@@ -2,9 +2,10 @@ package com.ecommerce.domain.user;
 
 import com.ecommerce.api.auth.dto.UserSignUpRequestDTO;
 import com.ecommerce.api.auth.dto.UserSignUpResponseDTO;
-import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.api.location.dto.LocationRequestDTO;
 import com.ecommerce.api.user.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.user.dto.UserUpdateResponseDTO;
+import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.location.LocationService;
 import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.role.RoleService;
@@ -15,18 +16,16 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
+import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationDTO;
 import static com.ecommerce.domain.user.UserError.supplyUserExisted;
 import static com.ecommerce.domain.user.UserError.supplyUserNotFound;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
-import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateDTO;
 import static com.ecommerce.error.CommonError.supplyValidationError;
@@ -51,22 +50,19 @@ public class UserService {
     public UserSignUpResponseDTO signUp(final UserSignUpRequestDTO userRequestDTO) {
         verifyIfUserAvailable(userRequestDTO.getEmail());
 
+        final UserDTO userDTO = toUserDTO(userRequestDTO);
         final RoleDTO roleDTO = roleService.findByName("ROLE_USER");
 
         userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-        userRequestDTO.setCreatedAt(Instant.now());
-        userRequestDTO.setRoleDTO(roleDTO);
+        userDTO.setCreatedAt(Instant.now());
+        userDTO.setRoles(Collections.singleton(roleDTO));
 
-        return toUserResponseDTO(userRepository.save(toUserEntity(userRequestDTO)));
+        return toUserResponseDTO(userRepository.save(toUserEntity(userDTO)));
     }
 
     public UserDTO findById(final UUID userId) {
         return toUserDTO(userRepository.findById(userId)
                 .orElseThrow(supplyUserNotFound(userId)));
-    }
-
-    public UserDTO findByEmail(final String email) {
-        return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound(email)));
     }
 
     public UserUpdateResponseDTO updateInfo(final UUID userId, final UserUpdateRequestDTO userUpdate) {
@@ -91,14 +87,15 @@ public class UserService {
         return toUserUpdateDTO(userRepository.save(toUserEntity(user)));
     }
 
-    public LocationDTO addLocation(final UUID userId, final LocationDTO locationDTO) {
+    public LocationDTO addLocation(final UUID userId, final LocationRequestDTO locationRequestDTO) {
+        final LocationDTO location = toLocationDTO(locationRequestDTO);
         final UserDTO userDTO = findById(userId);
 
-        verifyIfAddressAvailable(userDTO.getLocations(), locationDTO.getAddress());
+        verifyIfAddressAvailable(userDTO.getLocations(), locationRequestDTO.getAddress());
 
-        locationDTO.setUserDTO(userDTO);
+        location.setUser(userDTO);
 
-        return locationService.save(locationDTO);
+        return locationService.save(location);
     }
 
     private void validatePassword(final String password) {

@@ -3,9 +3,8 @@ package com.ecommerce.domain.product.mapper;
 import com.ecommerce.api.category.CategoryDTO;
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
-import com.ecommerce.persistent.category.CategoryEntity;
+import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.persistent.product.ProductEntity;
-import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
@@ -17,13 +16,8 @@ public class ProductCreateDTOMapper {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
-    public static ProductEntity toProductEntity(final ProductCreateRequestDTO productDTO) {
-        final ProductEntity productEntity = modelMapper.map(productDTO, ProductEntity.class);
-
-        productEntity.setSeller(modelMapper.map(productDTO.getSeller(), SellerEntity.class));
-        productEntity.setCategory(modelMapper.map(productDTO.getCategoryDTO(), CategoryEntity.class));
-
-        return productEntity;
+    public static ProductDTO toProductDTO(final ProductCreateRequestDTO productDTO) {
+        return modelMapper.map(productDTO, ProductDTO.class);
     }
 
     public static ProductResponseDTO toProductResponseDTO(final ProductEntity entity) {

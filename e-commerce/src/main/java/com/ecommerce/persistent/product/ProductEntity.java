@@ -26,7 +26,7 @@ public class ProductEntity {
 
     private String condition;
 
-    private boolean productStatus;
+    private boolean productApproval;
 
     private String description;
 

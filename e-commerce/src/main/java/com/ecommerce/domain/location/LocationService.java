@@ -1,12 +1,12 @@
 package com.ecommerce.domain.location;
 
-import com.ecommerce.api.location.dto.LocationDTO;
 import com.ecommerce.persistent.location.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationDTO;
 import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationEntity;
+
 
 @Service
 @RequiredArgsConstructor

@@ -1,7 +1,5 @@
 package com.ecommerce.api.product.dto;
 
-import com.ecommerce.api.category.CategoryDTO;
-import com.ecommerce.domain.seller.SellerDTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
@@ -34,8 +32,4 @@ public class ProductCreateRequestDTO {
     private String description;
 
     private UUID categoryId;
-
-    private CategoryDTO categoryDTO;
-
-    private SellerDTO seller;
 }

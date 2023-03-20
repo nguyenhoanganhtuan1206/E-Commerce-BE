@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.UUID;
 
 import static com.ecommerce.domain.seller.SellerError.supplySellerNotFound;
-import static com.ecommerce.domain.seller.mapper.SellerCreateDTOMapper.toSellerEntity;
+import static com.ecommerce.domain.seller.mapper.SellerCreateDTOMapper.toSellerDTO;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerEntity;
 import static com.ecommerce.utils.TokenGenerator.generateToken;
@@ -52,9 +52,10 @@ public class SellerService {
                 .orElseThrow(supplySellerNotFound(token)));
     }
 
-    public SellerDTO registerSeller(final SellerCreateRequestDTO sellerDTO) throws MessagingException, UnsupportedEncodingException {
+    public SellerDTO registerSeller(final SellerCreateRequestDTO sellerRequestDTO) throws MessagingException, UnsupportedEncodingException {
         final UserAuthenticationToken authenticationToken = authsProvider.getCurrentAuthentication();
 
+        final SellerDTO seller = toSellerDTO(sellerRequestDTO);
         final UserDTO user = userService.findById(authenticationToken.getUserId());
         SellerDTO registeredSeller;
 
@@ -62,17 +63,17 @@ public class SellerService {
          @  Check if the user has not yet registered as a seller.
          */
         if (isBlank(user.getSeller().getConfirmationToken())) {
-            sellerDTO.setConfirmationToken(generateToken());
-            sellerDTO.setSellerStatus(false);
-            sellerDTO.setUser(user);
+            seller.setConfirmationToken(generateToken());
+            seller.setSellerStatus(false);
+            seller.setUser(user);
 
-            registeredSeller = toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
+            registeredSeller = toSellerDTO(sellerRepository.save(toSellerEntity(seller)));
         } else {
             registeredSeller = user.getSeller();
         }
 
-        final String registrationLink = URL_REGISTER + sellerDTO.getConfirmationToken();
-        sendRegistrationEmail(user, sellerDTO.getEmailSeller(), registrationLink);
+        final String registrationLink = URL_REGISTER + seller.getConfirmationToken();
+        sendRegistrationEmail(user, seller.getEmailSeller(), registrationLink);
 
         return registeredSeller;
     }

@@ -23,6 +23,8 @@ public class ProductDTO {
 
     private boolean productStatus;
 
+    private boolean productApproval;
+
     private String description;
 
     private SellerDTO seller;

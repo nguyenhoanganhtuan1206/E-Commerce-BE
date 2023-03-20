@@ -1,6 +1,7 @@
 package com.ecommerce.api.user;
 
-import com.ecommerce.api.location.dto.LocationDTO;
+import com.ecommerce.api.location.dto.LocationRequestDTO;
+import com.ecommerce.api.location.dto.LocationResponseDTO;
 import com.ecommerce.api.user.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.user.dto.UserUpdateResponseDTO;
 import com.ecommerce.domain.user.UserDTO;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -47,11 +49,11 @@ public class UserController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @PostMapping("/profile/{userId}/locations")
-    public LocationDTO addLocation(final @PathVariable UUID userId,
-                                   final @Valid @RequestBody LocationDTO locationDTO,
-                                   final BindingResult bindingResult) {
+    public LocationResponseDTO addLocation(final @PathVariable UUID userId,
+                                           final @Valid @RequestBody LocationRequestDTO locationDTO,
+                                           final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
-        return userService.addLocation(userId, locationDTO);
+        return toLocationResponseDTO(userService.addLocation(userId, locationDTO));
     }
 }

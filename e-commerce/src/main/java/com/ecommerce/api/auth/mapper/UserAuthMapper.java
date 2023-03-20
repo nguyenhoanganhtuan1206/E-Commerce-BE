@@ -6,7 +6,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 
 @UtilityClass
-public class UserLoginMapper {
+public class UserAuthMapper {
 
     public static Authentication toAuthentication(final UserLoginRequestDTO userLoginRequestDTO) {
         return new UsernamePasswordAuthenticationToken(

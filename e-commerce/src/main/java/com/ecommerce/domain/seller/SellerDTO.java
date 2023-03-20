@@ -1,10 +1,12 @@
 package com.ecommerce.domain.seller;
 
+import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.user.UserDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -35,4 +37,6 @@ public class SellerDTO {
     private String commune;
 
     private UserDTO user;
+
+    private Set<ProductDTO> products;
 }

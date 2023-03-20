@@ -21,6 +21,11 @@ public class ProductController {
 
     public final ProductService productService;
 
+//    @GetMapping
+//    public Set<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
+//        return productService
+//    }
+
     @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_ADMIN')")
     @GetMapping("{sellerId}")
     public Set<ProductResponseDTO> findBySellerId(final @PathVariable UUID sellerId) {

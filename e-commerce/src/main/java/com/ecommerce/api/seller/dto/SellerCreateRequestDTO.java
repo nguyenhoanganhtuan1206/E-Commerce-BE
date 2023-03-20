@@ -1,6 +1,5 @@
 package com.ecommerce.api.seller.dto;
 
-import com.ecommerce.domain.user.UserDTO;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
@@ -45,6 +44,4 @@ public class SellerCreateRequestDTO {
     private boolean sellerStatus;
 
     private String confirmationToken;
-
-    private UserDTO user;
 }

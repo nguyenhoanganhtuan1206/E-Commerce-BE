@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import static com.ecommerce.api.auth.mapper.UserLoginMapper.toAuthentication;
+import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;
 import static com.ecommerce.error.CommonError.supplyValidationError;
 
 @RestController

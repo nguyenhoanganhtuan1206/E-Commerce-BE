@@ -20,7 +20,7 @@ public class ProductResponseDTO {
 
     private String condition;
 
-    private boolean productStatus;
+    private boolean productApproval;
 
     private String description;
 

@@ -28,7 +28,9 @@ public class JwtTokenService {
     private static final Clock clock = DefaultClock.INSTANCE;
 
     private static final String CLAIM_ROLES = "roles";
+
     private static final String CLAIM_USER_ID = "userId";
+    private static final String CLAIMS_SELLER = "sellerId";
 
     private final JwtProperties jwtProperties;
 

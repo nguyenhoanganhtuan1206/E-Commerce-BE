@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class LocationDTO {
+public class LocationRequestDTO {
 
     /**
      * @ DTO has represents all fields from LocationEntity
