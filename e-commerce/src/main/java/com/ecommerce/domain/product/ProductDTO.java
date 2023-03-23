@@ -2,10 +2,12 @@ package com.ecommerce.domain.product;
 
 import com.ecommerce.api.category.CategoryDTO;
 import com.ecommerce.domain.seller.SellerDTO;
+import com.ecommerce.persistent.variant.ProductVariantEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -30,4 +32,6 @@ public class ProductDTO {
     private SellerDTO seller;
 
     private CategoryDTO category;
+
+    private Set<ProductVariantEntity> productVariants;
 }

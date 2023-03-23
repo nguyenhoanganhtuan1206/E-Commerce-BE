@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.category;
 
 import com.ecommerce.persistent.product.ProductEntity;
+import com.ecommerce.persistent.variant.ProductVariantEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -24,4 +25,7 @@ public class CategoryEntity {
 
     @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
     private Set<ProductEntity> products;
+
+    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
+    private Set<ProductVariantEntity> productVariants;
 }

@@ -13,7 +13,7 @@ import lombok.Setter;
 public class UserSignUpRequestDTO {
 
     @NotBlank(message = "Username cannot be empty")
-    @Size(min = 6, max = 30, message = "Username must be at between 6 to 30 characters")
+    @Size(min = 6, max = 50, message = "Username must be at between 6 to 30 characters")
     private String username;
 
     @NotBlank(message = "Email cannot be empty")

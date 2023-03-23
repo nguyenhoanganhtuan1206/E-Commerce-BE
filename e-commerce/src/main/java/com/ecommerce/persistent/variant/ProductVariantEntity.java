@@ -7,6 +7,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -22,9 +23,8 @@ public class ProductVariantEntity {
 
     private String variantName;
 
-    private String variantValue;
-
-    private long quantity;
+    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL)
+    private Set<VariantOptionEntity> variantOptions;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
