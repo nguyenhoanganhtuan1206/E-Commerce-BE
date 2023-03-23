@@ -53,7 +53,7 @@ public class UserService {
         final UserDTO userDTO = toUserDTO(userRequestDTO);
         final RoleDTO roleDTO = roleService.findByName("ROLE_USER");
 
-        userRequestDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
+        userDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
         userDTO.setCreatedAt(Instant.now());
         userDTO.setRoles(Collections.singleton(roleDTO));
 

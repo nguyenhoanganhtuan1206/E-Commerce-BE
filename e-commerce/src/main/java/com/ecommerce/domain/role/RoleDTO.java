@@ -4,14 +4,12 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @NoArgsConstructor
 @Getter
 @Setter
 public class RoleDTO {
 
-    private UUID id;
+    private Integer id;
 
     private String name;
 }

@@ -12,7 +12,7 @@ public class AuthsProvider {
         final Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
         if (authentication == null) {
-            throw new UnauthorizedException();
+            throw new UnauthorizedException("Authentication failed. Please ensure that you have provided the correct credentials.");
         }
 
         return (UserAuthenticationToken) authentication;

@@ -26,6 +26,10 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
 
     @Override
     public void onApplicationEvent(ContextRefreshedEvent event) {
+        /**
+         * @ Add about User and Role
+         * */
+
         if (roleRepository.findByName("ROLE_ADMIN").isEmpty()) {
             roleRepository.save(new RoleEntity("ROLE_ADMIN"));
         }
@@ -43,13 +47,7 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
 
         // ADD ADMIN
         if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-            UserEntity userEntity = UserEntity.builder()
-                    .email("admin@gmail.com")
-                    .password(passwordEncoder.encode("123456"))
-                    .phoneNumber("12323232")
-                    .createdAt(Instant.now())
-                    .roles(new HashSet<>(Collections.singletonList(roleAdmin)))
-                    .build();
+            UserEntity userEntity = UserEntity.builder().email("admin@gmail.com").password(passwordEncoder.encode("123456")).phoneNumber("12323232").createdAt(Instant.now()).roles(new HashSet<>(Collections.singletonList(roleAdmin))).build();
 
             userRepository.save(userEntity);
         }
@@ -57,13 +55,7 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
         // ADD USER
         if (userRepository.findByEmail("user@gmail.com").isEmpty()) {
 
-            UserEntity userEntity = UserEntity.builder()
-                    .email("user@gmail.com")
-                    .password(passwordEncoder.encode("123456"))
-                    .phoneNumber("12323232")
-                    .createdAt(Instant.now())
-                    .roles(new HashSet<>(Collections.singletonList(roleUser)))
-                    .build();
+            UserEntity userEntity = UserEntity.builder().email("user@gmail.com").password(passwordEncoder.encode("123456")).phoneNumber("12323232").createdAt(Instant.now()).roles(new HashSet<>(Collections.singletonList(roleUser))).build();
 
             userRepository.save(userEntity);
         }

@@ -27,7 +27,9 @@ public class JwtUserDetailsService implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(final String email) throws UsernameNotFoundException {
-        return userRepository.findByEmail(email).map(this::buildUser).orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
+        return userRepository.findByEmail(email)
+                .map(this::buildUser)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with email: " + email));
     }
 
     private User buildUser(final UserEntity userEntity) {
