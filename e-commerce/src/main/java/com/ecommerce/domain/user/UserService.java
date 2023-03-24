@@ -60,6 +60,11 @@ public class UserService {
         return toUserResponseDTO(userRepository.save(toUserEntity(userDTO)));
     }
 
+    public UserDTO findByEmail(final String email) {
+        return toUserDTO(userRepository.findByEmail(email)
+                .orElseThrow(supplyUserNotFound(email)));
+    }
+
     public UserDTO findById(final UUID userId) {
         return toUserDTO(userRepository.findById(userId)
                 .orElseThrow(supplyUserNotFound(userId)));

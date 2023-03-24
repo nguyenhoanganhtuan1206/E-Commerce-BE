@@ -22,10 +22,12 @@ public class UserDTOMapper {
     public static UserEntity toUserEntity(final UserDTO userDTO) {
         final UserEntity entity = modelMapper.map(userDTO, UserEntity.class);
 
-        entity.setLocations(userDTO.getLocations()
-                .stream()
-                .map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class))
-                .collect(Collectors.toSet()));
+        if (userDTO.getLocations() != null) {
+            entity.setLocations(userDTO.getLocations()
+                    .stream()
+                    .map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class))
+                    .collect(Collectors.toSet()));
+        }
 
         entity.setRoles(userDTO.getRoles()
                 .stream()

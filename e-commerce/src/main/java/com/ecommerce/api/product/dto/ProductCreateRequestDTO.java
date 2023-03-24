@@ -32,4 +32,8 @@ public class ProductCreateRequestDTO {
     private String description;
 
     private UUID categoryId;
+
+    private UUID variantId;
+
+    private UUID variantOptionId;
 }
