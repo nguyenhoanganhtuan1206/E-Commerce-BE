@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.stream.Collectors;
 
 import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;
+import static com.ecommerce.error.CommonError.supplyUnauthorizedException;
 import static com.ecommerce.error.CommonError.supplyValidationError;
 
 @RestController
@@ -34,32 +35,34 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public UserLoginResponseDTO login(
-            final @RequestBody UserLoginRequestDTO userLoginRequestDTO
-    ) {
+    public UserLoginResponseDTO login(final @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         /**
          * @ when `getPrincipal, it will return the `User` in `JwtUserDetails` I extend include
          * username, password, role and so on...
          * */
 
-        final Authentication authentication = authenticationManager.authenticate(toAuthentication(userLoginRequestDTO));
+        try {
+            final Authentication authentication = authenticationManager.authenticate(toAuthentication(userLoginRequestDTO));
 
-        final UserDTO userDTO = userService.findByEmail(userLoginRequestDTO.getEmail());
+            final UserDTO userDTO = userService.findByEmail(userLoginRequestDTO.getEmail());
 
-        return UserLoginResponseDTO.builder()
-                .userId(userDTO.getId())
-                .username(userDTO.getUsername())
-                .email(authentication.getName())
-                .roles(userDTO.getRoles().stream().map(RoleDTO::getName).collect(Collectors.toSet()))
-                .token(jwtTokenService.generateToken((JwtUserDetails) authentication.getPrincipal()))
-                .build();
+            return UserLoginResponseDTO.builder()
+                    .userId(userDTO.getId())
+                    .username(userDTO.getUsername())
+                    .email(authentication.getName())
+                    .roles(userDTO.getRoles()
+                            .stream().
+                            map(RoleDTO::getName)
+                            .collect(Collectors.toSet()))
+                    .token(jwtTokenService.generateToken((JwtUserDetails) authentication.getPrincipal()))
+                    .build();
+        } catch (Exception exception) {
+            throw supplyUnauthorizedException("Bad credentials. Please check your inputs again!").get();
+        }
     }
 
     @PostMapping("/sign-up")
-    public UserSignUpResponseDTO signUp(
-            final @Valid @RequestBody UserSignUpRequestDTO userSignUpDTO,
-            final BindingResult bindingResult
-    ) {
+    public UserSignUpResponseDTO signUp(final @Valid @RequestBody UserSignUpRequestDTO userSignUpDTO, final BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
         }

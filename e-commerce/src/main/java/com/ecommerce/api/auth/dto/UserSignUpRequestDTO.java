@@ -28,4 +28,8 @@ public class UserSignUpRequestDTO {
     @NotBlank(message = "Password cannot be empty")
     @Size(min = 6, max = 30, message = "Password must be at between 6 to 30 characters")
     private String password;
+
+    @NotBlank(message = "Address cannot be empty")
+    @Size(min = 3, message = "Address is invalid")
+    private String address;
 }

@@ -17,6 +17,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecommerce.error.CommonError.supplyAccessDeniedException;
+import static com.ecommerce.error.CommonError.supplyUnauthorizedException;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 import static org.apache.commons.lang3.StringUtils.split;
 
@@ -34,54 +36,47 @@ public class JwtTokenService {
     private final JwtProperties jwtProperties;
 
     public Authentication parse(final String token) {
+        try {
+            if (isBlank(token)) {
+                return null;
+            }
 
-        if (isBlank(token)) {
-            return null;
+            final Claims claims = Jwts.parser()
+                    .setSigningKey(jwtProperties.getSecret())
+                    .parseClaimsJws(token)
+                    .getBody();
+
+            if (isBlank(claims.getSubject())) {
+                return null;
+            }
+
+            if (claims.getExpiration().before(clock.now())) {
+                throw supplyAccessDeniedException("Your token has expired. Please log in again.").get();
+            }
+
+            final String claimRoles = claims.get(CLAIM_ROLES, String.class);
+            if (isBlank(claimRoles)) {
+                return null;
+            }
+
+            return new UserAuthenticationToken(
+                    UUID.fromString(claims.get(CLAIM_USER_ID).toString()),
+                    claims.getSubject(),
+                    Arrays.stream(split(claimRoles, ","))
+                            .map(SimpleGrantedAuthority::new)
+                            .toList()
+            );
+        } catch (Exception exception) {
+            throw supplyUnauthorizedException("Authentication failed. Please ensure that you have provided the correct credentials.").get();
         }
-
-        final Claims claims = Jwts.parser()
-                .setSigningKey(jwtProperties.getSecret())
-                .parseClaimsJws(token)
-                .getBody();
-
-        if (isBlank(claims.getSubject())) {
-            return null;
-        }
-
-        if (claims.getExpiration().before(clock.now())) {
-            return null;
-        }
-
-        final String claimRoles = claims.get(CLAIM_ROLES, String.class);
-        if (isBlank(claimRoles)) {
-            return null;
-        }
-
-        return new UserAuthenticationToken(
-                UUID.fromString(claims.get(CLAIM_USER_ID).toString()),
-                claims.getSubject(),
-                Arrays.stream(split(claimRoles, ","))
-                        .map(SimpleGrantedAuthority::new)
-                        .toList()
-        );
     }
 
     public String generateToken(final JwtUserDetails userDetails) {
         final Date createdDate = clock.now();
         final Date expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
 
-        final List<String> roles = userDetails.getAuthorities()
-                .stream()
-                .map(GrantedAuthority::getAuthority)
-                .toList();
+        final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
-        return Jwts.builder()
-                .setSubject(userDetails.getUsername())
-                .setIssuedAt(createdDate)
-                .setExpiration(expirationDate)
-                .claim(CLAIM_ROLES, String.join(",", roles))
-                .claim(CLAIM_USER_ID, userDetails.getUserId())
-                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
-                .compact();
+        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(createdDate).setExpiration(expirationDate).claim(CLAIM_ROLES, String.join(",", roles)).claim(CLAIM_USER_ID, userDetails.getUserId()).signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret()).compact();
     }
 }

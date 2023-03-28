@@ -1,4 +1,4 @@
-package com.ecommerce.api.user.dto;
+package com.ecommerce.api.profile.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;

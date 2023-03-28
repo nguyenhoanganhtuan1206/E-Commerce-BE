@@ -5,7 +5,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.GrantedAuthority;
 
 import java.util.Collection;
+import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Getter
 public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken {
@@ -14,7 +16,7 @@ public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken
 
     private final String email;
 
-    private final String role;
+    private final Set<String> role;
 
     public UserAuthenticationToken(final UUID userId,
                                    final String email,
@@ -24,7 +26,6 @@ public class UserAuthenticationToken extends UsernamePasswordAuthenticationToken
         this.email = email;
         this.role = this.getAuthorities().stream()
                 .map(GrantedAuthority::getAuthority)
-                .findFirst()
-                .orElseThrow(null);
+                .collect(Collectors.toSet());
     }
 }

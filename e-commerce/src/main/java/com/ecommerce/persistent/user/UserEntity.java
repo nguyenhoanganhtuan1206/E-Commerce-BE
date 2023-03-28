@@ -34,6 +34,8 @@ public class UserEntity {
 
     private Instant updatedAt;
 
+    private String address;
+
     private String password;
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)

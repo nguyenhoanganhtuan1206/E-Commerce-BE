@@ -1,4 +1,4 @@
-package com.ecommerce.domain.user;
+package com.ecommerce.api.user.dto;
 
 import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.role.RoleDTO;
@@ -14,10 +14,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class UserDTO {
+public class UserResponseDTO {
 
     /**
-     * @ DTO has represents all fields from UserEntity
+     * @ this class has represents all fields from UserDTO without PASSWORD
      */
 
     private UUID id;
@@ -32,8 +32,6 @@ public class UserDTO {
 
     private Instant updatedAt;
 
-    private String password;
-
     private String address;
 
     private SellerDTO seller;
@@ -42,3 +40,4 @@ public class UserDTO {
 
     private Set<LocationDTO> locations;
 }
+

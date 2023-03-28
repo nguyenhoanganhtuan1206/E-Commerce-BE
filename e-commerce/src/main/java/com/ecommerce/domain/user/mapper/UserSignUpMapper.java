@@ -12,7 +12,7 @@ public class UserSignUpMapper {
 
     public static final ModelMapper modelMapper = new ModelMapper();
 
-    public static UserSignUpResponseDTO toUserResponseDTO(final UserEntity userEntity) {
+    public static UserSignUpResponseDTO toUserSignUpResponseDTO(final UserEntity userEntity) {
         return modelMapper.map(userEntity, UserSignUpResponseDTO.class);
     }
 
