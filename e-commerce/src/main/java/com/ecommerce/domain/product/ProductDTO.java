@@ -1,8 +1,7 @@
 package com.ecommerce.domain.product;
 
-import com.ecommerce.api.category.CategoryDTO;
-import com.ecommerce.domain.brand.BrandDTO;
 import com.ecommerce.domain.seller.SellerDTO;
+import com.ecommerce.domain.variant.CategoryVariantDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -30,7 +29,5 @@ public class ProductDTO {
 
     private SellerDTO seller;
 
-    private CategoryDTO category;
-
-    private BrandDTO brand;
+    private CategoryVariantDTO categoryVariant;
 }

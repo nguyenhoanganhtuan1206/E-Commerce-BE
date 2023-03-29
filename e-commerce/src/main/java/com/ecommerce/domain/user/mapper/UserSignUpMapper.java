@@ -10,7 +10,7 @@ import org.modelmapper.ModelMapper;
 @UtilityClass
 public class UserSignUpMapper {
 
-    public static final ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     public static UserSignUpResponseDTO toUserSignUpResponseDTO(final UserEntity userEntity) {
         return modelMapper.map(userEntity, UserSignUpResponseDTO.class);

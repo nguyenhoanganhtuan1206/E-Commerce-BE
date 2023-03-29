@@ -1,4 +1,4 @@
-package com.ecommerce.api.category;
+package com.ecommerce.domain.category;
 
 import com.ecommerce.domain.brand.BrandDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;

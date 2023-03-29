@@ -1,6 +1,6 @@
 package com.ecommerce.domain.variant;
 
-import com.ecommerce.api.category.CategoryDTO;
+import com.ecommerce.domain.category.CategoryDTO;
 import com.ecommerce.domain.product.ProductDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,7 +15,7 @@ import java.util.UUID;
 public class CategoryVariantDTO {
 
     /**
-     * @ DTO has represents all fields from ProductVariantEntity
+     * @ DTO has represents all fields from CategoryVariantEntity
      */
 
     private UUID id;

@@ -1,6 +1,6 @@
 package com.ecommerce.api.product.dto;
 
-import com.ecommerce.api.category.CategoryDTO;
+import com.ecommerce.domain.category.CategoryDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

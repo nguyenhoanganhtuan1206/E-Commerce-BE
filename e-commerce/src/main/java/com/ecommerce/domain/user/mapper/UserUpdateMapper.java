@@ -8,7 +8,7 @@ import org.modelmapper.ModelMapper;
 @UtilityClass
 public class UserUpdateMapper {
 
-    public static final ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     public static UserUpdateResponseDTO toUserUpdateResponseDTO(final UserEntity userEntity) {
         return modelMapper.map(userEntity, UserUpdateResponseDTO.class);

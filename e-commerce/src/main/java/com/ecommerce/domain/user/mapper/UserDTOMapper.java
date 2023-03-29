@@ -17,7 +17,7 @@ import java.util.stream.Collectors;
 @UtilityClass
 public class UserDTOMapper {
 
-    public static final ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
     public static UserEntity toUserEntity(final UserDTO userDTO) {
         final UserEntity entity = modelMapper.map(userDTO, UserEntity.class);
@@ -25,13 +25,13 @@ public class UserDTOMapper {
         if (userDTO.getLocations() != null) {
             entity.setLocations(userDTO.getLocations()
                     .stream()
-                    .map(locationDTO -> modelMapper.map(locationDTO, LocationEntity.class))
+                    .map(UserDTOMapper::apply)
                     .collect(Collectors.toSet()));
         }
 
         entity.setRoles(userDTO.getRoles()
                 .stream()
-                .map(roleDTO -> modelMapper.map(roleDTO, RoleEntity.class))
+                .map(UserDTOMapper::apply)
                 .collect(Collectors.toSet()));
 
         if (userDTO.getSeller() != null) {
@@ -46,11 +46,13 @@ public class UserDTOMapper {
 
         userDTO.setLocations(entity.getLocations()
                 .stream()
-                .map(location -> modelMapper.map(location, LocationDTO.class)).collect(Collectors.toSet()));
+                .map(UserDTOMapper::apply)
+                .collect(Collectors.toSet()));
 
         userDTO.setRoles(entity.getRoles()
                 .stream()
-                .map(role -> modelMapper.map(role, RoleDTO.class)).collect(Collectors.toSet()));
+                .map(UserDTOMapper::apply)
+                .collect(Collectors.toSet()));
 
         if (entity.getSeller() != null) {
             userDTO.setSeller(modelMapper.map(entity.getSeller(), SellerDTO.class));
@@ -61,5 +63,21 @@ public class UserDTOMapper {
 
     public static List<UserDTO> toUserDTOs(final List<UserEntity> entity) {
         return entity.stream().map(UserDTOMapper::toUserDTO).toList();
+    }
+
+    private static LocationEntity apply(LocationDTO locationDTO) {
+        return modelMapper.map(locationDTO, LocationEntity.class);
+    }
+
+    private static RoleDTO apply(RoleEntity role) {
+        return modelMapper.map(role, RoleDTO.class);
+    }
+
+    private static RoleEntity apply(RoleDTO roleDTO) {
+        return modelMapper.map(roleDTO, RoleEntity.class);
+    }
+
+    private static LocationDTO apply(LocationEntity location) {
+        return modelMapper.map(location, LocationDTO.class);
     }
 }

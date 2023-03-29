@@ -49,6 +49,8 @@ public class JwtWebSecurityConfig {
                 .csrf().disable()
                 .authorizeRequests()
                 .requestMatchers(HttpMethod.GET, "/api/v1/products/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/category-variant/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()

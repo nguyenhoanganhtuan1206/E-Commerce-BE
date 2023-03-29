@@ -46,7 +46,6 @@ public class ProductService {
         final SellerDTO sellerDTO = sellerService.findById(sellerId);
         final ProductDTO product = toProductDTO(productCreateRequestDTO);
         product.setSeller(sellerDTO);
-        product.setCategory(categoryService.findById(productCreateRequestDTO.getCategoryId()));
 
         return toProductResponseDTO(productRepository.save(toProductEntity(product)));
     }
