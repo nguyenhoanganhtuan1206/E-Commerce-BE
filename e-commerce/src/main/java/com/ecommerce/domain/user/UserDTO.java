@@ -35,7 +35,7 @@ public class UserDTO {
     private String password;
 
     private String address;
-
+    
     private SellerDTO seller;
 
     private Set<RoleDTO> roles;

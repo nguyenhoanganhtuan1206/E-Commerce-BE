@@ -77,6 +77,13 @@ public class JwtTokenService {
 
         final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
 
-        return Jwts.builder().setSubject(userDetails.getUsername()).setIssuedAt(createdDate).setExpiration(expirationDate).claim(CLAIM_ROLES, String.join(",", roles)).claim(CLAIM_USER_ID, userDetails.getUserId()).signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret()).compact();
+        return Jwts.builder()
+                .setSubject(userDetails.getUsername())
+                .setIssuedAt(createdDate)
+                .setExpiration(expirationDate)
+                .claim(CLAIM_ROLES, String.join(",", roles))
+                .claim(CLAIM_USER_ID, userDetails.getUserId())
+                .signWith(SignatureAlgorithm.HS256, jwtProperties.getSecret())
+                .compact();
     }
 }

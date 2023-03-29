@@ -8,14 +8,10 @@ import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import com.ecommerce.persistent.seller.SellerRepository;
-import jakarta.mail.MessagingException;
-import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.mail.javamail.MimeMessageHelper;
 import org.springframework.stereotype.Service;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Set;
 import java.util.UUID;
 
@@ -23,6 +19,7 @@ import static com.ecommerce.domain.seller.SellerError.supplySellerNotFound;
 import static com.ecommerce.domain.seller.mapper.SellerCreateDTOMapper.toSellerDTO;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerEntity;
+import static com.ecommerce.utils.FormEmailSender.formEmail;
 import static com.ecommerce.utils.TokenGenerator.generateToken;
 import static org.apache.commons.lang3.StringUtils.isBlank;
 
@@ -36,9 +33,9 @@ public class SellerService {
 
     private final RoleService roleService;
 
-    private final AuthsProvider authsProvider;
-
     private final JavaMailSender javaMailSender;
+
+    private final AuthsProvider authsProvider;
     private final String URL_REGISTER = "http://localhost:8080/api/v1/seller/confirm-register?token=";
 
     public UserAuthenticationToken getCurrentUserToken() {
@@ -55,7 +52,7 @@ public class SellerService {
                 .orElseThrow(supplySellerNotFound(token)));
     }
 
-    public SellerDTO registerSeller(final SellerCreateRequestDTO sellerRequestDTO) throws MessagingException, UnsupportedEncodingException {
+    public SellerDTO registerSeller(final SellerCreateRequestDTO sellerRequestDTO) {
         final SellerDTO seller = toSellerDTO(sellerRequestDTO);
         final UserDTO user = userService.findById(getCurrentUserToken().getUserId());
         SellerDTO registeredSeller;
@@ -64,7 +61,7 @@ public class SellerService {
          @  Check if the user has not yet registered as a seller.
          */
         if (isBlank(user.getSeller().getConfirmationToken())) {
-            seller.setConfirmationToken(generateToken());
+            seller.setConfirmationToken(generateToken(seller.getEmailSeller(), null));
             seller.setSellerStatus(false);
             seller.setUser(user);
 
@@ -97,20 +94,7 @@ public class SellerService {
             final UserDTO userDTO,
             final String emailSeller,
             final String registrationLink
-    ) throws MessagingException, UnsupportedEncodingException {
-
-        MimeMessage message = javaMailSender.createMimeMessage();
-        MimeMessageHelper messageHelper = new MimeMessageHelper(message, "UTF-8");
-
-        /* Set headers */
-        message.addHeader("Content-type", "text/HTML; charset=UTF-8");
-        message.addHeader("format", "flowed");
-        message.addHeader("Content-Transfer-Encoding", "8bit");
-
-        /* Create form */
-        messageHelper.setFrom("gridshopvn@gmail.com", "GridShop - E-Commerce System");
-        messageHelper.setTo(emailSeller);
-
+    ) {
         String subject = "Confirm Your Registration as a Seller on Our E-commerce Platform";
         String content = "<body style='padding: 0;margin: 0;'>" +
                 "    <div style='width: 600px;" +
@@ -133,9 +117,6 @@ public class SellerService {
                 "        </div>" +
                 "    </div>" +
                 "</body>";
-
-        messageHelper.setSubject(subject);
-        messageHelper.setText(content, true);
-        javaMailSender.send(message);
+        formEmail(javaMailSender, emailSeller, subject, content);
     }
 }
