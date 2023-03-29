@@ -1,6 +1,5 @@
 package com.ecommerce.domain.product.mapper;
 
-import com.ecommerce.api.category.CategoryDTO;
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
 import com.ecommerce.domain.product.ProductDTO;
@@ -22,8 +21,6 @@ public class ProductCreateDTOMapper {
 
     public static ProductResponseDTO toProductResponseDTO(final ProductEntity entity) {
         final ProductResponseDTO productDTO = modelMapper.map(entity, ProductResponseDTO.class);
-
-        productDTO.setCategory(modelMapper.map(entity.getCategory(), CategoryDTO.class));
 
         return productDTO;
     }

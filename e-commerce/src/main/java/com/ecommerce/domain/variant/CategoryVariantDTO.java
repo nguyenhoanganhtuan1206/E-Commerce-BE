@@ -6,22 +6,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductVariantDTO {
+public class CategoryVariantDTO {
+
+    /**
+     * @ DTO has represents all fields from ProductVariantEntity
+     */
 
     private UUID id;
 
     private String variantName;
 
-    private String variantValue;
-
-    private long quantity;
-
     private CategoryDTO category;
 
-    private ProductDTO product;
+    private Set<ProductDTO> products;
 }

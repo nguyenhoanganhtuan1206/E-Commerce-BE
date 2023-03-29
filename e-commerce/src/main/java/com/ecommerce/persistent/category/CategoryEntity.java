@@ -1,7 +1,7 @@
 package com.ecommerce.persistent.category;
 
-import com.ecommerce.persistent.product.ProductEntity;
-import com.ecommerce.persistent.variant.ProductVariantEntity;
+import com.ecommerce.persistent.brand.BrandEntity;
+import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,9 +23,13 @@ public class CategoryEntity {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<ProductEntity> products;
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.ALL, CascadeType.PERSIST})
+    private Set<CategoryVariantEntity> categoryVariants;
 
-    @OneToMany(mappedBy = "category", cascade = CascadeType.ALL)
-    private Set<ProductVariantEntity> productVariants;
+    @OneToMany(mappedBy = "category", cascade = {CascadeType.ALL, CascadeType.PERSIST})
+    private Set<BrandEntity> brands;
+
+    public CategoryEntity(String name) {
+        this.categoryName = name;
+    }
 }

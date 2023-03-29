@@ -15,7 +15,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class ProductVariantEntity {
+public class CategoryVariantEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -23,14 +23,14 @@ public class ProductVariantEntity {
 
     private String variantName;
 
-    @OneToMany(mappedBy = "productVariant", cascade = CascadeType.ALL)
-    private Set<VariantOptionEntity> variantOptions;
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "product_id")
-    private ProductEntity product;
+    @OneToMany(mappedBy = "categoryVariant", cascade = {CascadeType.ALL, CascadeType.MERGE})
+    private Set<ProductEntity> products;
+
+    public CategoryVariantEntity(String variantName) {
+        this.variantName = variantName;
+    }
 }

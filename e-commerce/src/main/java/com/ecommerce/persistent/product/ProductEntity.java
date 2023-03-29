@@ -1,12 +1,11 @@
 package com.ecommerce.persistent.product;
 
-import com.ecommerce.persistent.category.CategoryEntity;
+import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
-import com.ecommerce.persistent.variant.ProductVariantEntity;
+import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -37,9 +36,9 @@ public class ProductEntity {
     private SellerEntity seller;
 
     @ManyToOne(cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id", nullable = false)
-    private CategoryEntity category;
+    @JoinColumn(name = "category_variant_id", nullable = false)
+    private CategoryVariantEntity categoryVariant;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
-    private Set<ProductVariantEntity> productVariants;
+    @OneToOne(mappedBy = "product", cascade = CascadeType.MERGE)
+    private InventoryEntity inventoryEntity;
 }

@@ -1,6 +1,7 @@
 package com.ecommerce.api.category;
 
-import com.ecommerce.domain.variant.ProductVariantDTO;
+import com.ecommerce.domain.brand.BrandDTO;
+import com.ecommerce.domain.variant.CategoryVariantDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -17,5 +18,7 @@ public class CategoryDTO {
 
     private String categoryName;
 
-    private Set<ProductVariantDTO> productVariants;
+    private Set<BrandDTO> brands;
+
+    private Set<CategoryVariantDTO> categoryVariants;
 }
