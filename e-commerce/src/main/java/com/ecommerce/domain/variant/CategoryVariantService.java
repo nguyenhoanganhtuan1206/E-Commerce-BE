@@ -12,7 +12,7 @@ import static com.ecommerce.domain.variant.mapper.CategoryVariantDTOMapper.toCat
 @RequiredArgsConstructor
 public class CategoryVariantService {
 
-    private CategoryVariantRepository categoryVariantRepository;
+    private final CategoryVariantRepository categoryVariantRepository;
 
     public Set<CategoryVariantDTO> findByCategoryName(final String categoryName) {
         return toCategoryVariantDTOs(categoryVariantRepository.findByCategoryName(categoryName));

@@ -11,7 +11,7 @@ import java.util.UUID;
 @Repository
 public interface CategoryVariantRepository extends JpaRepository<CategoryVariantEntity, UUID> {
 
-    @Query("select c from CategoryEntity c where c.categoryName = :categoryName")
+    @Query("select c from CategoryVariantEntity c where c.category.categoryName = :categoryName")
     Set<CategoryVariantEntity> findByCategoryName(final String categoryName);
 
     Optional<CategoryVariantEntity> findByVariantName(final String variantName);
