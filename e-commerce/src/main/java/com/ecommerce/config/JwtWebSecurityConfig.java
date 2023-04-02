@@ -52,6 +52,7 @@ public class JwtWebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/category/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/category-variant/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/brand/**").permitAll()
+                .requestMatchers("/api/v1/address/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .anyRequest()
                 .authenticated()
