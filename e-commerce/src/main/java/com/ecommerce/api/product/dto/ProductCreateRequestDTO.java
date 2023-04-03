@@ -8,8 +8,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -31,9 +29,14 @@ public class ProductCreateRequestDTO {
     @Size(min = 6, max = 255, message = "Product description must be at between 6 to 255 characters")
     private String description;
 
-    private UUID categoryId;
+    @NotBlank(message = "Description cannot be empty")
+    @Min(value = 1, message = "Quantity at least 1 unit")
+    @Max(value = 10000, message = "Quantity cannot large than 10000 quantities")
+    private int quantity;
 
-    private UUID variantId;
+    private String categoryName;
 
-    private UUID variantOptionId;
+    private String variantName;
+
+    private String brandName;
 }

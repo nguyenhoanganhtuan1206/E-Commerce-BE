@@ -2,15 +2,15 @@ package com.ecommerce.domain.seller;
 
 import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.user.UserDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class SellerDTO {
 
@@ -24,10 +24,6 @@ public class SellerDTO {
 
     private float sellerRating;
 
-    private boolean sellerStatus;
-
-    private String confirmationToken;
-
     private String address;
 
     private String city;
@@ -37,6 +33,8 @@ public class SellerDTO {
     private String commune;
 
     private UserDTO user;
+
+    private String confirmationToken;
 
     private Set<ProductDTO> products;
 }

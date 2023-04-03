@@ -1,7 +1,9 @@
 package com.ecommerce.domain.product.mapper;
 
+import com.ecommerce.domain.inventory.InventoryDTO;
 import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.seller.SellerDTO;
+import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.experimental.UtilityClass;
@@ -19,6 +21,7 @@ public class ProductDTOMapper {
         final ProductDTO productDTO = modelMapper.map(productEntity, ProductDTO.class);
 
         productDTO.setSeller(modelMapper.map(productEntity.getSeller(), SellerDTO.class));
+        productDTO.setInventory(modelMapper.map(productEntity.getInventory(), InventoryDTO.class));
 
         return productDTO;
     }
@@ -31,6 +34,7 @@ public class ProductDTOMapper {
         final ProductEntity productEntity = modelMapper.map(productDTO, ProductEntity.class);
 
         productEntity.setSeller(modelMapper.map(productDTO.getSeller(), SellerEntity.class));
+        productEntity.setInventory(modelMapper.map(productDTO.getInventory(), InventoryEntity.class));
 
         return productEntity;
     }

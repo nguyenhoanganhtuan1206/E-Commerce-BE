@@ -40,5 +40,5 @@ public class ProductEntity {
     private CategoryVariantEntity categoryVariant;
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.MERGE)
-    private InventoryEntity inventoryEntity;
+    private InventoryEntity inventory;
 }

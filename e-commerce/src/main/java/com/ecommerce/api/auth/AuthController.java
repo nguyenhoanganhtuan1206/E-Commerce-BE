@@ -1,5 +1,6 @@
 package com.ecommerce.api.auth;
 
+import com.ecommerce.api.auth.dto.TokenRefreshRequest;
 import com.ecommerce.api.auth.dto.UserSignUpRequestDTO;
 import com.ecommerce.api.auth.dto.UserSignUpResponseDTO;
 import com.ecommerce.domain.auth.JwtTokenService;
@@ -22,6 +23,7 @@ import java.util.stream.Collectors;
 import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;
 import static com.ecommerce.error.CommonError.supplyUnauthorizedException;
 import static com.ecommerce.error.CommonError.supplyValidationError;
+import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
 @RequestMapping("/api/v1/auth")
@@ -35,29 +37,34 @@ public class AuthController {
     private final AuthenticationManager authenticationManager;
 
     @PostMapping("/login")
-    public UserLoginResponseDTO login(final @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
+    public JwtTokenResponseDTO login(final @RequestBody UserLoginRequestDTO userLoginRequestDTO) {
         /**
          * @ when `getPrincipal, it will return the `User` in `JwtUserDetails` I extend include
          * username, password, role and so on...
          * */
-
         try {
             final Authentication authentication = authenticationManager.authenticate(toAuthentication(userLoginRequestDTO));
-
             final UserDTO userDTO = userService.findByEmail(userLoginRequestDTO.getEmail());
 
-            return UserLoginResponseDTO.builder()
-                    .userId(userDTO.getId())
-                    .username(userDTO.getUsername())
-                    .email(authentication.getName())
-                    .roles(userDTO.getRoles()
-                            .stream().
-                            map(RoleDTO::getName)
-                            .collect(Collectors.toSet()))
-                    .token(jwtTokenService.generateToken((JwtUserDetails) authentication.getPrincipal()))
-                    .build();
+            return generateJwtToken(userDTO, (JwtUserDetails) authentication.getPrincipal());
         } catch (Exception exception) {
             throw supplyUnauthorizedException("Bad credentials. Please check your inputs again!").get();
+        }
+    }
+
+    @PostMapping("/refreshToken")
+    public JwtTokenResponseDTO refreshToken(final @Valid @RequestBody TokenRefreshRequest request,
+                                            final BindingResult bindingResult
+    ) {
+        try {
+            handleValidationError(bindingResult);
+
+            final Authentication authentication = jwtTokenService.parse(request.getToken());
+            final UserDTO userDTO = userService.findByEmail(authentication.getPrincipal().toString());
+
+            return generateJwtToken(userDTO, (JwtUserDetails) authentication.getPrincipal());
+        } catch (Exception exception) {
+            throw supplyUnauthorizedException("Your refresh token you provided is invalid!").get();
         }
     }
 
@@ -68,5 +75,17 @@ public class AuthController {
         }
 
         return userService.signUp(userSignUpDTO);
+    }
+
+    private JwtTokenResponseDTO generateJwtToken(final UserDTO userDTO, final JwtUserDetails userDetails) {
+        return JwtTokenResponseDTO.builder()
+                .userId(userDTO.getId())
+                .username(userDTO.getUsername())
+                .email(userDTO.getEmail())
+                .roles(userDTO.getRoles().stream()
+                        .map(RoleDTO::getName)
+                        .collect(Collectors.toSet()))
+                .token(jwtTokenService.generateToken(userDetails))
+                .build();
     }
 }

@@ -32,6 +32,20 @@ public class AddressService {
                 .orElseThrow(supplyAddressNotFound(format("Cannot found province with %s", provinceId)));
     }
 
+    public District findDistrictById(final String districtId) {
+        return vietnameseAddress.getDistricts().stream()
+                .filter(d -> d.getIdProvince().equals(districtId))
+                .findFirst()
+                .orElseThrow(supplyAddressNotFound(format("Cannot found district with %s", districtId)));
+    }
+
+    public Commune findCommuneById(final String communeId) {
+        return vietnameseAddress.getCommunes().stream()
+                .filter(c -> c.getIdCommune().equals(communeId))
+                .findFirst()
+                .orElseThrow(supplyAddressNotFound(format("Cannot found commune with %s", communeId)));
+    }
+
     public Set<Province> findProvinces() {
         return vietnameseAddress.getProvinces();
     }

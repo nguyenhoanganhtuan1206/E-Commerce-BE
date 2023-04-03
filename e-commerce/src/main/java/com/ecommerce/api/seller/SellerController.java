@@ -1,7 +1,7 @@
 package com.ecommerce.api.seller;
 
+import com.ecommerce.api.seller.dto.SellerConfirmRequestDTO;
 import com.ecommerce.api.seller.dto.SellerCreateRequestDTO;
-import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.seller.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,21 +19,25 @@ public class SellerController {
     private final SellerService sellerService;
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping
-    public SellerDTO registerForSell(
+    @PostMapping("/confirm-register")
+    public void requestConfirmationEmailForSale(
+            final @Valid @RequestBody SellerConfirmRequestDTO sellerConfirmRequestDTO,
+            final BindingResult bindingResult
+    ) {
+        handleValidationError(bindingResult);
+
+        sellerService.requestConfirmationEmailForSale(sellerConfirmRequestDTO.getEmailSeller());
+    }
+
+    @PreAuthorize("hasRole('ROLE_USER')")
+    @PutMapping
+    public void registerNewSeller(
+            final @RequestParam("token") String token,
             final @Valid @RequestBody SellerCreateRequestDTO sellerCreateRequestDTO,
             final BindingResult bindingResult
     ) {
         handleValidationError(bindingResult);
 
-        return sellerService.registerSeller(sellerCreateRequestDTO);
-    }
-
-    @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping("/confirm-register")
-    public SellerDTO confirmRegister(
-            final @RequestParam(name = "token") String token
-    ) {
-        return sellerService.confirmRegister(token);
+        sellerService.registerNewSeller(token, sellerCreateRequestDTO);
     }
 }

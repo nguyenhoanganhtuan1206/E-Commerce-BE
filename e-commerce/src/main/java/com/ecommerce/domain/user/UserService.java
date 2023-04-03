@@ -8,7 +8,6 @@ import com.ecommerce.api.profile.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
-import com.ecommerce.domain.auth.JwtTokenService;
 import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.location.LocationService;
 import com.ecommerce.domain.role.RoleDTO;
@@ -55,12 +54,14 @@ public class UserService {
 
     private final String BASE_URL_FORGET_PASSWORD = "http://localhost:3000/reset-password/";
 
-    private final JwtTokenService jwtTokenService;
-
     private final JavaMailSender javaMailSender;
 
     public List<UserDTO> findAll() {
         return toUserDTOs(userRepository.findAll());
+    }
+
+    public UserDTO save(final UserDTO userDTO) {
+        return toUserDTO(userRepository.save(toUserEntity(userDTO)));
     }
 
     public UserSignUpResponseDTO signUp(final UserSignUpRequestDTO userRequestDTO) {

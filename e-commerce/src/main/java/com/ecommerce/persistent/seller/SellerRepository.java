@@ -9,5 +9,5 @@ import java.util.UUID;
 @Repository
 public interface SellerRepository extends JpaRepository<SellerEntity, UUID> {
 
-    Optional<SellerEntity> findByConfirmationToken(final String token);
+    Optional<SellerEntity> findByEmailSeller(final String emailSeller);
 }

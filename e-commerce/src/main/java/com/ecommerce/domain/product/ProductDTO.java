@@ -1,5 +1,6 @@
 package com.ecommerce.domain.product;
 
+import com.ecommerce.domain.inventory.InventoryDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;
 import lombok.Getter;
@@ -30,4 +31,6 @@ public class ProductDTO {
     private SellerDTO seller;
 
     private CategoryVariantDTO categoryVariant;
+
+    private InventoryDTO inventory;
 }
