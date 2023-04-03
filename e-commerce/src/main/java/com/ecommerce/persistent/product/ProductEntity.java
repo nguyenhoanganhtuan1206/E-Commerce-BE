@@ -1,11 +1,13 @@
 package com.ecommerce.persistent.product;
 
+import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -41,4 +43,12 @@ public class ProductEntity {
 
     @OneToOne(mappedBy = "product", cascade = CascadeType.MERGE)
     private InventoryEntity inventory;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinTable(
+            name = "cart_product",
+            joinColumns = @JoinColumn(name = "cart_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_id")
+    )
+    private Set<CartEntity> carts;
 }

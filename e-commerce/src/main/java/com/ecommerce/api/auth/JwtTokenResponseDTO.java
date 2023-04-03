@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Builder
 @Getter
-public class UserLoginResponseDTO {
+public class JwtTokenResponseDTO {
 
     private final UUID userId;
 

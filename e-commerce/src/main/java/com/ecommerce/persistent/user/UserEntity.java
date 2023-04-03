@@ -1,5 +1,6 @@
 package com.ecommerce.persistent.user;
 
+import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
@@ -50,4 +51,7 @@ public class UserEntity {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<RoleEntity> roles;
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
+    private CartEntity cart;
 }

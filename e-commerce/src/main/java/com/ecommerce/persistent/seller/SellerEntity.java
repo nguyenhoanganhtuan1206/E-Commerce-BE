@@ -1,5 +1,6 @@
 package com.ecommerce.persistent.seller;
 
+import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
@@ -49,4 +50,7 @@ public class SellerEntity {
             joinColumns = {@JoinColumn(name = "seller_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
     private UserEntity user;
+
+    @OneToMany(mappedBy = "seller")
+    private Set<CartEntity> carts;
 }
