@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.seller;
 
 import com.ecommerce.persistent.cart.CartEntity;
+import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
@@ -53,4 +54,10 @@ public class SellerEntity {
 
     @OneToMany(mappedBy = "seller")
     private Set<CartEntity> carts;
+
+    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @JoinTable(name = "payment_method_seller",
+            joinColumns = @JoinColumn(name = "payment_method_id"),
+            inverseJoinColumns = @JoinColumn(name = "seller_id"))
+    private Set<PaymentMethodEntity> paymentMethods;
 }
