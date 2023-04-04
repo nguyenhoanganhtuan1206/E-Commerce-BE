@@ -1,5 +1,6 @@
 package com.ecommerce.domain.seller;
 
+import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.user.UserDTO;
 import lombok.*;
@@ -32,9 +33,11 @@ public class SellerDTO {
 
     private String commune;
 
-    private UserDTO user;
+    private boolean sellerApproval;
 
-    private String confirmationToken;
+    private Set<PaymentMethodDTO> paymentMethodDTOs;
+
+    private UserDTO user;
 
     private Set<ProductDTO> products;
 }

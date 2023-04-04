@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.UUID;
 
 @Entity
-@Table(name = "location")
+@Table(name = "payment_method")
 @Getter
 @Setter
 @NoArgsConstructor

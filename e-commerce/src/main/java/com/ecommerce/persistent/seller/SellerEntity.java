@@ -31,7 +31,7 @@ public class SellerEntity {
 
     private float sellerRating;
 
-    private boolean sellerStatus;
+    private boolean sellerApproval;
 
     private String address;
 
@@ -40,8 +40,6 @@ public class SellerEntity {
     private String district;
 
     private String commune;
-
-    private String confirmationToken;
 
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;
@@ -57,7 +55,7 @@ public class SellerEntity {
 
     @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
     @JoinTable(name = "payment_method_seller",
-            joinColumns = @JoinColumn(name = "payment_method_id"),
-            inverseJoinColumns = @JoinColumn(name = "seller_id"))
+            joinColumns = @JoinColumn(name = "seller_id"),
+            inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
     private Set<PaymentMethodEntity> paymentMethods;
 }

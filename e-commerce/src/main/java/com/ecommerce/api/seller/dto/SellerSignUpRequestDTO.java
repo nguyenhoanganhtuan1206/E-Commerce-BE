@@ -1,19 +1,27 @@
 package com.ecommerce.api.seller.dto;
 
+import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.Set;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class SellerCreateRequestDTO {
+public class SellerSignUpRequestDTO {
 
     @NotBlank(message = "Seller Name cannot be empty")
     @Size(min = 6, max = 50, message = "Seller name must be at between 6 to 50 characters")
     private String sellerName;
+
+    @NotBlank(message = "Email cannot be empty")
+    @Email(message = "Email is invalid")
+    @Size(min = 9, message = "Email is invalid")
+    private String emailSeller;
 
     @NotBlank(message = "Phone number cannot be empty")
     @Size(min = 9, max = 11, message = "Phone number is invalid")
@@ -31,4 +39,6 @@ public class SellerCreateRequestDTO {
 
     @NotBlank(message = "Commune cannot be empty")
     private String commune;
+
+    private Set<String> namePaymentMethods;
 }

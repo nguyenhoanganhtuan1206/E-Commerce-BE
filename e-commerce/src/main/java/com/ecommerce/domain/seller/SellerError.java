@@ -1,6 +1,7 @@
 package com.ecommerce.domain.seller;
 
 import com.ecommerce.error.AccessDeniedException;
+import com.ecommerce.error.ConflictException;
 import com.ecommerce.error.NotFoundException;
 import lombok.experimental.UtilityClass;
 
@@ -15,5 +16,9 @@ public class SellerError {
 
     public static Supplier<AccessDeniedException> supplySellerPermission() {
         return () -> new AccessDeniedException("You don't have permission to register!");
+    }
+
+    public static Supplier<ConflictException> supplyEmailSellerUsedError(final String emailSeller) {
+        return () -> new ConflictException("Email with %s is already registered as a seller. Please use a different email address to register", emailSeller);
     }
 }

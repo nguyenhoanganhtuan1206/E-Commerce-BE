@@ -10,4 +10,6 @@ import java.util.UUID;
 public interface SellerRepository extends JpaRepository<SellerEntity, UUID> {
 
     Optional<SellerEntity> findByEmailSeller(final String emailSeller);
+
+    Optional<SellerEntity> findByUserId(final UUID userId);
 }

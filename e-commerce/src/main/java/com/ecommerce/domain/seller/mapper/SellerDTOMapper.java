@@ -3,6 +3,7 @@ package com.ecommerce.domain.seller.mapper;
 import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
+import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.user.UserEntity;
@@ -40,6 +41,10 @@ public class SellerDTOMapper {
                     .map(product -> modelMapper.map(product, ProductEntity.class))
                     .collect(Collectors.toSet()));
         }
+
+        sellerEntity.setPaymentMethods(sellerDTO.getPaymentMethodDTOs().stream()
+                .map(paymentMethod -> modelMapper.map(paymentMethod, PaymentMethodEntity.class))
+                .collect(Collectors.toSet()));
 
         return sellerEntity;
     }
