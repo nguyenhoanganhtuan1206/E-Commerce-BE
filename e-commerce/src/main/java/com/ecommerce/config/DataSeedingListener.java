@@ -1,5 +1,7 @@
 package com.ecommerce.config;
 
+import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
+import com.ecommerce.persistent.paymentMethod.PaymentMethodRepository;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.role.RoleRepository;
 import com.ecommerce.persistent.user.UserEntity;
@@ -21,6 +23,8 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
     private final RoleRepository roleRepository;
 
     private final UserRepository userRepository;
+
+    private final PaymentMethodRepository paymentMethodRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -58,6 +62,18 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
             UserEntity userEntity = UserEntity.builder().email("user@gmail.com").password(passwordEncoder.encode("123456")).phoneNumber("12323232").createdAt(Instant.now()).roles(new HashSet<>(Collections.singletonList(roleUser))).build();
 
             userRepository.save(userEntity);
+        }
+
+        /**
+         * @ Add about payment method
+         * */
+
+        if (paymentMethodRepository.findByName("COD").isEmpty()) {
+            paymentMethodRepository.save(new PaymentMethodEntity("COD"));
+        }
+
+        if (paymentMethodRepository.findByName("Paypal").isEmpty()) {
+            paymentMethodRepository.save(new PaymentMethodEntity("Paypal"));
         }
     }
 }
