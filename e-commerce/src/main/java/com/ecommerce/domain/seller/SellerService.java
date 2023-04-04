@@ -57,10 +57,6 @@ public class SellerService {
         verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         verifyPermissionSellerRegister(userDTO);
 
-        final RoleDTO roleDTO = roleService.findByName("ROLE_SELLER");
-        userDTO.getRoles().add(roleDTO);
-        userService.save(userDTO);
-
         final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
                 .map(paymentMethodService::findByName)
                 .collect(Collectors.toSet());
@@ -80,6 +76,10 @@ public class SellerService {
                 .build();
 
         sellerRepository.save(toSellerEntity(sellerDTO));
+
+        final RoleDTO roleDTO = roleService.findByName("ROLE_SELLER");
+        userDTO.getRoles().add(roleDTO);
+        userService.save(userDTO);
     }
 
     private String getCityName(String cityId) {
@@ -99,7 +99,7 @@ public class SellerService {
                 .map(SellerDTOMapper::toSellerDTO);
 
         if (sellerDTO.isPresent()) {
-            throw supplyEmailSellerUsedError("Email address registered by another person. Please try another email.").get();
+            throw supplyEmailSellerUsedError(emailSeller).get();
         }
     }
 

@@ -22,7 +22,6 @@ import java.util.stream.Collectors;
 
 import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;
 import static com.ecommerce.error.CommonError.supplyUnauthorizedException;
-import static com.ecommerce.error.CommonError.supplyValidationError;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -70,9 +69,7 @@ public class AuthController {
 
     @PostMapping("/sign-up")
     public UserSignUpResponseDTO signUp(final @Valid @RequestBody UserSignUpRequestDTO userSignUpDTO, final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
-        }
+        handleValidationError(bindingResult);
 
         return userService.signUp(userSignUpDTO);
     }

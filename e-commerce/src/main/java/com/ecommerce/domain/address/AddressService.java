@@ -34,7 +34,7 @@ public class AddressService {
 
     public District findDistrictById(final String districtId) {
         return vietnameseAddress.getDistricts().stream()
-                .filter(d -> d.getIdProvince().equals(districtId))
+                .filter(d -> d.getIdDistrict().equals(districtId))
                 .findFirst()
                 .orElseThrow(supplyAddressNotFound(format("Cannot found district with %s", districtId)));
     }
