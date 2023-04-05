@@ -5,6 +5,7 @@ import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.payment.PaymentMethodService;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.role.RoleDTO;
+import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
@@ -32,12 +33,15 @@ public class SellerService {
 
     private final UserService userService;
 
+    private final RoleService roleService;
+
     private final PaymentMethodService paymentMethodService;
 
     private final AuthsProvider authsProvider;
 
     public SellerDTO findById(final UUID sellerId) {
-        return toSellerDTO(sellerRepository.findById(sellerId).orElseThrow(supplySellerNotFound(sellerId)));
+        return toSellerDTO(sellerRepository.findById(sellerId)
+                .orElseThrow(supplySellerNotFound(sellerId)));
     }
 
     public SellerDTO findByUserId(final UUID userId) {
@@ -45,7 +49,8 @@ public class SellerService {
     }
 
     public Optional<SellerDTO> getRegisteredSellerDetailsByUserId() {
-        return sellerRepository.findByUserId(authsProvider.getCurrentUserId()).map(SellerDTOMapper::toSellerDTO);
+        return sellerRepository.findByUserId(authsProvider.getCurrentUserId())
+                .map(SellerDTOMapper::toSellerDTO);
     }
 
     public void registerNewSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
@@ -54,11 +59,7 @@ public class SellerService {
         verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         verifyPermissionSellerRegister(userDTO);
 
-        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream().map(paymentMethodService::findByName).collect(Collectors.toSet());
-
-        final SellerDTO sellerDTO = SellerDTO.builder().sellerName(sellerRequestDTO.getSellerName()).emailSeller(sellerRequestDTO.getEmailSeller()).sellerRating((float) 0).phoneNumber(sellerRequestDTO.getPhoneNumber()).city(sellerRequestDTO.getCity()).district(sellerRequestDTO.getDistrict()).commune(sellerRequestDTO.getCommune()).address(sellerRequestDTO.getAddress()).sellerApproval(false).user(userDTO).paymentMethodDTOs(paymentMethodDTOs).build();
-
-        sellerRepository.save(toSellerEntity(sellerDTO));
+        createNewSeller(sellerRequestDTO, userDTO);
     }
 
     public void updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
@@ -68,8 +69,46 @@ public class SellerService {
             verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         }
         verifyPermissionSellerRegister(sellerDTO.getUser());
+        updateSeller(sellerDTO, sellerRequestDTO);
+    }
 
-        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream().map(paymentMethodService::findByName).collect(Collectors.toSet());
+    public SellerDTO approvalSeller(final UUID sellerId) {
+        final SellerDTO sellerDTO = findById(sellerId);
+        final UserDTO userDTO = sellerDTO.getUser();
+
+        sellerDTO.setSellerApproval(true);
+        final RoleDTO roleDTO = roleService.findByName("ROLE_SELLER");
+        userDTO.getRoles().add(roleDTO);
+
+        userService.save(userDTO);
+        return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
+    }
+
+    private void createNewSeller(final SellerSignUpRequestDTO sellerRequestDTO, final UserDTO userDTO) {
+        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
+                .map(paymentMethodService::findByName)
+                .collect(Collectors.toSet());
+
+        final SellerDTO sellerDTO = SellerDTO.builder()
+                .sellerName(sellerRequestDTO.getSellerName())
+                .emailSeller(sellerRequestDTO.getEmailSeller())
+                .sellerRating((float) 0)
+                .phoneNumber(sellerRequestDTO.getPhoneNumber())
+                .city(sellerRequestDTO.getCity())
+                .district(sellerRequestDTO.getDistrict())
+                .commune(sellerRequestDTO.getCommune())
+                .address(sellerRequestDTO.getAddress())
+                .sellerApproval(false).user(userDTO)
+                .paymentMethodDTOs(paymentMethodDTOs)
+                .build();
+
+        sellerRepository.save(toSellerEntity(sellerDTO));
+    }
+
+    private void updateSeller(final SellerDTO sellerDTO, final SellerSignUpRequestDTO sellerRequestDTO) {
+        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
+                .map(paymentMethodService::findByName)
+                .collect(Collectors.toSet());
 
         sellerDTO.setSellerName(sellerRequestDTO.getSellerName());
         sellerDTO.setEmailSeller(sellerRequestDTO.getEmailSeller());

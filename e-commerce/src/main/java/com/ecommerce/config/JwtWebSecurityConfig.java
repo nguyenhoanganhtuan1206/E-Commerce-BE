@@ -54,6 +54,7 @@ public class JwtWebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/brand/**").permitAll()
                 .requestMatchers("/api/v1/address/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
+                .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
