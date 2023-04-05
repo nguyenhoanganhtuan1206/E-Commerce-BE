@@ -36,6 +36,11 @@ public class JwtUserDetailsService implements UserDetailsService {
         final int roleId = userEntity.getRoles().stream().findFirst().get().getId();
         final RoleEntity roleEntity = roleRepository.findById(roleId).orElseThrow(supplyRoleNotFound(roleId));
 
-        return new JwtUserDetails(userEntity.getId(), userEntity.getEmail(), userEntity.getPassword(), List.of(new SimpleGrantedAuthority(roleEntity.getName())));
+        return new JwtUserDetails(
+                userEntity.getId(),
+                userEntity.getUsername(),
+                userEntity.getEmail(),
+                userEntity.getPassword(),
+                List.of(new SimpleGrantedAuthority(roleEntity.getName())));
     }
 }

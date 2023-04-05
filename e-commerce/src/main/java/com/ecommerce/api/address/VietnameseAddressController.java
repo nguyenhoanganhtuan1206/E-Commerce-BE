@@ -24,13 +24,13 @@ public class VietnameseAddressController {
         return addressService.findProvinces();
     }
 
-    @GetMapping("/districts/{provinceId}/province")
-    public Set<District> findDistrictByProvinceId(final @PathVariable String provinceId) {
-        return addressService.findDistrictByProvinceId(provinceId);
+    @GetMapping("/districts/{provinceName}/province")
+    public Set<District> findDistrictByProvinceId(final @PathVariable String provinceName) {
+        return addressService.findDistrictByProvinceName(provinceName);
     }
 
-    @GetMapping("/communes/{districtId}/district")
-    public Set<Commune> findCommuneByDistrictId(final @PathVariable String districtId) {
-        return addressService.findCommuneByDistrictId(districtId);
+    @GetMapping("/communes/{districtName}/district")
+    public Set<Commune> findCommuneByDistrictId(final @PathVariable String districtName) {
+        return addressService.findCommuneByDistrictName(districtName);
     }
 }

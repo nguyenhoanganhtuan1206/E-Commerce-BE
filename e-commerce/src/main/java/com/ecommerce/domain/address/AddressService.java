@@ -25,40 +25,29 @@ public class AddressService {
         vietnameseAddress = parseJson(VietnameseAddress.class, filePath);
     }
 
-    public Province findProvinceById(final String provinceId) {
-        return vietnameseAddress.getProvinces().stream()
-                .filter(p -> p.getIdProvince().equals(provinceId))
-                .findFirst()
-                .orElseThrow(supplyAddressNotFound(format("Cannot found province with %s", provinceId)));
-    }
-
-    public District findDistrictById(final String districtId) {
-        return vietnameseAddress.getDistricts().stream()
-                .filter(d -> d.getIdDistrict().equals(districtId))
-                .findFirst()
-                .orElseThrow(supplyAddressNotFound(format("Cannot found district with %s", districtId)));
-    }
-
-    public Commune findCommuneById(final String communeId) {
-        return vietnameseAddress.getCommunes().stream()
-                .filter(c -> c.getIdCommune().equals(communeId))
-                .findFirst()
-                .orElseThrow(supplyAddressNotFound(format("Cannot found commune with %s", communeId)));
-    }
-
     public Set<Province> findProvinces() {
         return vietnameseAddress.getProvinces();
     }
 
-    public Set<District> findDistrictByProvinceId(final String provinceId) {
+    public Set<District> findDistrictByProvinceName(final String provinceName) {
+        final Province province = vietnameseAddress.getProvinces().stream()
+                .filter(p -> p.getName().equals(provinceName))
+                .findFirst()
+                .orElseThrow(supplyAddressNotFound(format("Cannot found province with %s", provinceName)));
+
         return vietnameseAddress.getDistricts().stream()
-                .filter(d -> d.getIdProvince().equals(provinceId))
+                .filter(d -> d.getIdProvince().equals(province.getIdProvince()))
                 .collect(Collectors.toSet());
     }
 
-    public Set<Commune> findCommuneByDistrictId(final String districtId) {
+    public Set<Commune> findCommuneByDistrictName(final String districtName) {
+        final District district = vietnameseAddress.getDistricts().stream()
+                .filter(d -> d.getName().equals(districtName))
+                .findFirst()
+                .orElseThrow(supplyAddressNotFound(format("Cannot found district with %s", districtName)));
+
         return vietnameseAddress.getCommunes().stream()
-                .filter(c -> c.getIdDistrict().equals(districtId))
+                .filter(c -> c.getIdDistrict().equals(district.getIdDistrict()))
                 .collect(Collectors.toSet());
     }
 }

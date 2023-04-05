@@ -24,7 +24,7 @@ public class PaymentMethodEntity {
 
     @ManyToMany(mappedBy = "paymentMethods",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.ALL})
+            cascade = {CascadeType.ALL})
     private Set<SellerEntity> sellers;
 
     public PaymentMethodEntity(String name) {

@@ -7,7 +7,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
-public class SellerResponseSignUpDTO {
+public class SellerSignUpResponseDTO {
 
     private String sellerName;
 
@@ -22,4 +22,6 @@ public class SellerResponseSignUpDTO {
     private String district;
 
     private String commune;
+
+    private boolean sellerApproval;
 }

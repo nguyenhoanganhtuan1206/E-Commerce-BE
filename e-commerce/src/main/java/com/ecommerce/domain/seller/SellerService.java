@@ -1,17 +1,16 @@
 package com.ecommerce.domain.seller;
 
 import com.ecommerce.api.seller.dto.SellerSignUpRequestDTO;
-import com.ecommerce.domain.address.AddressService;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.payment.PaymentMethodService;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.role.RoleDTO;
-import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import com.ecommerce.persistent.seller.SellerRepository;
 import lombok.RequiredArgsConstructor;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -33,22 +32,20 @@ public class SellerService {
 
     private final UserService userService;
 
-    private final RoleService roleService;
-
-    private final AddressService addressService;
-
     private final PaymentMethodService paymentMethodService;
 
     private final AuthsProvider authsProvider;
 
     public SellerDTO findById(final UUID sellerId) {
-        return toSellerDTO(sellerRepository.findById(sellerId)
-                .orElseThrow(supplySellerNotFound(sellerId)));
+        return toSellerDTO(sellerRepository.findById(sellerId).orElseThrow(supplySellerNotFound(sellerId)));
     }
 
-    public SellerDTO getRegisteredSellerDetailsByUserId() {
-        return toSellerDTO(sellerRepository.findByUserId(authsProvider.getCurrentUserId())
-                .orElse(null));
+    public SellerDTO findByUserId(final UUID userId) {
+        return toSellerDTO(sellerRepository.findByUserId(userId).orElseThrow(supplySellerNotFound(userId)));
+    }
+
+    public Optional<SellerDTO> getRegisteredSellerDetailsByUserId() {
+        return sellerRepository.findByUserId(authsProvider.getCurrentUserId()).map(SellerDTOMapper::toSellerDTO);
     }
 
     public void registerNewSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
@@ -57,46 +54,38 @@ public class SellerService {
         verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         verifyPermissionSellerRegister(userDTO);
 
-        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
-                .map(paymentMethodService::findByName)
-                .collect(Collectors.toSet());
+        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream().map(paymentMethodService::findByName).collect(Collectors.toSet());
 
-        final SellerDTO sellerDTO = SellerDTO.builder()
-                .sellerName(sellerRequestDTO.getSellerName())
-                .emailSeller(sellerRequestDTO.getEmailSeller())
-                .sellerRating((float) 0)
-                .phoneNumber(sellerRequestDTO.getPhoneNumber())
-                .city(getCityName(sellerRequestDTO.getCity()))
-                .district(getDistrictName(sellerRequestDTO.getDistrict()))
-                .commune(getCommuneName(sellerRequestDTO.getCommune()))
-                .address(sellerRequestDTO.getAddress())
-                .sellerApproval(false)
-                .user(userDTO)
-                .paymentMethodDTOs(paymentMethodDTOs)
-                .build();
+        final SellerDTO sellerDTO = SellerDTO.builder().sellerName(sellerRequestDTO.getSellerName()).emailSeller(sellerRequestDTO.getEmailSeller()).sellerRating((float) 0).phoneNumber(sellerRequestDTO.getPhoneNumber()).city(sellerRequestDTO.getCity()).district(sellerRequestDTO.getDistrict()).commune(sellerRequestDTO.getCommune()).address(sellerRequestDTO.getAddress()).sellerApproval(false).user(userDTO).paymentMethodDTOs(paymentMethodDTOs).build();
 
         sellerRepository.save(toSellerEntity(sellerDTO));
-
-        final RoleDTO roleDTO = roleService.findByName("ROLE_SELLER");
-        userDTO.getRoles().add(roleDTO);
-        userService.save(userDTO);
     }
 
-    private String getCityName(String cityId) {
-        return addressService.findProvinceById(cityId).getName();
-    }
+    public void updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
+        final SellerDTO sellerDTO = findByUserId(authsProvider.getCurrentUserId());
 
-    private String getDistrictName(String districtId) {
-        return addressService.findDistrictById(districtId).getName();
-    }
+        if (!StringUtils.equals(sellerRequestDTO.getEmailSeller(), sellerDTO.getEmailSeller())) {
+            verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
+        }
+        verifyPermissionSellerRegister(sellerDTO.getUser());
 
-    private String getCommuneName(String communeId) {
-        return addressService.findCommuneById(communeId).getName();
+        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream().map(paymentMethodService::findByName).collect(Collectors.toSet());
+
+        sellerDTO.setSellerName(sellerRequestDTO.getSellerName());
+        sellerDTO.setEmailSeller(sellerRequestDTO.getEmailSeller());
+        sellerDTO.setSellerRating((float) 0);
+        sellerDTO.setPhoneNumber(sellerRequestDTO.getPhoneNumber());
+        sellerDTO.setCity(sellerRequestDTO.getCity());
+        sellerDTO.setDistrict(sellerRequestDTO.getDistrict());
+        sellerDTO.setCommune(sellerRequestDTO.getCommune());
+        sellerDTO.setAddress(sellerRequestDTO.getAddress());
+        sellerDTO.setPaymentMethodDTOs(paymentMethodDTOs);
+
+        sellerRepository.save(toSellerEntity(sellerDTO));
     }
 
     private void verifyIfEmailSellerAvailable(final String emailSeller) {
-        final Optional<SellerDTO> sellerDTO = sellerRepository.findByEmailSeller(emailSeller)
-                .map(SellerDTOMapper::toSellerDTO);
+        final Optional<SellerDTO> sellerDTO = sellerRepository.findByEmailSeller(emailSeller).map(SellerDTOMapper::toSellerDTO);
 
         if (sellerDTO.isPresent()) {
             throw supplyEmailSellerUsedError(emailSeller).get();

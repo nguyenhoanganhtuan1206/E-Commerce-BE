@@ -53,7 +53,7 @@ public class SellerEntity {
     @OneToMany(mappedBy = "seller")
     private Set<CartEntity> carts;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "payment_method_seller",
             joinColumns = @JoinColumn(name = "seller_id"),
             inverseJoinColumns = @JoinColumn(name = "payment_method_id"))

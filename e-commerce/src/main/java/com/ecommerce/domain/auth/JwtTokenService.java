@@ -30,7 +30,6 @@ public class JwtTokenService {
     private static final Clock clock = DefaultClock.INSTANCE;
 
     private static final String CLAIM_ROLES = "roles";
-
     private static final String CLAIM_USER_ID = "userId";
 
     private final JwtProperties jwtProperties;
@@ -40,7 +39,7 @@ public class JwtTokenService {
             if (isBlank(token)) {
                 return null;
             }
-
+            
             final Claims claims = Jwts.parser()
                     .setSigningKey(jwtProperties.getSecret())
                     .parseClaimsJws(token)
@@ -75,10 +74,12 @@ public class JwtTokenService {
         final Date createdDate = clock.now();
         final Date expirationDate = new Date(createdDate.getTime() + jwtProperties.getExpiration() * 1000);
 
-        final List<String> roles = userDetails.getAuthorities().stream().map(GrantedAuthority::getAuthority).toList();
+        final List<String> roles = userDetails.getAuthorities().stream()
+                .map(GrantedAuthority::getAuthority)
+                .toList();
 
         return Jwts.builder()
-                .setSubject(userDetails.getUsername())
+                .setSubject(userDetails.getEmail())
                 .setIssuedAt(createdDate)
                 .setExpiration(expirationDate)
                 .claim(CLAIM_ROLES, String.join(",", roles))
