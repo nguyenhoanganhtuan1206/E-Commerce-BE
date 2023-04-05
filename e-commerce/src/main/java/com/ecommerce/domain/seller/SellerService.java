@@ -5,7 +5,6 @@ import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.payment.PaymentMethodService;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.role.RoleDTO;
-import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
@@ -32,8 +31,6 @@ public class SellerService {
     private final SellerRepository sellerRepository;
 
     private final UserService userService;
-
-    private final RoleService roleService;
 
     private final PaymentMethodService paymentMethodService;
 
@@ -64,24 +61,13 @@ public class SellerService {
 
     public void updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
         final SellerDTO sellerDTO = findByUserId(authsProvider.getCurrentUserId());
+        final UserDTO userDTO = userService.findById(authsProvider.getCurrentUserId());
 
         if (!StringUtils.equals(sellerRequestDTO.getEmailSeller(), sellerDTO.getEmailSeller())) {
             verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         }
-        verifyPermissionSellerRegister(sellerDTO.getUser());
+        verifyPermissionSellerRegister(userDTO);
         updateSeller(sellerDTO, sellerRequestDTO);
-    }
-
-    public SellerDTO approvalSeller(final UUID sellerId) {
-        final SellerDTO sellerDTO = findById(sellerId);
-        final UserDTO userDTO = sellerDTO.getUser();
-
-        sellerDTO.setSellerApproval(true);
-        final RoleDTO roleDTO = roleService.findByName("ROLE_SELLER");
-        userDTO.getRoles().add(roleDTO);
-
-        userService.save(userDTO);
-        return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
     }
 
     private void createNewSeller(final SellerSignUpRequestDTO sellerRequestDTO, final UserDTO userDTO) {
@@ -98,9 +84,12 @@ public class SellerService {
                 .district(sellerRequestDTO.getDistrict())
                 .commune(sellerRequestDTO.getCommune())
                 .address(sellerRequestDTO.getAddress())
-                .sellerApproval(false).user(userDTO)
+                .sellerApproval(false)
                 .paymentMethodDTOs(paymentMethodDTOs)
                 .build();
+
+        userDTO.setSeller(sellerDTO);
+        userService.save(userDTO);
 
         sellerRepository.save(toSellerEntity(sellerDTO));
     }

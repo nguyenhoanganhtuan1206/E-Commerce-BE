@@ -34,7 +34,8 @@ public class ProfileController {
     }
 
     @PutMapping
-    public UserUpdateResponseDTO update(final @Valid @RequestBody UserUpdateRequestDTO userRequestDTO, final BindingResult bindingResult) {
+    public UserUpdateResponseDTO update(final @Valid @RequestBody UserUpdateRequestDTO userRequestDTO,
+                                        final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
         return userService.update(userRequestDTO);
@@ -49,7 +50,8 @@ public class ProfileController {
     }
 
     @PostMapping("locations")
-    public LocationResponseDTO addLocation(final @Valid @RequestBody LocationRequestDTO locationDTO, final BindingResult bindingResult) {
+    public LocationResponseDTO addLocation(final @Valid @RequestBody LocationRequestDTO locationDTO,
+                                           final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
         return toLocationResponseDTO(userService.addLocation(locationDTO));
