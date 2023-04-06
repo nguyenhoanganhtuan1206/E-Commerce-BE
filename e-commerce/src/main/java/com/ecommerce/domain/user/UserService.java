@@ -7,6 +7,7 @@ import com.ecommerce.api.profile.dto.UserUpdatePasswordDTO;
 import com.ecommerce.api.profile.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
+import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.location.LocationService;
@@ -23,6 +24,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.*;
 
+import static com.ecommerce.api.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
 import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationDTO;
 import static com.ecommerce.domain.user.UserError.*;
@@ -52,8 +54,6 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final String BASE_URL_FORGET_PASSWORD = "http://localhost:3000/reset-password/";
-
     private final JavaMailSender javaMailSender;
 
     public List<UserDTO> findAll() {
@@ -80,6 +80,11 @@ public class UserService {
 
     public UserDTO findByEmail(final String email) {
         return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound(email)));
+    }
+
+    public UserResponseDTO findProfileById(final UUID userId) {
+        return toUserResponseDTO(userRepository.findUserByUserIdAndDefaultLocation(userId)
+                .orElseThrow(supplyUserNotFound(userId)));
     }
 
     public UserDTO findById(final UUID userId) {
@@ -119,19 +124,9 @@ public class UserService {
         return toUserUpdateResponseDTO(userRepository.save(toUserEntity(user)));
     }
 
-    public LocationDTO addLocation(final LocationRequestDTO locationRequestDTO) {
-        final LocationDTO location = toLocationDTO(locationRequestDTO);
-        final UserDTO userDTO = findById(authsProvider.getCurrentUserId());
-
-        verifyIfAddressAvailable(userDTO.getLocations(), locationRequestDTO.getAddress());
-
-        location.setUser(userDTO);
-
-        return locationService.save(location);
-    }
-
     /* FORGET PASSWORD HANDLER */
     public void handleForgetPassword(final String email) {
+        final String BASE_URL_FORGET_PASSWORD = "http://localhost:3000/reset-password/";
         final UserDTO userDTO = findByEmail(email);
 
         /* Generate token */
@@ -151,6 +146,25 @@ public class UserService {
 
         user.setPassword(passwordEncoder.encode(userRequestDTO.getNewPassword()));
         userRepository.save(toUserEntity(user));
+    }
+
+    public LocationDTO addLocation(final LocationRequestDTO locationRequestDTO) {
+        final LocationDTO location = toLocationDTO(locationRequestDTO);
+        final UserDTO userDTO = findById(authsProvider.getCurrentUserId());
+
+        verifyIfAddressAvailable(locationRequestDTO.getAddress());
+
+        if (locationRequestDTO.isDefaultLocation()) {
+            locationService.findByDefaultLocationTrue()
+                    .ifPresent(this::changeDefaultLocation);
+        }
+
+        userDTO.setUpdatedAt(Instant.now());
+        location.setUser(userDTO);
+        location.setDefaultLocation(locationRequestDTO.isDefaultLocation());
+
+        userRepository.save(toUserEntity(userDTO));
+        return locationService.save(location);
     }
 
     private void sendEmailResetPassword(final UserDTO user, final String linkResetPassword) {
@@ -187,7 +201,9 @@ public class UserService {
     }
     /* FORGET PASSWORD HANDLER */
 
-    private void verifyIfAddressAvailable(final Set<LocationDTO> locationDTOS, final String addressUpdate) {
+    private void verifyIfAddressAvailable(final String addressUpdate) {
+        final Set<LocationDTO> locationDTOS = locationService.findLocationEntitiesByUserId(authsProvider.getCurrentUserId());
+
         for (LocationDTO location : locationDTOS) {
             if (location.getAddress().equals(addressUpdate)) {
                 throw supplyAddressAvailable(addressUpdate).get();
@@ -201,5 +217,10 @@ public class UserService {
         if (user.isPresent()) {
             throw supplyUserExisted(email).get();
         }
+    }
+
+    private void changeDefaultLocation(LocationDTO locationDTO) {
+        locationDTO.setDefaultLocation(false);
+        locationService.save(locationDTO);
     }
 }

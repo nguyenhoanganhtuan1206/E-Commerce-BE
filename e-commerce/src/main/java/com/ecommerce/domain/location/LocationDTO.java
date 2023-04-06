@@ -12,10 +12,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class LocationDTO {
 
-    /**
-     * @ DTO has represents all fields from locationEntity
-     */
-
     private UUID id;
 
     private String address;
@@ -27,4 +23,6 @@ public class LocationDTO {
     private String commune;
 
     private UserDTO user;
+
+    private boolean defaultLocation;
 }

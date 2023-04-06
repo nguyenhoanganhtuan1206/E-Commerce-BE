@@ -1,8 +1,6 @@
 package com.ecommerce.api.user.dto;
 
-import com.ecommerce.domain.location.LocationDTO;
-import com.ecommerce.domain.role.RoleDTO;
-import com.ecommerce.domain.seller.SellerDTO;
+import com.ecommerce.api.location.dto.LocationResponseDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,10 +32,6 @@ public class UserResponseDTO {
 
     private String address;
 
-    private SellerDTO seller;
-
-    private Set<RoleDTO> roles;
-
-    private Set<LocationDTO> locations;
+    private Set<LocationResponseDTO> locations;
 }
 

@@ -14,7 +14,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ecommerce.api.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
@@ -30,7 +29,7 @@ public class ProfileController {
 
     @GetMapping
     public UserResponseDTO getProfile() {
-        return toUserResponseDTO(userService.findById(authsProvider.getCurrentUserId()));
+        return userService.findProfileById(authsProvider.getCurrentUserId());
     }
 
     @PutMapping
@@ -49,7 +48,7 @@ public class ProfileController {
         return userService.updatePassword(userRequestDTO);
     }
 
-    @PostMapping("locations")
+    @PostMapping("/locations")
     public LocationResponseDTO addLocation(final @Valid @RequestBody LocationRequestDTO locationDTO,
                                            final BindingResult bindingResult) {
         handleValidationError(bindingResult);

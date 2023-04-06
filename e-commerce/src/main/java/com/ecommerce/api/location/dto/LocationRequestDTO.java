@@ -1,24 +1,15 @@
 package com.ecommerce.api.location.dto;
 
-import com.ecommerce.domain.user.UserDTO;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.util.UUID;
-
 @Getter
 @Setter
 @NoArgsConstructor
 public class LocationRequestDTO {
-
-    /**
-     * @ DTO has represents all fields from LocationEntity
-     */
-
-    private UUID id;
 
     @NotBlank(message = "Address cannot be empty")
     @Size(min = 3, message = "Address is invalid")
@@ -36,5 +27,5 @@ public class LocationRequestDTO {
     @Size(min = 3, message = "Commune is invalid")
     private String commune;
 
-    private UserDTO userDTO;
+    private boolean defaultLocation;
 }

@@ -1,16 +1,16 @@
 package com.ecommerce.api.user.mapper;
 
 import com.ecommerce.api.user.dto.UserResponseDTO;
-import com.ecommerce.domain.user.UserDTO;
+import com.ecommerce.persistent.user.UserEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
 @UtilityClass
 public class UserResponseDTOMapper {
 
-    private final ModelMapper modelMapper = new ModelMapper();
+    private static final ModelMapper modelMapper = new ModelMapper();
 
-    public static UserResponseDTO toUserResponseDTO(final UserDTO userDTO) {
-        return modelMapper.map(userDTO, UserResponseDTO.class);
+    public static UserResponseDTO toUserResponseDTO(final UserEntity userEntity) {
+        return modelMapper.map(userEntity, UserResponseDTO.class);
     }
 }

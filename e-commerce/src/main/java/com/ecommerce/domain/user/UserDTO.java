@@ -1,6 +1,5 @@
 package com.ecommerce.domain.user;
 
-import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import lombok.Getter;
@@ -35,10 +34,8 @@ public class UserDTO {
     private String password;
 
     private String address;
-    
+
     private SellerDTO seller;
 
     private Set<RoleDTO> roles;
-
-    private Set<LocationDTO> locations;
 }
