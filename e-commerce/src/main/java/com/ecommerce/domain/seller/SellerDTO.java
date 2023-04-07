@@ -2,6 +2,7 @@ package com.ecommerce.domain.seller;
 
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.product.ProductDTO;
+import com.ecommerce.domain.user.UserDTO;
 import lombok.*;
 
 import java.util.Set;
@@ -35,6 +36,8 @@ public class SellerDTO {
     private boolean sellerApproval;
 
     private Set<PaymentMethodDTO> paymentMethodDTOs;
+
+    private UserDTO userDTO;
 
     private Set<ProductDTO> products;
 }

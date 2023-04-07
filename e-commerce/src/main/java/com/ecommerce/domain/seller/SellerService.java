@@ -85,11 +85,9 @@ public class SellerService {
                 .commune(sellerRequestDTO.getCommune())
                 .address(sellerRequestDTO.getAddress())
                 .sellerApproval(false)
+                .userDTO(userDTO)
                 .paymentMethodDTOs(paymentMethodDTOs)
                 .build();
-
-        userDTO.setSeller(sellerDTO);
-        userService.save(userDTO);
 
         sellerRepository.save(toSellerEntity(sellerDTO));
     }
@@ -113,7 +111,8 @@ public class SellerService {
     }
 
     private void verifyIfEmailSellerAvailable(final String emailSeller) {
-        final Optional<SellerDTO> sellerDTO = sellerRepository.findByEmailSeller(emailSeller).map(SellerDTOMapper::toSellerDTO);
+        final Optional<SellerDTO> sellerDTO = sellerRepository.findByEmailSeller(emailSeller)
+                .map(SellerDTOMapper::toSellerDTO);
 
         if (sellerDTO.isPresent()) {
             throw supplyEmailSellerUsedError(emailSeller).get();

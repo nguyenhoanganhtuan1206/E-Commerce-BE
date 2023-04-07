@@ -1,7 +1,6 @@
 package com.ecommerce.domain.user;
 
 import com.ecommerce.domain.role.RoleDTO;
-import com.ecommerce.domain.seller.SellerDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -34,8 +33,6 @@ public class UserDTO {
     private String password;
 
     private String address;
-
-    private SellerDTO seller;
 
     private Set<RoleDTO> roles;
 }
