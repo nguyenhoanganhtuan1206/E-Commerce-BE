@@ -40,6 +40,11 @@ public class LocationController {
         return toLocationResponseDTO(locationService.addLocation(locationDTO));
     }
 
+    @PutMapping("/{locationId}/default")
+    public LocationResponseDTO setDefaultLocation(final @PathVariable UUID locationId) {
+        return toLocationResponseDTO(locationService.setDefaultLocation(locationId));
+    }
+
     @PutMapping("{locationId}")
     public LocationResponseDTO updateLocation(final @PathVariable UUID locationId, final @Valid @RequestBody LocationRequestDTO locationRequestDTO, final BindingResult bindingResult) {
         handleValidationError(bindingResult);

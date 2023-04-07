@@ -57,8 +57,7 @@ public class LocationService {
         verifyIfLocationExisted(locationDTOS, locationRequestDTO);
 
         if (locationRequestDTO.isDefaultLocation()) {
-            findByDefaultLocationTrue()
-                    .ifPresent(this::changeDefaultLocation);
+            changeDefaultLocationIfAvailable();
         }
 
         location.setCreatedAt(Instant.now());
@@ -69,13 +68,20 @@ public class LocationService {
         return save(location);
     }
 
+    public LocationDTO setDefaultLocation(final UUID locationId) {
+        final LocationDTO locationDTO = findById(locationId);
+        changeDefaultLocationIfAvailable();
+        locationDTO.setDefaultLocation(true);
+
+        return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
+    }
+
     public LocationDTO updateLocation(final UUID locationId, final LocationRequestDTO locationRequestDTO) {
         final LocationDTO locationDTO = findById(locationId);
         final List<LocationDTO> locationDTOS = findLocationsByUserId(authsProvider.getCurrentUserId());
 
         if (locationRequestDTO.isDefaultLocation()) {
-            findByDefaultLocationTrue()
-                    .ifPresent(this::changeDefaultLocation);
+            changeDefaultLocationIfAvailable();
         }
 
         verifyIfLocationExisted(locationDTOS, locationRequestDTO);
@@ -99,11 +105,11 @@ public class LocationService {
         return toLocationDTOs(locationRepository.findLocationEntitiesByUserId(userId));
     }
 
-    private void changeDefaultLocation(LocationDTO locationDTO) {
+    private void changeDefaultLocationIfAvailable() {
         findByDefaultLocationTrue()
                 .ifPresent(location -> {
-                    locationDTO.setDefaultLocation(false);
-                    save(locationDTO);
+                    location.setDefaultLocation(false);
+                    save(location);
                 });
     }
 }
