@@ -5,8 +5,7 @@ import com.ecommerce.domain.brand.BrandDTO;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @UtilityClass
 public class BrandDTOMapper {
@@ -17,9 +16,9 @@ public class BrandDTOMapper {
         return modelMapper.map(brandDTO, BrandResponseDTO.class);
     }
 
-    public static Set<BrandResponseDTO> toBrandResponseDTOs(final Set<BrandDTO> brandDTOs) {
+    public static List<BrandResponseDTO> toBrandResponseDTOs(final List<BrandDTO> brandDTOs) {
         return brandDTOs.stream()
                 .map(BrandDTOMapper::toBrandResponseDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 }

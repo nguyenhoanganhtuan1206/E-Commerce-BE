@@ -2,15 +2,12 @@ package com.ecommerce.domain.user;
 
 import com.ecommerce.api.auth.dto.UserSignUpRequestDTO;
 import com.ecommerce.api.auth.dto.UserSignUpResponseDTO;
-import com.ecommerce.api.location.dto.LocationRequestDTO;
 import com.ecommerce.api.profile.dto.UserUpdatePasswordDTO;
 import com.ecommerce.api.profile.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
 import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
-import com.ecommerce.domain.location.LocationDTO;
-import com.ecommerce.domain.location.LocationService;
 import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.mapper.UserDTOMapper;
@@ -22,11 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
-import java.util.*;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 import static com.ecommerce.api.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
-import static com.ecommerce.domain.location.LocationError.supplyAddressAvailable;
-import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationDTO;
 import static com.ecommerce.domain.user.UserError.*;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
@@ -45,8 +43,6 @@ import static com.ecommerce.utils.TokenGenerator.parse;
 public class UserService {
 
     private final UserRepository userRepository;
-
-    private final LocationService locationService;
 
     private final AuthsProvider authsProvider;
 
@@ -83,7 +79,7 @@ public class UserService {
     }
 
     public UserResponseDTO findProfileById(final UUID userId) {
-        return toUserResponseDTO(userRepository.findUserByUserIdAndDefaultLocation(userId)
+        return toUserResponseDTO(userRepository.findProfileById(userId)
                 .orElseThrow(supplyUserNotFound(userId)));
     }
 
@@ -148,25 +144,6 @@ public class UserService {
         userRepository.save(toUserEntity(user));
     }
 
-    public LocationDTO addLocation(final LocationRequestDTO locationRequestDTO) {
-        final LocationDTO location = toLocationDTO(locationRequestDTO);
-        final UserDTO userDTO = findById(authsProvider.getCurrentUserId());
-
-        verifyIfAddressAvailable(locationRequestDTO.getAddress());
-
-        if (locationRequestDTO.isDefaultLocation()) {
-            locationService.findByDefaultLocationTrue()
-                    .ifPresent(this::changeDefaultLocation);
-        }
-
-        userDTO.setUpdatedAt(Instant.now());
-        location.setUser(userDTO);
-        location.setDefaultLocation(locationRequestDTO.isDefaultLocation());
-
-        userRepository.save(toUserEntity(userDTO));
-        return locationService.save(location);
-    }
-
     private void sendEmailResetPassword(final UserDTO user, final String linkResetPassword) {
         try {
             final String subject = "Here's the link to reset your password";
@@ -201,26 +178,11 @@ public class UserService {
     }
     /* FORGET PASSWORD HANDLER */
 
-    private void verifyIfAddressAvailable(final String addressUpdate) {
-        final Set<LocationDTO> locationDTOS = locationService.findLocationEntitiesByUserId(authsProvider.getCurrentUserId());
-
-        for (LocationDTO location : locationDTOS) {
-            if (location.getAddress().equals(addressUpdate)) {
-                throw supplyAddressAvailable(addressUpdate).get();
-            }
-        }
-    }
-
     private void verifyIfUserAvailable(final String email) {
         Optional<UserDTO> user = userRepository.findByEmail(email).map(UserDTOMapper::toUserDTO);
 
         if (user.isPresent()) {
             throw supplyUserExisted(email).get();
         }
-    }
-
-    private void changeDefaultLocation(LocationDTO locationDTO) {
-        locationDTO.setDefaultLocation(false);
-        locationService.save(locationDTO);
     }
 }

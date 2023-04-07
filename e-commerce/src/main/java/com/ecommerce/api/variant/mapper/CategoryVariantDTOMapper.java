@@ -5,8 +5,7 @@ import com.ecommerce.domain.variant.CategoryVariantDTO;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @UtilityClass
 public class CategoryVariantDTOMapper {
@@ -17,9 +16,9 @@ public class CategoryVariantDTOMapper {
         return modelMapper.map(categoryVariantDTO, CategoryVariantResponseDTO.class);
     }
 
-    public static Set<CategoryVariantResponseDTO> toCategoryVariantResponseDTOs(final Set<CategoryVariantDTO> categoryVariantDTOs) {
+    public static List<CategoryVariantResponseDTO> toCategoryVariantResponseDTOs(final List<CategoryVariantDTO> categoryVariantDTOs) {
         return categoryVariantDTOs.stream()
                 .map(CategoryVariantDTOMapper::toCategoryVariantResponseDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 }

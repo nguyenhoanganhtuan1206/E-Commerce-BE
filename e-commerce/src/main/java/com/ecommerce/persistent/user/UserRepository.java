@@ -12,11 +12,10 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByEmail(final String email);
 
-    @Query("SELECT u " +
-            "FROM UserEntity u " +
-            "INNER JOIN LocationEntity l " +
-            "ON u.id = l.user.id " +
-            "WHERE u.id = :userId " +
-            "ORDER BY l.defaultLocation DESC")
-    Optional<UserEntity> findUserByUserIdAndDefaultLocation(final UUID userId);
+    @Query("select u from UserEntity u " +
+            "inner join LocationEntity l " +
+            "on l.user.id = u.id " +
+            "where u.id = :userId " +
+            "order by l.defaultLocation DESC , l.createdAt DESC ")
+    Optional<UserEntity> findProfileById(final UUID userId);
 }

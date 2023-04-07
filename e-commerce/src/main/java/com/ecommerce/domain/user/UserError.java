@@ -11,7 +11,7 @@ import java.util.function.Supplier;
 public class UserError {
 
     public static <T> Supplier<NotFoundException> supplyUserNotFound(final T input) {
-        return () -> new NotFoundException("User with email %s not found", input);
+        return () -> new NotFoundException("User with %s not found", input);
     }
 
     public static Supplier<BadRequestException> supplyUserExisted(final String email) {

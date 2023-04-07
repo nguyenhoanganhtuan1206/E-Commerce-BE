@@ -1,7 +1,5 @@
 package com.ecommerce.api.profile;
 
-import com.ecommerce.api.location.dto.LocationRequestDTO;
-import com.ecommerce.api.location.dto.LocationResponseDTO;
 import com.ecommerce.api.profile.dto.UserUpdatePasswordDTO;
 import com.ecommerce.api.profile.dto.UserUpdateRequestDTO;
 import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
@@ -14,7 +12,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ecommerce.domain.location.mapper.LocationDTOMapper.toLocationResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -46,13 +43,5 @@ public class ProfileController {
         handleValidationError(bindingResult);
 
         return userService.updatePassword(userRequestDTO);
-    }
-
-    @PostMapping("/locations")
-    public LocationResponseDTO addLocation(final @Valid @RequestBody LocationRequestDTO locationDTO,
-                                           final BindingResult bindingResult) {
-        handleValidationError(bindingResult);
-
-        return toLocationResponseDTO(userService.addLocation(locationDTO));
     }
 }

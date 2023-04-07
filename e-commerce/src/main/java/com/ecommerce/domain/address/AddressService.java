@@ -7,8 +7,7 @@ import com.ecommerce.domain.address.dto.VietnameseAddress;
 import org.springframework.stereotype.Service;
 
 import java.io.IOException;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 import static com.ecommerce.domain.address.AddressError.supplyAddressNotFound;
 import static com.ecommerce.utils.JsonParser.parseJson;
@@ -25,11 +24,11 @@ public class AddressService {
         vietnameseAddress = parseJson(VietnameseAddress.class, filePath);
     }
 
-    public Set<Province> findProvinces() {
+    public List<Province> findProvinces() {
         return vietnameseAddress.getProvinces();
     }
 
-    public Set<District> findDistrictByProvinceName(final String provinceName) {
+    public List<District> findDistrictByProvinceName(final String provinceName) {
         final Province province = vietnameseAddress.getProvinces().stream()
                 .filter(p -> p.getName().equals(provinceName))
                 .findFirst()
@@ -37,10 +36,10 @@ public class AddressService {
 
         return vietnameseAddress.getDistricts().stream()
                 .filter(d -> d.getIdProvince().equals(province.getIdProvince()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 
-    public Set<Commune> findCommuneByDistrictName(final String districtName) {
+    public List<Commune> findCommuneByDistrictName(final String districtName) {
         final District district = vietnameseAddress.getDistricts().stream()
                 .filter(d -> d.getName().equals(districtName))
                 .findFirst()
@@ -48,6 +47,6 @@ public class AddressService {
 
         return vietnameseAddress.getCommunes().stream()
                 .filter(c -> c.getIdDistrict().equals(district.getIdDistrict()))
-                .collect(Collectors.toSet());
+                .toList();
     }
 }

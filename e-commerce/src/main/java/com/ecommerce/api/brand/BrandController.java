@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 import static com.ecommerce.api.brand.mapper.BrandDTOMapper.toBrandResponseDTOs;
 
@@ -20,7 +20,7 @@ public class BrandController {
     private final BrandService brandService;
 
     @GetMapping
-    public Set<BrandResponseDTO> findByCategoryName(final @RequestParam String categoryName) {
+    public List<BrandResponseDTO> findByCategoryName(final @RequestParam String categoryName) {
         return toBrandResponseDTOs(brandService.findByCategoryName(categoryName));
     }
 }

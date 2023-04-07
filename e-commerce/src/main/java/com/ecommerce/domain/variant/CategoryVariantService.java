@@ -4,7 +4,7 @@ import com.ecommerce.persistent.variant.CategoryVariantRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
 import static com.ecommerce.domain.variant.VariantError.supplyVariantNotFound;
 import static com.ecommerce.domain.variant.mapper.CategoryVariantDTOMapper.toCategoryVariantDTO;
@@ -21,7 +21,7 @@ public class CategoryVariantService {
                 .orElseThrow(supplyVariantNotFound(name)));
     }
 
-    public Set<CategoryVariantDTO> findByCategoryName(final String categoryName) {
+    public List<CategoryVariantDTO> findByCategoryName(final String categoryName) {
         return toCategoryVariantDTOs(categoryVariantRepository.findByCategoryName(categoryName));
     }
 }

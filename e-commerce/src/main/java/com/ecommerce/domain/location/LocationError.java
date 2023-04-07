@@ -8,7 +8,11 @@ import java.util.function.Supplier;
 @UtilityClass
 public class LocationError {
 
-    public static Supplier<BadRequestException> supplyAddressAvailable(final String address) {
-        return () -> new BadRequestException("Address with %s is existed", address);
+    public static Supplier<BadRequestException> supplyLocationAlreadyExisted() {
+        return () -> new BadRequestException("Location you provided already existed, Please choose different");
+    }
+
+    public static <T> Supplier<BadRequestException> supplyLocationNotFound(final T input) {
+        return () -> new BadRequestException("Location with %s cannot found", input);
     }
 }

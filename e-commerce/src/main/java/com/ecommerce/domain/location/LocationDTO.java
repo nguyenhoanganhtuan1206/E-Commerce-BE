@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -22,7 +23,11 @@ public class LocationDTO {
 
     private String commune;
 
-    private UserDTO user;
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     private boolean defaultLocation;
+
+    private UserDTO user;
 }

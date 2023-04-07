@@ -7,8 +7,7 @@ import com.ecommerce.persistent.location.LocationEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @UtilityClass
 public class LocationDTOMapper {
@@ -23,10 +22,10 @@ public class LocationDTOMapper {
         return modelMapper.map(locationEntity, LocationDTO.class);
     }
 
-    public static Set<LocationDTO> toLocationDTOs(final Set<LocationEntity> locationEntities) {
+    public static List<LocationDTO> toLocationDTOs(final List<LocationEntity> locationEntities) {
         return locationEntities.stream()
                 .map(LocationDTOMapper::toLocationDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     public static LocationDTO toLocationDTO(final LocationRequestDTO locationRequestDTO) {
@@ -35,5 +34,11 @@ public class LocationDTOMapper {
 
     public static LocationResponseDTO toLocationResponseDTO(final LocationDTO locationDTO) {
         return modelMapper.map(locationDTO, LocationResponseDTO.class);
+    }
+
+    public static List<LocationResponseDTO> toLocationResponseDTOs(final List<LocationDTO> locationDTOs) {
+        return locationDTOs.stream()
+                .map(LocationDTOMapper::toLocationResponseDTO)
+                .toList();
     }
 }

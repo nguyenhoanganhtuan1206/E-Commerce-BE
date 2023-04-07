@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 import static com.ecommerce.api.variant.mapper.CategoryVariantDTOMapper.toCategoryVariantResponseDTOs;
 
@@ -20,7 +20,7 @@ public class CategoryVariantController {
     private final CategoryVariantService categoryVariantService;
 
     @GetMapping
-    public Set<CategoryVariantResponseDTO> find(final @RequestParam String categoryName) {
+    public List<CategoryVariantResponseDTO> find(final @RequestParam String categoryName) {
         return toCategoryVariantResponseDTOs(categoryVariantService.findByCategoryName(categoryName));
     }
 }

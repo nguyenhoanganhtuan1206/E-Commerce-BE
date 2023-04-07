@@ -4,6 +4,7 @@ import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +27,10 @@ public class LocationEntity {
     private String district;
 
     private String commune;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     private boolean defaultLocation;
 

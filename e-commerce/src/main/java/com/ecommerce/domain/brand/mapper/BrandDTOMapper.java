@@ -6,8 +6,7 @@ import com.ecommerce.persistent.brand.BrandEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.List;
 
 @UtilityClass
 public class BrandDTOMapper {
@@ -22,9 +21,9 @@ public class BrandDTOMapper {
         return brandDTO;
     }
 
-    public static Set<BrandDTO> toBrandDTOs(final Set<BrandEntity> brandEntities) {
+    public static List<BrandDTO> toBrandDTOs(final List<BrandEntity> brandEntities) {
         return brandEntities.stream()
                 .map(BrandDTOMapper::toBrandDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 }

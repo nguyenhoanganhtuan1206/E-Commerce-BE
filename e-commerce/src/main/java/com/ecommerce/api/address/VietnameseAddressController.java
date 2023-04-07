@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
 @RestController
 @RequestMapping(value = "/api/v1/address")
@@ -20,17 +20,17 @@ public class VietnameseAddressController {
     private final AddressService addressService;
 
     @GetMapping
-    public Set<Province> findProvinces() {
+    public List<Province> findProvinces() {
         return addressService.findProvinces();
     }
 
     @GetMapping("/districts/{provinceName}/province")
-    public Set<District> findDistrictByProvinceId(final @PathVariable String provinceName) {
+    public List<District> findDistrictByProvinceId(final @PathVariable String provinceName) {
         return addressService.findDistrictByProvinceName(provinceName);
     }
 
     @GetMapping("/communes/{districtName}/district")
-    public Set<Commune> findCommuneByDistrictId(final @PathVariable String districtName) {
+    public List<Commune> findCommuneByDistrictId(final @PathVariable String districtName) {
         return addressService.findCommuneByDistrictName(districtName);
     }
 }

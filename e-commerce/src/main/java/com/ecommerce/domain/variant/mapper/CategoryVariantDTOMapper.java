@@ -8,7 +8,7 @@ import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
-import java.util.Set;
+import java.util.List;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -27,10 +27,10 @@ public class CategoryVariantDTOMapper {
         return categoryVariantDTO;
     }
 
-    public static Set<CategoryVariantDTO> toCategoryVariantDTOs(final Set<CategoryVariantEntity> categoryVariants) {
+    public static List<CategoryVariantDTO> toCategoryVariantDTOs(final List<CategoryVariantEntity> categoryVariants) {
         return categoryVariants.stream()
                 .map(CategoryVariantDTOMapper::toCategoryVariantDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 
     private static ProductDTO apply(ProductEntity product) {
