@@ -61,7 +61,6 @@ public class LocationService {
                     .ifPresent(this::changeDefaultLocation);
         }
 
-        userDTO.setUpdatedAt(Instant.now());
         location.setCreatedAt(Instant.now());
         location.setUser(userDTO);
         location.setDefaultLocation(locationRequestDTO.isDefaultLocation());
@@ -75,7 +74,8 @@ public class LocationService {
         final List<LocationDTO> locationDTOS = findLocationsByUserId(authsProvider.getCurrentUserId());
 
         if (locationRequestDTO.isDefaultLocation()) {
-            changeDefaultLocation(locationDTO);
+            findByDefaultLocationTrue()
+                    .ifPresent(this::changeDefaultLocation);
         }
 
         verifyIfLocationExisted(locationDTOS, locationRequestDTO);
@@ -84,6 +84,7 @@ public class LocationService {
         locationDTO.setCity(locationRequestDTO.getCity());
         locationDTO.setCommune(locationRequestDTO.getCommune());
         locationDTO.setDistrict(locationRequestDTO.getDistrict());
+        locationDTO.setDefaultLocation(locationRequestDTO.isDefaultLocation());
         locationDTO.setUpdatedAt(Instant.now());
 
         return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
