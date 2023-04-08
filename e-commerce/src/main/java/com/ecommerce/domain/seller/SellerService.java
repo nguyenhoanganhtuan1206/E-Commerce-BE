@@ -9,6 +9,7 @@ import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
 import com.ecommerce.persistent.seller.SellerRepository;
+import com.ecommerce.persistent.status.Status;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
@@ -84,9 +85,9 @@ public class SellerService {
                 .district(sellerRequestDTO.getDistrict())
                 .commune(sellerRequestDTO.getCommune())
                 .address(sellerRequestDTO.getAddress())
-                .sellerApproval(false)
-                .userDTO(userDTO)
-                .paymentMethodDTOs(paymentMethodDTOs)
+                .sellerApproval(Status.PENDING)
+                .user(userDTO)
+                .paymentMethods(paymentMethodDTOs)
                 .build();
 
         sellerRepository.save(toSellerEntity(sellerDTO));
@@ -105,7 +106,7 @@ public class SellerService {
         sellerDTO.setDistrict(sellerRequestDTO.getDistrict());
         sellerDTO.setCommune(sellerRequestDTO.getCommune());
         sellerDTO.setAddress(sellerRequestDTO.getAddress());
-        sellerDTO.setPaymentMethodDTOs(paymentMethodDTOs);
+        sellerDTO.setPaymentMethods(paymentMethodDTOs);
 
         sellerRepository.save(toSellerEntity(sellerDTO));
     }

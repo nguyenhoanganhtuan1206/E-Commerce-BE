@@ -3,6 +3,7 @@ package com.ecommerce.persistent.seller;
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
+import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
@@ -31,8 +32,6 @@ public class SellerEntity {
 
     private float sellerRating;
 
-    private boolean sellerApproval;
-
     private String address;
 
     private String city;
@@ -40,6 +39,9 @@ public class SellerEntity {
     private String district;
 
     private String commune;
+
+    @Enumerated(EnumType.STRING)
+    private Status sellerApproval;
 
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;

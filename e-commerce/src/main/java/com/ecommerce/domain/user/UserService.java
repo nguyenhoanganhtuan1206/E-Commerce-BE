@@ -24,11 +24,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import static com.ecommerce.api.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.UserError.*;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
+import static com.ecommerce.domain.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserSignUpResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateResponseDTO;

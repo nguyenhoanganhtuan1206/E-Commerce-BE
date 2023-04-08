@@ -1,4 +1,4 @@
-package com.ecommerce.api.user.mapper;
+package com.ecommerce.domain.user.mapper;
 
 import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.persistent.user.UserEntity;

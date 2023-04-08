@@ -1,5 +1,6 @@
 package com.ecommerce.api.seller.dto;
 
+import com.ecommerce.persistent.status.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -23,5 +24,5 @@ public class SellerSignUpResponseDTO {
 
     private String commune;
 
-    private boolean sellerApproval;
+    private Status sellerApproval;
 }

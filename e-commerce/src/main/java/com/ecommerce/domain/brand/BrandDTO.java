@@ -20,5 +20,5 @@ public class BrandDTO {
 
     private String brandName;
 
-    private CategoryDTO categoryDTO;
+    private CategoryDTO category;
 }
