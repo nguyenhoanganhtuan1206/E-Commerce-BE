@@ -54,28 +54,8 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
         final RoleEntity roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElse(null);
         final RoleEntity roleUser = roleRepository.findByName("ROLE_USER").orElse(null);
 
-        // ADD ADMIN
-        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
-            UserEntity userEntity = UserEntity.builder().email("admin@gmail.com")
-                    .password(passwordEncoder.encode("123456"))
-                    .phoneNumber("12323232").createdAt(Instant.now())
-                    .roles(new HashSet<>(Collections.singletonList(roleAdmin)))
-                    .build();
-
-            userRepository.save(userEntity);
-        }
-
-        // ADD USER
-        if (userRepository.findByEmail("user@gmail.com").isEmpty()) {
-
-            UserEntity userEntity = UserEntity.builder().email("user@gmail.com")
-                    .password(passwordEncoder.encode("123456"))
-                    .phoneNumber("12323232").createdAt(Instant.now())
-                    .roles(new HashSet<>(Collections.singletonList(roleUser)))
-                    .build();
-
-            userRepository.save(userEntity);
-        }
+        addNewUser("admin@gmail.com", "123456", "12323232", Instant.now(), roleAdmin);
+        addNewUser("user@gmail.com", "123456", "12323232", Instant.now(), roleUser);
     }
 
     public void seedPaymentMethod() {
@@ -89,6 +69,19 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
 
         if (paymentMethodRepository.findByName("Paypal").isEmpty()) {
             paymentMethodRepository.save(new PaymentMethodEntity("Paypal"));
+        }
+    }
+
+    private void addNewUser(final String email, final String password, final String phoneNumber, final Instant createdAt, final RoleEntity role) {
+        if (userRepository.findByEmail(email).isEmpty()) {
+            final UserEntity userEntity = new UserEntity();
+            userEntity.setEmail(email);
+            userEntity.setPassword(passwordEncoder.encode(password));
+            userEntity.setPhoneNumber(phoneNumber);
+            userEntity.setCreatedAt(createdAt);
+            userEntity.setRoles(new HashSet<>(Collections.singletonList(role)));
+
+            userRepository.save(userEntity);
         }
     }
 }

@@ -5,6 +5,8 @@ import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
+import java.util.List;
+
 @UtilityClass
 public class SellerDTOMapper {
 
@@ -16,5 +18,11 @@ public class SellerDTOMapper {
 
     public static SellerEntity toSellerEntity(final SellerDTO sellerDTO) {
         return modelMapper.map(sellerDTO, SellerEntity.class);
+    }
+
+    public static List<SellerDTO> toSellerDTOs(final List<SellerEntity> sellerEntities) {
+        return sellerEntities.stream()
+                .map(SellerDTOMapper::toSellerDTO)
+                .toList();
     }
 }

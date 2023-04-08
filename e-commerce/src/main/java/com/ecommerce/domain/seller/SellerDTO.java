@@ -6,6 +6,7 @@ import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -35,6 +36,10 @@ public class SellerDTO {
     private String commune;
 
     private Status sellerApproval;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     private Set<PaymentMethodDTO> paymentMethods;
 

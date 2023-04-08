@@ -14,6 +14,8 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.UUID;
@@ -21,8 +23,7 @@ import java.util.stream.Collectors;
 
 import static com.ecommerce.domain.seller.SellerError.supplyEmailSellerUsedError;
 import static com.ecommerce.domain.seller.SellerError.supplySellerNotFound;
-import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
-import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerEntity;
+import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.*;
 import static com.ecommerce.error.CommonError.supplyErrorProcesses;
 
 @Service
@@ -36,6 +37,10 @@ public class SellerService {
     private final PaymentMethodService paymentMethodService;
 
     private final AuthsProvider authsProvider;
+
+    public List<SellerDTO> findAllSortedByCreatedAt() {
+        return toSellerDTOs(sellerRepository.findAllSortedByCreatedAt());
+    }
 
     public SellerDTO findById(final UUID sellerId) {
         return toSellerDTO(sellerRepository.findById(sellerId)
@@ -87,6 +92,7 @@ public class SellerService {
                 .address(sellerRequestDTO.getAddress())
                 .sellerApproval(Status.PENDING)
                 .user(userDTO)
+                .createdAt(Instant.now())
                 .paymentMethods(paymentMethodDTOs)
                 .build();
 

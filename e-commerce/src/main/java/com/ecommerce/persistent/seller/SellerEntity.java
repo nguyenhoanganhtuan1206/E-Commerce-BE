@@ -10,6 +10,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.Set;
 import java.util.UUID;
 
@@ -39,6 +40,10 @@ public class SellerEntity {
     private String district;
 
     private String commune;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     @Enumerated(EnumType.STRING)
     private Status sellerApproval;

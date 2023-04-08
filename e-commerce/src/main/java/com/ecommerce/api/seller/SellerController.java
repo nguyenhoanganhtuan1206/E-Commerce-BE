@@ -1,7 +1,7 @@
 package com.ecommerce.api.seller;
 
+import com.ecommerce.api.seller.dto.SellerResponseDTO;
 import com.ecommerce.api.seller.dto.SellerSignUpRequestDTO;
-import com.ecommerce.api.seller.dto.SellerSignUpResponseDTO;
 import com.ecommerce.domain.seller.SellerService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ecommerce.api.seller.mapper.SellerSignUpDTOMapper.toSellerSignUpResponseDTO;
+import static com.ecommerce.api.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -21,9 +21,9 @@ public class SellerController {
 
     @PreAuthorize("hasRole('ROLE_USER')")
     @GetMapping("/registration")
-    public SellerSignUpResponseDTO getRegisteredSellerDetailsByUserId() {
+    public SellerResponseDTO getRegisteredSellerDetailsByUserId() {
         if (sellerService.getRegisteredSellerDetailsByUserId().isPresent()) {
-            return toSellerSignUpResponseDTO(sellerService.getRegisteredSellerDetailsByUserId().get());
+            return toSellerResponseDTO(sellerService.getRegisteredSellerDetailsByUserId().get());
         }
         return null;
     }
