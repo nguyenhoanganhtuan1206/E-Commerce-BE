@@ -58,7 +58,6 @@ public class ProductService {
 
         productDTO.setInventory(inventoryService.save(new InventoryDTO(productRequestDTO.getQuantity())));
         productDTO.setCategoryVariant(categoryVariantDTO);
-        productDTO.setSeller(sellerDTO);
 
         return toProductResponseDTO(productRepository.save(toProductEntity(productDTO)));
     }

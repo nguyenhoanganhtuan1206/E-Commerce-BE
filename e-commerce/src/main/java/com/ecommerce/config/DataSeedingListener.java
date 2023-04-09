@@ -14,7 +14,6 @@ import org.springframework.stereotype.Component;
 
 import java.time.Instant;
 import java.util.Collections;
-import java.util.HashSet;
 
 @Component
 @RequiredArgsConstructor
@@ -52,10 +51,16 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
         }
 
         final RoleEntity roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElse(null);
-        final RoleEntity roleUser = roleRepository.findByName("ROLE_USER").orElse(null);
-
-        addNewUser("admin@gmail.com", "123456", "12323232", Instant.now(), roleAdmin);
-        addNewUser("user@gmail.com", "123456", "12323232", Instant.now(), roleUser);
+        
+        if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
+            final UserEntity userEntity = new UserEntity();
+            userEntity.setEmail("admin@gmail.com");
+            userEntity.setUsername("Admin");
+            userEntity.setPassword(passwordEncoder.encode("123456"));
+            userEntity.setRoles(Collections.singleton(roleAdmin));
+            userEntity.setCreatedAt(Instant.now());
+            userRepository.save(userEntity);
+        }
     }
 
     public void seedPaymentMethod() {
@@ -69,19 +74,6 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
 
         if (paymentMethodRepository.findByName("Paypal").isEmpty()) {
             paymentMethodRepository.save(new PaymentMethodEntity("Paypal"));
-        }
-    }
-
-    private void addNewUser(final String email, final String password, final String phoneNumber, final Instant createdAt, final RoleEntity role) {
-        if (userRepository.findByEmail(email).isEmpty()) {
-            final UserEntity userEntity = new UserEntity();
-            userEntity.setEmail(email);
-            userEntity.setPassword(passwordEncoder.encode(password));
-            userEntity.setPhoneNumber(phoneNumber);
-            userEntity.setCreatedAt(createdAt);
-            userEntity.setRoles(new HashSet<>(Collections.singletonList(role)));
-
-            userRepository.save(userEntity);
         }
     }
 }

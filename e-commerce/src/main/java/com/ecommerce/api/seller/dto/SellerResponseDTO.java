@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -27,6 +28,10 @@ public class SellerResponseDTO {
     private String district;
 
     private String commune;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     private Status sellerApproval;
 }
