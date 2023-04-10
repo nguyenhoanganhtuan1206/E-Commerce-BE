@@ -75,16 +75,16 @@ public class UserService {
     }
 
     public UserDTO findByEmail(final String email) {
-        return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound(email)));
+        return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound("Email", email)));
     }
 
     public UserResponseDTO findProfileById(final UUID userId) {
         return toUserResponseDTO(userRepository.findProfileById(userId)
-                .orElseThrow(supplyUserNotFound(userId)));
+                .orElseThrow(supplyUserNotFound("id", userId)));
     }
 
     public UserDTO findById(final UUID userId) {
-        return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound(userId)));
+        return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound("id", userId)));
     }
 
     public UserUpdateResponseDTO updatePassword(final UserUpdatePasswordDTO userRequestDTO) {

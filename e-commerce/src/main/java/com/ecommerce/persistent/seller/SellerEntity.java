@@ -51,7 +51,7 @@ public class SellerEntity {
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = CascadeType.REMOVE)
     @JoinTable(name = "user_seller",
             joinColumns = {@JoinColumn(name = "seller_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})

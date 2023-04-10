@@ -5,6 +5,7 @@ import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.payment.PaymentMethodService;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.role.RoleDTO;
+import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
@@ -35,6 +36,8 @@ public class SellerService {
     private final SellerRepository sellerRepository;
 
     private final UserService userService;
+
+    private final RoleService roleService;
 
     private final PaymentMethodService paymentMethodService;
 
@@ -85,6 +88,17 @@ public class SellerService {
         final SellerDTO sellerDTO = findById(sellerId);
 
         sendEmailFeedbackUser(sellerDTO, BASE_URL_REGISTER_FORM, contentFeedback);
+    }
+
+    public void approveSellerRequest(final UUID sellerId) {
+        final SellerDTO sellerDTO = findById(sellerId);
+        final UserDTO userDTO = sellerDTO.getUser();
+
+        userDTO.getRoles().add(roleService.findByName("ROLE_SELLER"));
+        sellerDTO.setSellerApproval(Status.ACTIVE);
+
+        userService.save(userDTO);
+        sellerRepository.save(toSellerEntity(sellerDTO));
     }
 
     private void createNewSeller(final SellerSignUpRequestDTO sellerRequestDTO, final UserDTO userDTO) {

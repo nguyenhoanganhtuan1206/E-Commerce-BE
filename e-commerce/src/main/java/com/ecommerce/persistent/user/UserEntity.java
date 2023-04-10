@@ -43,10 +43,10 @@ public class UserEntity {
     @JsonIgnore
     private Set<LocationEntity> locations;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private SellerEntity seller;
 
-    @ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.MERGE)
+    @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

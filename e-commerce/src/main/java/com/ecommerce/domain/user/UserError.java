@@ -10,8 +10,8 @@ import java.util.function.Supplier;
 @UtilityClass
 public class UserError {
 
-    public static <T> Supplier<NotFoundException> supplyUserNotFound(final T input) {
-        return () -> new NotFoundException("User with %s not found", input);
+    public static <T> Supplier<NotFoundException> supplyUserNotFound(final String fieldName, final T fieldValue) {
+        return () -> new NotFoundException("User with %s %s cannot found", fieldName, fieldValue);
     }
 
     public static Supplier<BadRequestException> supplyUserExisted(final String email) {

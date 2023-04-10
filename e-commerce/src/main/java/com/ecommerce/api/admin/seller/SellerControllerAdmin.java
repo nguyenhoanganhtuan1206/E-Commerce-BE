@@ -29,9 +29,9 @@ public class SellerControllerAdmin {
         return toSellerResponseDTO(sellerService.findById(sellerId));
     }
 
-    @PutMapping("{sellerId}")
-    public void approveSellerRequest(final UUID sellerId) {
-
+    @PutMapping("{sellerId}/approval")
+    public void approveSellerRequest(final @PathVariable UUID sellerId) {
+        sellerService.approveSellerRequest(sellerId);
     }
 
     @PostMapping("{sellerId}/feedback")
