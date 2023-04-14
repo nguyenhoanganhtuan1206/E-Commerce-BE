@@ -15,9 +15,9 @@ public class LocationRequestDTO {
     @Size(min = 3, message = "Address is invalid")
     private String address;
 
-    @NotBlank(message = "City cannot be empty")
-    @Size(min = 3, message = "City is invalid")
-    private String city;
+    @NotBlank(message = "Province cannot be empty")
+    @Size(min = 3, message = "Province is invalid")
+    private String province;
 
     @NotBlank(message = "District cannot be empty")
     @Size(min = 3, message = "District is invalid")

@@ -25,7 +25,7 @@ public class VietnameseAddressController {
     }
 
     @GetMapping("/districts/{provinceName}/province")
-    public List<District> findDistrictByProvinceId(final @PathVariable String provinceName) {
+    public List<District> findDistrictByProvinceName(final @PathVariable String provinceName) {
         return addressService.findDistrictByProvinceName(provinceName);
     }
 

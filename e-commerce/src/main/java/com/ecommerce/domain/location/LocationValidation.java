@@ -15,7 +15,7 @@ public class LocationValidation {
                                                final LocationRequestDTO locationRequestDTOs) {
         for (LocationDTO location : locationDTOS) {
             if (StringUtils.equals(location.getAddress(), locationRequestDTOs.getAddress()) &&
-                    StringUtils.equals(location.getCity(), locationRequestDTOs.getCity()) &&
+                    StringUtils.equals(location.getProvince(), locationRequestDTOs.getProvince()) &&
                     StringUtils.equals(location.getDistrict(), locationRequestDTOs.getCommune())) {
                 throw supplyLocationAlreadyExisted().get();
             }

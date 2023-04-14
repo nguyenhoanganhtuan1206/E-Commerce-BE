@@ -111,7 +111,7 @@ public class SellerService {
                 .emailSeller(sellerRequestDTO.getEmailSeller())
                 .sellerRating((float) 0)
                 .phoneNumber(sellerRequestDTO.getPhoneNumber())
-                .city(sellerRequestDTO.getCity())
+                .province(sellerRequestDTO.getProvince())
                 .district(sellerRequestDTO.getDistrict())
                 .commune(sellerRequestDTO.getCommune())
                 .address(sellerRequestDTO.getAddress())
@@ -133,7 +133,7 @@ public class SellerService {
         sellerDTO.setEmailSeller(sellerRequestDTO.getEmailSeller());
         sellerDTO.setSellerRating((float) 0);
         sellerDTO.setPhoneNumber(sellerRequestDTO.getPhoneNumber());
-        sellerDTO.setCity(sellerRequestDTO.getCity());
+        sellerDTO.setProvince(sellerRequestDTO.getProvince());
         sellerDTO.setDistrict(sellerRequestDTO.getDistrict());
         sellerDTO.setCommune(sellerRequestDTO.getCommune());
         sellerDTO.setAddress(sellerRequestDTO.getAddress());

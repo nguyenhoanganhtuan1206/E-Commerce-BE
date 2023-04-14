@@ -31,8 +31,8 @@ public class SellerSignUpRequestDTO {
     @Size(min = 3, message = "Address is invalid")
     private String address;
 
-    @NotBlank(message = "City cannot be empty")
-    private String city;
+    @NotBlank(message = "Province cannot be empty")
+    private String province;
 
     @NotBlank(message = "District cannot be empty")
     private String district;

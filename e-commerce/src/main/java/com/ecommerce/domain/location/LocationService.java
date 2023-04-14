@@ -87,7 +87,7 @@ public class LocationService {
         verifyIfLocationExisted(locationDTOS, locationRequestDTO);
 
         locationDTO.setAddress(locationRequestDTO.getAddress());
-        locationDTO.setCity(locationRequestDTO.getCity());
+        locationDTO.setProvince(locationRequestDTO.getProvince());
         locationDTO.setCommune(locationRequestDTO.getCommune());
         locationDTO.setDistrict(locationRequestDTO.getDistrict());
         locationDTO.setDefaultLocation(locationRequestDTO.isDefaultLocation());

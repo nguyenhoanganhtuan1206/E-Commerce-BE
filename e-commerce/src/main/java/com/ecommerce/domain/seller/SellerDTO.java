@@ -29,7 +29,7 @@ public class SellerDTO {
 
     private String address;
 
-    private String city;
+    private String province;
 
     private String district;
 

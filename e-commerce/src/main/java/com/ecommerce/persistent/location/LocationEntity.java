@@ -22,7 +22,7 @@ public class LocationEntity {
 
     private String address;
 
-    private String city;
+    private String province;
 
     private String district;
 

@@ -23,7 +23,7 @@ public class SellerResponseDTO {
 
     private String address;
 
-    private String city;
+    private String province;
 
     private String district;
 
