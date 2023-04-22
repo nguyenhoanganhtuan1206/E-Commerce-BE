@@ -34,8 +34,8 @@ public class LocationService {
         return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
     }
 
-    public List<LocationDTO> findLocationsByUserIdAndSorted() {
-        return toLocationDTOs(locationRepository.findLocationsByUserIdAndSorted(authsProvider.getCurrentUserId()));
+    public List<LocationDTO> findLocationsByUserIdAndSorted(final UUID userId) {
+        return toLocationDTOs(locationRepository.findLocationsByUserIdAndSorted(userId));
     }
 
     public void delete(final UUID locationId) {

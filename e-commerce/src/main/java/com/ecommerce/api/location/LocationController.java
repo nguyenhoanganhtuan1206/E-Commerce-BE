@@ -23,9 +23,9 @@ import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 public class LocationController {
     private final LocationService locationService;
 
-    @GetMapping
-    public List<LocationResponseDTO> findLocationsByUserId() {
-        return toLocationResponseDTOs(locationService.findLocationsByUserIdAndSorted());
+    @GetMapping("/user/{userId}")
+    public List<LocationResponseDTO> findLocationsByUserId(@PathVariable final UUID userId) {
+        return toLocationResponseDTOs(locationService.findLocationsByUserIdAndSorted(userId));
     }
 
     @GetMapping("{locationId}")
@@ -46,14 +46,16 @@ public class LocationController {
     }
 
     @PutMapping("{locationId}")
-    public LocationResponseDTO updateLocation(final @PathVariable UUID locationId, final @Valid @RequestBody LocationRequestDTO locationRequestDTO, final BindingResult bindingResult) {
+    public LocationResponseDTO updateLocation(final @PathVariable UUID locationId,
+                                              final @Valid @RequestBody LocationRequestDTO locationRequestDTO,
+                                              final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
         return toLocationResponseDTO(locationService.updateLocation(locationId, locationRequestDTO));
     }
 
     @DeleteMapping("{locationId}")
-    public void updateLocation(final @PathVariable UUID locationId) {
+    public void deleteLocation(final @PathVariable UUID locationId) {
         locationService.delete(locationId);
     }
 }
