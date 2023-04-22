@@ -23,11 +23,11 @@ public class CategoryVariantEntity {
 
     private String variantName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.PERSIST})
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
-    @OneToMany(mappedBy = "categoryVariant", cascade = {CascadeType.ALL, CascadeType.MERGE})
+    @OneToMany(mappedBy = "categoryVariant")
     private Set<ProductEntity> products;
 
     public CategoryVariantEntity(String variantName) {

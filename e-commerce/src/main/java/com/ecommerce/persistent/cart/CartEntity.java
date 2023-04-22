@@ -34,10 +34,10 @@ public class CartEntity {
 
     @ManyToMany(mappedBy = "carts",
             fetch = FetchType.LAZY,
-            cascade = {CascadeType.PERSIST, CascadeType.ALL})
+            cascade = CascadeType.ALL)
     private Set<ProductEntity> products;
 
-    @OneToOne(cascade = CascadeType.DETACH)
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "user_cart",
             joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "cart_id", referencedColumnName = "id")})

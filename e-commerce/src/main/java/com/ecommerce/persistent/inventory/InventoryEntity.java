@@ -26,7 +26,7 @@ public class InventoryEntity {
 
     private Instant updatedAt;
 
-    @OneToOne(cascade = {CascadeType.MERGE, CascadeType.ALL})
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "inventory_product",
             joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
             inverseJoinColumns = {@JoinColumn(name = "inventory_id", referencedColumnName = "id")})
