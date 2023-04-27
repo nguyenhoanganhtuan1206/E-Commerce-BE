@@ -77,8 +77,7 @@ public class SellerService {
     }
 
     public SellerResponseDTO updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
-        // findByUserId(authsProvider.getCurrentUserId())
-        final SellerDTO sellerDTO = null;
+        final SellerDTO sellerDTO = toSellerDTO(findByUserId(authsProvider.getCurrentUserId()));
         final UserDTO userDTO = userService.findById(authsProvider.getCurrentUserId());
 
         if (!StringUtils.equals(sellerRequestDTO.getEmailSeller(), sellerDTO.getEmailSeller())) {
