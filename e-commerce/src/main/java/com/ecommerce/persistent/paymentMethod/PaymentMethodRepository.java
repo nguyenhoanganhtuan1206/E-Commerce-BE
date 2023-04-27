@@ -9,5 +9,5 @@ import java.util.UUID;
 @Repository
 public interface PaymentMethodRepository extends JpaRepository<PaymentMethodEntity, UUID> {
 
-    Optional<PaymentMethodEntity> findByName(final String name);
+    Optional<PaymentMethodEntity> findByNameIgnoreCase(final String name);
 }

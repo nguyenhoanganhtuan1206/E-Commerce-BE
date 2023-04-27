@@ -22,7 +22,7 @@ public class PaymentMethodEntity {
 
     private String name;
 
-    @ManyToMany(mappedBy = "paymentMethods", fetch = FetchType.LAZY)
+    @ManyToMany(mappedBy = "paymentMethods")
     private Set<SellerEntity> sellers;
 
     public PaymentMethodEntity(String name) {

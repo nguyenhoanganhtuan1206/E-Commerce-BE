@@ -33,7 +33,10 @@ public class LocationDTOMapper {
     }
 
     public static LocationResponseDTO toLocationResponseDTO(final LocationDTO locationDTO) {
-        return modelMapper.map(locationDTO, LocationResponseDTO.class);
+        final LocationResponseDTO locationResponseDTO = modelMapper.map(locationDTO, LocationResponseDTO.class);
+        locationResponseDTO.setUserId(locationDTO.getUser().getId());
+
+        return locationResponseDTO;
     }
 
     public static List<LocationResponseDTO> toLocationResponseDTOs(final List<LocationDTO> locationDTOs) {

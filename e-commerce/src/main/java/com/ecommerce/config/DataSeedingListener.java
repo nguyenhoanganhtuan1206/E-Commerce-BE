@@ -51,7 +51,7 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
         }
 
         final RoleEntity roleAdmin = roleRepository.findByName("ROLE_ADMIN").orElse(null);
-        
+
         if (userRepository.findByEmail("admin@gmail.com").isEmpty()) {
             final UserEntity userEntity = new UserEntity();
             userEntity.setEmail("admin@gmail.com");
@@ -68,11 +68,11 @@ public class DataSeedingListener implements ApplicationListener<ContextRefreshed
          * @ Add about payment method
          * */
 
-        if (paymentMethodRepository.findByName("COD").isEmpty()) {
+        if (paymentMethodRepository.findByNameIgnoreCase("COD").isEmpty()) {
             paymentMethodRepository.save(new PaymentMethodEntity("COD"));
         }
 
-        if (paymentMethodRepository.findByName("Paypal").isEmpty()) {
+        if (paymentMethodRepository.findByNameIgnoreCase("Paypal").isEmpty()) {
             paymentMethodRepository.save(new PaymentMethodEntity("Paypal"));
         }
     }

@@ -23,10 +23,10 @@ public class CategoryEntity {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category", cascade = {CascadeType.ALL, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "category")
     private Set<CategoryVariantEntity> categoryVariants;
 
-    @OneToMany(mappedBy = "category", cascade = {CascadeType.ALL, CascadeType.PERSIST})
+    @OneToMany(mappedBy = "category")
     private Set<BrandEntity> brands;
 
     public CategoryEntity(String name) {

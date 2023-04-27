@@ -22,4 +22,6 @@ public class LocationResponseDTO {
     private String commune;
 
     private boolean defaultLocation;
+
+    private UUID userId;
 }

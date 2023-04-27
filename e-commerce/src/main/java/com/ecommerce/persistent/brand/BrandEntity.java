@@ -2,9 +2,7 @@ package com.ecommerce.persistent.brand;
 
 import com.ecommerce.persistent.category.CategoryEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.UUID;
 
@@ -12,6 +10,8 @@ import java.util.UUID;
 @Table(name = "brand")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class BrandEntity {
 
@@ -24,8 +24,4 @@ public class BrandEntity {
     @ManyToOne(fetch = FetchType.LAZY, cascade = {CascadeType.ALL, CascadeType.MERGE})
     @JoinColumn(name = "category_id", nullable = false)
     private CategoryEntity category;
-
-    public BrandEntity(final String brandName) {
-        this.brandName = brandName;
-    }
 }

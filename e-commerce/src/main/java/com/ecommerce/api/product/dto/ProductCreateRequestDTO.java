@@ -17,7 +17,6 @@ public class ProductCreateRequestDTO {
     @Size(min = 6, max = 255, message = "Product name must be at between 6 to 255 characters")
     private String name;
 
-    @NotBlank(message = "Price cannot be empty")
     @Min(value = 5, message = "Price must be at least $5")
     @Max(value = 1000000, message = "Price must be less than $1000000")
     private long price;
@@ -29,14 +28,16 @@ public class ProductCreateRequestDTO {
     @Size(min = 6, max = 255, message = "Product description must be at between 6 to 255 characters")
     private String description;
 
-    @NotBlank(message = "Description cannot be empty")
     @Min(value = 1, message = "Quantity at least 1 unit")
     @Max(value = 10000, message = "Quantity cannot large than 10000 quantities")
     private int quantity;
 
+    @NotBlank(message = "Category name cannot be empty")
     private String categoryName;
 
+    @NotBlank(message = "Variant name cannot be empty")
     private String variantName;
 
+    @NotBlank(message = "Brand name cannot be empty")
     private String brandName;
 }

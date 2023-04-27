@@ -3,9 +3,7 @@ package com.ecommerce.persistent.variant;
 import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 import java.util.UUID;
@@ -15,6 +13,8 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@AllArgsConstructor
 public class CategoryVariantEntity {
 
     @Id
@@ -23,14 +23,10 @@ public class CategoryVariantEntity {
 
     private String variantName;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "category_id")
     private CategoryEntity category;
 
     @OneToMany(mappedBy = "categoryVariant")
     private Set<ProductEntity> products;
-
-    public CategoryVariantEntity(String variantName) {
-        this.variantName = variantName;
-    }
 }

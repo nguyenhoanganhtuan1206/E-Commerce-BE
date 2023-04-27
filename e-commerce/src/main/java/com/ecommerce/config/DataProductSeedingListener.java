@@ -32,8 +32,10 @@ public class DataProductSeedingListener implements ApplicationListener<ContextRe
 
             for (Object variantName : variantsSet) {
                 if (categoryVariantRepository.findByVariantName(variantName.toString()).isEmpty()) {
-                    final CategoryVariantEntity categoryVariant = new CategoryVariantEntity(variantName.toString());
-                    categoryVariant.setCategory(category);
+                    final CategoryVariantEntity categoryVariant = CategoryVariantEntity.builder()
+                            .variantName(variantName.toString())
+                            .category(category)
+                            .build();
                     variants.add(categoryVariant);
                 }
             }
@@ -41,8 +43,10 @@ public class DataProductSeedingListener implements ApplicationListener<ContextRe
 
             for (Object brandName : brandsSet) {
                 if (brandRepository.findByBrandName(brandName.toString()).isEmpty()) {
-                    final BrandEntity brand = new BrandEntity(brandName.toString());
-                    brand.setCategory(category);
+                    final BrandEntity brand = BrandEntity.builder()
+                            .brandName(brandName.toString())
+                            .category(category)
+                            .build();
                     brands.add(brand);
                 }
             }

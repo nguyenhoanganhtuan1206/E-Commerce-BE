@@ -3,14 +3,15 @@ package com.ecommerce.domain.product;
 import com.ecommerce.domain.inventory.InventoryDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ecommerce.persistent.status.Status;
+import lombok.*;
 
 import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class ProductDTO {
 
@@ -22,9 +23,7 @@ public class ProductDTO {
 
     private String condition;
 
-    private boolean productStatus;
-
-    private boolean productApproval;
+    private Status productApproval;
 
     private String description;
 

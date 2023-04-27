@@ -1,15 +1,15 @@
 package com.ecommerce.domain.inventory;
 
-import com.ecommerce.domain.product.ProductDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @Setter
+@With
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class InventoryDTO {
 
@@ -20,10 +20,4 @@ public class InventoryDTO {
     private Instant createdAt;
 
     private Instant updatedAt;
-
-    private ProductDTO product;
-
-    public InventoryDTO(int quantity) {
-        this.quantity = quantity;
-    }
 }

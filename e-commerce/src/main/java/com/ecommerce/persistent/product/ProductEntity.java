@@ -1,9 +1,9 @@
 package com.ecommerce.persistent.product;
 
 import com.ecommerce.persistent.cart.CartEntity;
-import com.ecommerce.persistent.imagesProduct.ImagesEntity;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
+import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import jakarta.persistence.*;
 import lombok.*;
@@ -30,19 +30,20 @@ public class ProductEntity {
 
     private String condition;
 
-    private boolean productApproval;
+    @Enumerated(EnumType.STRING)
+    private Status productApproval;
 
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private SellerEntity seller;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "category_variant_id", nullable = false)
     private CategoryVariantEntity categoryVariant;
 
-    @OneToOne(mappedBy = "product")
+    @OneToOne(mappedBy = "product", cascade = CascadeType.ALL)
     private InventoryEntity inventory;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -52,7 +53,4 @@ public class ProductEntity {
             inverseJoinColumns = @JoinColumn(name = "product_id")
     )
     private Set<CartEntity> carts;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.PERSIST)
-    private Set<ImagesEntity> images;
 }
