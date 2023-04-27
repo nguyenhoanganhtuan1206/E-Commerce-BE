@@ -1,5 +1,6 @@
 package com.ecommerce.domain.seller;
 
+import com.ecommerce.api.seller.dto.SellerResponseDTO;
 import com.ecommerce.api.seller.dto.SellerSignUpRequestDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.payment.PaymentMethodService;
@@ -9,6 +10,7 @@ import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.seller.mapper.SellerDTOMapper;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
+import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.seller.SellerRepository;
 import com.ecommerce.persistent.status.Status;
 import lombok.RequiredArgsConstructor;
@@ -23,6 +25,7 @@ import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
+import static com.ecommerce.api.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
 import static com.ecommerce.domain.seller.SellerError.supplyEmailSellerUsedError;
 import static com.ecommerce.domain.seller.SellerError.supplySellerNotFound;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.*;
@@ -51,11 +54,12 @@ public class SellerService {
 
     public SellerDTO findById(final UUID sellerId) {
         return toSellerDTO(sellerRepository.findById(sellerId)
-                .orElseThrow(supplySellerNotFound(sellerId)));
+                .orElseThrow(supplySellerNotFound("id", sellerId.toString())));
     }
 
-    public SellerDTO findByUserId(final UUID userId) {
-        return toSellerDTO(sellerRepository.findByUserId(userId).orElseThrow(supplySellerNotFound(userId)));
+    public SellerEntity findByUserId(final UUID userId) {
+        return sellerRepository.findByUserId(userId)
+                .orElseThrow(supplySellerNotFound("user id", userId.toString()));
     }
 
     public Optional<SellerDTO> getRegisteredSellerDetailsByUserId() {
@@ -63,24 +67,25 @@ public class SellerService {
                 .map(SellerDTOMapper::toSellerDTO);
     }
 
-    public void registerNewSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
+    public SellerResponseDTO registerNewSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
         final UserDTO userDTO = userService.findById(authsProvider.getCurrentUserId());
 
         verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         verifyPermissionSellerRegister(userDTO);
 
-        createNewSeller(sellerRequestDTO, userDTO);
+        return toSellerResponseDTO(createNewSeller(sellerRequestDTO, userDTO));
     }
 
-    public void updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
-        final SellerDTO sellerDTO = findByUserId(authsProvider.getCurrentUserId());
+    public SellerResponseDTO updateSeller(final SellerSignUpRequestDTO sellerRequestDTO) {
+        // findByUserId(authsProvider.getCurrentUserId())
+        final SellerDTO sellerDTO = null;
         final UserDTO userDTO = userService.findById(authsProvider.getCurrentUserId());
 
         if (!StringUtils.equals(sellerRequestDTO.getEmailSeller(), sellerDTO.getEmailSeller())) {
             verifyIfEmailSellerAvailable(sellerRequestDTO.getEmailSeller());
         }
         verifyPermissionSellerRegister(userDTO);
-        updateSeller(sellerDTO, sellerRequestDTO);
+        return toSellerResponseDTO(updateSeller(sellerDTO, sellerRequestDTO));
     }
 
     public void sendFeedbackToUser(final UUID sellerId, final String contentFeedback) {
@@ -90,7 +95,7 @@ public class SellerService {
         sendEmailFeedbackUser(sellerDTO, BASE_URL_REGISTER_FORM, contentFeedback);
     }
 
-    public void approveSellerRequest(final UUID sellerId) {
+    public SellerDTO approveSellerRequest(final UUID sellerId) {
         final SellerDTO sellerDTO = findById(sellerId);
         final UserDTO userDTO = sellerDTO.getUser();
 
@@ -98,13 +103,11 @@ public class SellerService {
         sellerDTO.setSellerApproval(Status.ACTIVE);
 
         userService.save(userDTO);
-        sellerRepository.save(toSellerEntity(sellerDTO));
+        return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
     }
 
-    private void createNewSeller(final SellerSignUpRequestDTO sellerRequestDTO, final UserDTO userDTO) {
-        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
-                .map(paymentMethodService::findByName)
-                .collect(Collectors.toSet());
+    private SellerDTO createNewSeller(final SellerSignUpRequestDTO sellerRequestDTO, final UserDTO userDTO) {
+        final Set<PaymentMethodDTO> paymentMethodDTOs = findPaymentMethodsByName(sellerRequestDTO.getNamePaymentMethods());
 
         final SellerDTO sellerDTO = SellerDTO.builder()
                 .sellerName(sellerRequestDTO.getSellerName())
@@ -121,13 +124,11 @@ public class SellerService {
                 .paymentMethods(paymentMethodDTOs)
                 .build();
 
-        sellerRepository.save(toSellerEntity(sellerDTO));
+        return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
     }
 
-    private void updateSeller(final SellerDTO sellerDTO, final SellerSignUpRequestDTO sellerRequestDTO) {
-        final Set<PaymentMethodDTO> paymentMethodDTOs = sellerRequestDTO.getNamePaymentMethods().stream()
-                .map(paymentMethodService::findByName)
-                .collect(Collectors.toSet());
+    private SellerDTO updateSeller(final SellerDTO sellerDTO, final SellerSignUpRequestDTO sellerRequestDTO) {
+        final Set<PaymentMethodDTO> paymentMethodDTOs = findPaymentMethodsByName(sellerRequestDTO.getNamePaymentMethods());
 
         sellerDTO.setSellerName(sellerRequestDTO.getSellerName());
         sellerDTO.setEmailSeller(sellerRequestDTO.getEmailSeller());
@@ -140,7 +141,13 @@ public class SellerService {
         sellerDTO.setPaymentMethods(paymentMethodDTOs);
         sellerDTO.setUpdatedAt(Instant.now());
 
-        sellerRepository.save(toSellerEntity(sellerDTO));
+        return toSellerDTO(sellerRepository.save(toSellerEntity(sellerDTO)));
+    }
+
+    private Set<PaymentMethodDTO> findPaymentMethodsByName(final Set<String> paymentMethodDTOS) {
+        return paymentMethodDTOS.stream()
+                .map(paymentMethodService::findByName)
+                .collect(Collectors.toSet());
     }
 
     private void verifyIfEmailSellerAvailable(final String emailSeller) {

@@ -1,7 +1,6 @@
 package com.ecommerce.domain.seller;
 
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
-import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.*;
@@ -44,6 +43,4 @@ public class SellerDTO {
     private Set<PaymentMethodDTO> paymentMethods;
 
     private UserDTO user;
-
-    private Set<ProductDTO> products;
 }

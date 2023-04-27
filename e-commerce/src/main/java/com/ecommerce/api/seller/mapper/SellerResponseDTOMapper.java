@@ -13,7 +13,10 @@ public class SellerResponseDTOMapper {
     private static final ModelMapper modalMapper = new ModelMapper();
 
     public static SellerResponseDTO toSellerResponseDTO(final SellerDTO sellerDTO) {
-        return modalMapper.map(sellerDTO, SellerResponseDTO.class);
+        final SellerResponseDTO sellerResponseDTO = modalMapper.map(sellerDTO, SellerResponseDTO.class);
+
+        sellerResponseDTO.setUserId(sellerDTO.getUser().getId());
+        return sellerResponseDTO;
     }
 
     public static List<SellerResponseDTO> toSellerResponseDTOs(final List<SellerDTO> sellerDTOs) {

@@ -30,8 +30,8 @@ public class SellerControllerAdmin {
     }
 
     @PutMapping("{sellerId}/approval")
-    public void approveSellerRequest(final @PathVariable UUID sellerId) {
-        sellerService.approveSellerRequest(sellerId);
+    public SellerResponseDTO approveSellerRequest(final @PathVariable UUID sellerId) {
+        return toSellerResponseDTO(sellerService.approveSellerRequest(sellerId));
     }
 
     @PostMapping("{sellerId}/feedback")

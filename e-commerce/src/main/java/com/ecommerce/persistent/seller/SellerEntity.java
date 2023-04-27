@@ -51,16 +51,14 @@ public class SellerEntity {
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;
 
-    @OneToOne(cascade = CascadeType.REMOVE)
-    @JoinTable(name = "user_seller",
-            joinColumns = {@JoinColumn(name = "seller_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")})
+    @OneToOne
+    @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
     @OneToMany(mappedBy = "seller")
     private Set<CartEntity> carts;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "payment_method_seller",
             joinColumns = @JoinColumn(name = "seller_id"),
             inverseJoinColumns = @JoinColumn(name = "payment_method_id"))

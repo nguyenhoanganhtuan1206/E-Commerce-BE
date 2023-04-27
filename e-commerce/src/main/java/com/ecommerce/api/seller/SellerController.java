@@ -29,19 +29,19 @@ public class SellerController {
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PutMapping("/registration")
-    public void updateSeller(final @Valid @RequestBody SellerSignUpRequestDTO sellerSignUpRequestDTO,
-                             final BindingResult bindingResult) {
+    @PostMapping("/registration")
+    public SellerResponseDTO registerNewSeller(final @Valid @RequestBody SellerSignUpRequestDTO sellerRequestDTO, final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
-        sellerService.updateSeller(sellerSignUpRequestDTO);
+        return sellerService.registerNewSeller(sellerRequestDTO);
     }
 
     @PreAuthorize("hasRole('ROLE_USER')")
-    @PostMapping("/registration")
-    public void registerNewSeller(final @Valid @RequestBody SellerSignUpRequestDTO sellerRequestDTO, final BindingResult bindingResult) {
+    @PutMapping("/registration")
+    public SellerResponseDTO updateSeller(final @Valid @RequestBody SellerSignUpRequestDTO sellerSignUpRequestDTO,
+                                          final BindingResult bindingResult) {
         handleValidationError(bindingResult);
 
-        sellerService.registerNewSeller(sellerRequestDTO);
+        return sellerService.updateSeller(sellerSignUpRequestDTO);
     }
 }
