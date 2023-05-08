@@ -1,4 +1,4 @@
-package com.ecommerce.api.brand.dto;
+package com.ecommerce.api.style.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -9,9 +9,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
-public class BrandResponseDTO {
+public class ProductStyleResponseDTO {
 
     private UUID id;
 
-    private String brandName;
+    private String name;
 }
