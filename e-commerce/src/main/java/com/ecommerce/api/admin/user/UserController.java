@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
+
 @RestController
 @RequestMapping("/api/v1/users")
 @RequiredArgsConstructor
@@ -27,6 +29,6 @@ public class UserController {
 
     @GetMapping("{userId}")
     public UserDTO findById(final @PathVariable UUID userId) {
-        return userService.findById(userId);
+        return toUserDTO(userService.findById(userId));
     }
 }

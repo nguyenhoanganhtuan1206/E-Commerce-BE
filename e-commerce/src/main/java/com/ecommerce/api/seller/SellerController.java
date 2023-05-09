@@ -9,7 +9,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ecommerce.api.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
+import static com.ecommerce.domain.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController

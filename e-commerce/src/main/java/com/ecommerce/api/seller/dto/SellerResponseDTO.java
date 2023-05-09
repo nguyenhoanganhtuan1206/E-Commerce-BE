@@ -1,13 +1,11 @@
 package com.ecommerce.api.seller.dto;
 
-import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -36,8 +34,6 @@ public class SellerResponseDTO {
     private Instant updatedAt;
 
     private Status sellerApproval;
-
-    private Set<PaymentMethodDTO> paymentMethods;
 
     private UUID userId;
 }

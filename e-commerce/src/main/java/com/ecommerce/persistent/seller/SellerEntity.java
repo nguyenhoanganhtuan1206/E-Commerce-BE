@@ -1,16 +1,15 @@
 package com.ecommerce.persistent.seller;
 
 import com.ecommerce.persistent.cart.CartEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.status.Status;
+import com.ecommerce.persistent.style.ProductStyleEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -18,6 +17,8 @@ import java.util.UUID;
 @Table(name = "sellers")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class SellerEntity {
 
@@ -51,16 +52,13 @@ public class SellerEntity {
     @OneToMany(mappedBy = "seller")
     private Set<ProductEntity> products;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
 
     @OneToMany(mappedBy = "seller")
     private Set<CartEntity> carts;
 
-    @ManyToMany
-    @JoinTable(name = "payment_method_seller",
-            joinColumns = @JoinColumn(name = "seller_id"),
-            inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
-    private Set<PaymentMethodEntity> paymentMethods;
+    @OneToMany(mappedBy = "seller")
+    private List<ProductStyleEntity> productStyles;
 }

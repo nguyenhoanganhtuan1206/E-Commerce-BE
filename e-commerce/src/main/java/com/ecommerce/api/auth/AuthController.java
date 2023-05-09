@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.stream.Collectors;
 
 import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.error.CommonError.supplyUnauthorizedException;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
@@ -43,11 +44,11 @@ public class AuthController {
          * */
         try {
             final Authentication authentication = authenticationManager.authenticate(toAuthentication(userLoginRequestDTO));
-            final UserDTO userDTO = userService.findByEmail(userLoginRequestDTO.getEmail());
+            final UserDTO userDTO = toUserDTO(userService.findByEmail(userLoginRequestDTO.getEmail()));
 
             return generateJwtToken(userDTO, (JwtUserDetails) authentication.getPrincipal());
         } catch (Exception exception) {
-            throw supplyUnauthorizedException("Bad credentials. Please check your inputs again!").get();
+            throw supplyUnauthorizedException("Bad credentials. Please check your inputs !").get();
         }
     }
 
@@ -59,7 +60,7 @@ public class AuthController {
             handleValidationError(bindingResult);
 
             final Authentication authentication = jwtTokenService.parse(request.getToken());
-            final UserDTO userDTO = userService.findByEmail(authentication.getPrincipal().toString());
+            final UserDTO userDTO = toUserDTO(userService.findByEmail(authentication.getPrincipal().toString()));
 
             return generateJwtToken(userDTO, (JwtUserDetails) authentication.getPrincipal());
         } catch (Exception exception) {

@@ -1,12 +1,9 @@
 package com.ecommerce.domain.seller;
 
-import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
-import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.*;
 
 import java.time.Instant;
-import java.util.Set;
 import java.util.UUID;
 
 @Getter
@@ -39,8 +36,4 @@ public class SellerDTO {
     private Instant createdAt;
 
     private Instant updatedAt;
-
-    private Set<PaymentMethodDTO> paymentMethods;
-
-    private UserDTO user;
 }

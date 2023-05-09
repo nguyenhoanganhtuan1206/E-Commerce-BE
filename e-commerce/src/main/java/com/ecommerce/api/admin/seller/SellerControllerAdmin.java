@@ -9,8 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-import static com.ecommerce.api.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
-import static com.ecommerce.api.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTOs;
+import static com.ecommerce.domain.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
+import static com.ecommerce.domain.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTOs;
 
 @RestController
 @RequestMapping(value = "/api/v1/admin/sellers")

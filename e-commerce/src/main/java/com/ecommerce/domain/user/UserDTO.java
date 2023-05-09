@@ -14,10 +14,6 @@ import java.util.UUID;
 @NoArgsConstructor
 public class UserDTO {
 
-    /**
-     * @ DTO has represents all fields from UserEntity
-     */
-
     private UUID id;
 
     private String username;
@@ -33,6 +29,8 @@ public class UserDTO {
     private String password;
 
     private String address;
+
+    private UUID sellerId;
 
     private Set<RoleDTO> roles;
 }

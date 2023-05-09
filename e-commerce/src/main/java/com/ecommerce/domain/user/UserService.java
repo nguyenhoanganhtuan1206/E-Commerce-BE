@@ -8,9 +8,10 @@ import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
 import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
-import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.mapper.UserDTOMapper;
+import com.ecommerce.persistent.role.RoleEntity;
+import com.ecommerce.persistent.user.UserEntity;
 import com.ecommerce.persistent.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.mail.javamail.JavaMailSender;
@@ -25,11 +26,8 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.ecommerce.domain.user.UserError.*;
-import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
-import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserEntity;
 import static com.ecommerce.domain.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
-import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserSignUpResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateResponseDTO;
 import static com.ecommerce.error.CommonError.supplyErrorProcesses;
@@ -56,26 +54,28 @@ public class UserService {
         return toUserDTOs(userRepository.findAll());
     }
 
-    public UserDTO save(final UserDTO userDTO) {
-        return toUserDTO(userRepository.save(toUserEntity(userDTO)));
+    public UserEntity save(final UserEntity user) {
+        return userRepository.save(user);
     }
 
     public UserSignUpResponseDTO signUp(final UserSignUpRequestDTO userRequestDTO) {
         verifyIfUserAvailable(userRequestDTO.getEmail());
 
-        final UserDTO userDTO = toUserDTO(userRequestDTO);
-        final RoleDTO roleDTO = roleService.findByName("ROLE_USER");
+        final RoleEntity role = roleService.findByName("ROLE_USER");
 
-        userDTO.setPassword(passwordEncoder.encode(userRequestDTO.getPassword()));
-        userDTO.setCreatedAt(Instant.now());
-        userDTO.setRoles(Collections.singleton(roleDTO));
-        userDTO.setAddress(userRequestDTO.getAddress());
+        final UserEntity userCreate = UserEntity.builder()
+                .password(passwordEncoder.encode(userRequestDTO.getPassword()))
+                .createdAt(Instant.now())
+                .roles(Collections.singleton(role))
+                .address(userRequestDTO.getAddress())
+                .build();
 
-        return toUserSignUpResponseDTO(userRepository.save(toUserEntity(userDTO)));
+        return toUserSignUpResponseDTO(userRepository.save(userCreate));
     }
 
-    public UserDTO findByEmail(final String email) {
-        return toUserDTO(userRepository.findByEmail(email).orElseThrow(supplyUserNotFound("Email", email)));
+    public UserEntity findByEmail(final String email) {
+        return userRepository.findByEmail(email)
+                .orElseThrow(supplyUserNotFound("email", email));
     }
 
     public UserResponseDTO findProfileById(final UUID userId) {
@@ -83,28 +83,28 @@ public class UserService {
                 .orElseThrow(supplyUserNotFound("id", userId)));
     }
 
-    public UserDTO findById(final UUID userId) {
-        return toUserDTO(userRepository.findById(userId).orElseThrow(supplyUserNotFound("id", userId)));
+    public UserEntity findById(final UUID userId) {
+        return userRepository.findById(userId).orElseThrow(supplyUserNotFound("id", userId));
     }
 
     public UserUpdateResponseDTO updatePassword(final UserUpdatePasswordDTO userRequestDTO) {
-        final UserDTO user = findById(authsProvider.getCurrentUserId());
+        final UserEntity userUpdate = findById(authsProvider.getCurrentUserId());
 
-        if (!passwordEncoder.matches(userRequestDTO.getCurrentPassword(), user.getPassword())) {
+        if (!passwordEncoder.matches(userRequestDTO.getCurrentPassword(), userUpdate.getPassword())) {
             throw supplyValidationError("The password you entered does not match your current password.").get();
         }
 
-        if (passwordEncoder.matches(userRequestDTO.getNewPassword(), user.getPassword())) {
+        if (passwordEncoder.matches(userRequestDTO.getNewPassword(), userUpdate.getPassword())) {
             throw supplyConflictError("You used this password recently. Please choose a different one.").get();
         }
 
-        user.setPassword(passwordEncoder.encode(userRequestDTO.getNewPassword()));
+        userUpdate.setPassword(passwordEncoder.encode(userRequestDTO.getNewPassword()));
 
-        return toUserUpdateResponseDTO(userRepository.save(toUserEntity(user)));
+        return toUserUpdateResponseDTO(userRepository.save(userUpdate));
     }
 
     public UserUpdateResponseDTO update(final UserUpdateRequestDTO userUpdate) {
-        final UserDTO user = findById(authsProvider.getCurrentUserId());
+        final UserEntity user = findById(authsProvider.getCurrentUserId());
 
         if (!user.getEmail().equals(userUpdate.getEmail())) {
             verifyIfUserAvailable(userUpdate.getEmail());
@@ -117,34 +117,34 @@ public class UserService {
         user.setAddress(userUpdate.getAddress());
         user.setUpdatedAt(Instant.now());
 
-        return toUserUpdateResponseDTO(userRepository.save(toUserEntity(user)));
+        return toUserUpdateResponseDTO(userRepository.save(user));
     }
 
     /* FORGET PASSWORD HANDLER */
     public void handleForgetPassword(final String email) {
         final String BASE_URL_FORGET_PASSWORD = "http://localhost:3000/reset-password/";
-        final UserDTO userDTO = findByEmail(email);
+        final UserEntity userFound = findByEmail(email);
 
         /* Generate token */
-        final String token = generateToken(userDTO.getEmail(), (long) 1000000);
+        final String token = generateToken(userFound.getEmail(), (long) 1000000);
 
         final String linkResetPassword = BASE_URL_FORGET_PASSWORD + token;
-        sendEmailResetPassword(userDTO, linkResetPassword);
+        sendEmailResetPassword(userFound, linkResetPassword);
     }
 
     public void handleResetPassword(final UserRequestResetPasswordDTO userRequestDTO, final String token) {
         final Authentication authentication = parse(token);
-        final UserDTO user = findByEmail(authentication.getCredentials().toString());
+        final UserEntity user = findByEmail(authentication.getCredentials().toString());
 
         if (passwordEncoder.matches(userRequestDTO.getNewPassword(), user.getPassword())) {
             throw supplyConflictError("You used this password recently. Please choose a different one.").get();
         }
 
         user.setPassword(passwordEncoder.encode(userRequestDTO.getNewPassword()));
-        userRepository.save(toUserEntity(user));
+        userRepository.save(user);
     }
 
-    private void sendEmailResetPassword(final UserDTO user, final String linkResetPassword) {
+    private void sendEmailResetPassword(final UserEntity user, final String linkResetPassword) {
         try {
             final String subject = "Here's the link to reset your password";
             String content = "<body style=\"padding: 0;margin: 0;\">" +
