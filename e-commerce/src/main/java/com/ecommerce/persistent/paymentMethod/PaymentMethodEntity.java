@@ -1,6 +1,6 @@
 package com.ecommerce.persistent.paymentMethod;
 
-import com.ecommerce.persistent.seller.SellerEntity;
+import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -23,7 +23,7 @@ public class PaymentMethodEntity {
     private String name;
 
     @ManyToMany(mappedBy = "paymentMethods")
-    private Set<SellerEntity> sellers;
+    private Set<ProductEntity> products;
 
     public PaymentMethodEntity(String name) {
         this.name = name;
