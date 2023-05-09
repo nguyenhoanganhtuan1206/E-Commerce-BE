@@ -1,13 +1,10 @@
 package com.ecommerce.persistent.category;
 
-import com.ecommerce.persistent.brand.BrandEntity;
-import com.ecommerce.persistent.variant.CategoryVariantEntity;
+import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -15,6 +12,9 @@ import java.util.UUID;
 @Getter
 @Setter
 @NoArgsConstructor
+@Builder
+@With
+@AllArgsConstructor
 public class CategoryEntity {
 
     @Id
@@ -23,11 +23,8 @@ public class CategoryEntity {
 
     private String categoryName;
 
-    @OneToMany(mappedBy = "category")
-    private Set<CategoryVariantEntity> categoryVariants;
-
-    @OneToMany(mappedBy = "category")
-    private Set<BrandEntity> brands;
+    @ManyToMany(mappedBy = "categories")
+    private List<ProductEntity> products;
 
     public CategoryEntity(String name) {
         this.categoryName = name;

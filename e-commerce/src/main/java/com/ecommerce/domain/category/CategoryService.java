@@ -1,12 +1,13 @@
 package com.ecommerce.domain.category;
 
+import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.category.CategoryRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.util.Set;
+import java.util.List;
 
-import static com.ecommerce.domain.category.mapper.CategoryDTOMapper.toCategoryDTOs;
+import static com.ecommerce.domain.category.CategoryError.supplyCategoryNotFound;
 
 @Service
 @RequiredArgsConstructor
@@ -14,7 +15,11 @@ public class CategoryService {
 
     private final CategoryRepository categoryRepository;
 
-    public Set<CategoryDTO> findAll() {
-        return toCategoryDTOs(categoryRepository.findAll());
+    public CategoryEntity findByCategoryName(final String categoryName) {
+        return categoryRepository.findByCategoryName(categoryName).orElseThrow(supplyCategoryNotFound(categoryName));
+    }
+
+    public List<CategoryEntity> findAll() {
+        return categoryRepository.findAll();
     }
 }

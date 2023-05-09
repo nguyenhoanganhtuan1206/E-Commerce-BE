@@ -7,19 +7,19 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.Set;
+import java.util.List;
 
-import static com.ecommerce.api.category.mapper.CategoryDTOMapper.toCategoryResponseDTOs;
+import static com.ecommerce.domain.category.mapper.CategoryResponseDTOMapper.toCategoryResponseDTOs;
 
 @RestController
-@RequestMapping(value = "/api/v1/category")
+@RequestMapping(value = "/api/v1/categories")
 @RequiredArgsConstructor
 public class CategoryController {
 
     private final CategoryService categoryService;
 
     @GetMapping
-    public Set<CategoryResponseDTO> findAll() {
+    public List<CategoryResponseDTO> findAll() {
         return toCategoryResponseDTOs(categoryService.findAll());
     }
 }
