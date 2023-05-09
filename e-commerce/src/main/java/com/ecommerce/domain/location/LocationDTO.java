@@ -1,6 +1,5 @@
 package com.ecommerce.domain.location;
 
-import com.ecommerce.domain.user.UserDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -29,5 +28,5 @@ public class LocationDTO {
 
     private boolean defaultLocation;
 
-    private UserDTO user;
+    private UUID userId;
 }

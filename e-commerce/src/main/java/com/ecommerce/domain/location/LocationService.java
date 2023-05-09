@@ -2,9 +2,8 @@ package com.ecommerce.domain.location;
 
 import com.ecommerce.api.location.dto.LocationRequestDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
-import com.ecommerce.domain.location.mapper.LocationDTOMapper;
-import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
+import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.location.LocationRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.location.LocationError.supplyLocationNotFound;
 import static com.ecommerce.domain.location.LocationValidation.verifyIfLocationExisted;
-import static com.ecommerce.domain.location.mapper.LocationDTOMapper.*;
 
 @Service
 @RequiredArgsConstructor
@@ -28,88 +26,82 @@ public class LocationService {
 
     private final AuthsProvider authsProvider;
 
-    public LocationDTO save(final LocationDTO locationDTO) {
-        locationDTO.setCreatedAt(Instant.now());
-
-        return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
-    }
-
-    public List<LocationDTO> findLocationsByUserIdAndSorted(final UUID userId) {
-        return toLocationDTOs(locationRepository.findLocationsByUserIdAndSorted(userId));
+    public List<LocationEntity> findLocationsByUserIdAndSorted(final UUID userId) {
+        return locationRepository.findLocationsByUserIdAndSorted(userId);
     }
 
     public void delete(final UUID locationId) {
-        final LocationDTO locationDTO = findById(locationId);
-
-        locationRepository.delete(toLocationEntity(locationDTO));
+        locationRepository.delete(findById(locationId));
     }
 
-    public LocationDTO findById(final UUID locationId) {
-        return toLocationDTO(locationRepository.findById(locationId)
-                .orElseThrow(supplyLocationNotFound(locationId)));
+    public LocationEntity findById(final UUID locationId) {
+        return locationRepository.findById(locationId)
+                .orElseThrow(supplyLocationNotFound(locationId));
     }
 
-    public LocationDTO addLocation(final LocationRequestDTO locationRequestDTO) {
-        final LocationDTO location = toLocationDTO(locationRequestDTO);
-        final UserDTO userDTO = userService.findById(authsProvider.getCurrentUserId());
-        final List<LocationDTO> locationDTOS = findLocationsByUserId(authsProvider.getCurrentUserId());
+    public LocationEntity addLocation(final LocationRequestDTO locationRequestDTO) {
+        final List<LocationEntity> locations = findLocationsByUserId(authsProvider.getCurrentUserId());
 
-        verifyIfLocationExisted(locationDTOS, locationRequestDTO);
+        verifyIfLocationExisted(locations, locationRequestDTO);
 
         if (locationRequestDTO.isDefaultLocation()) {
             changeDefaultLocationIfAvailable();
         }
 
-        location.setCreatedAt(Instant.now());
-        location.setUser(userDTO);
-        location.setDefaultLocation(locationRequestDTO.isDefaultLocation());
+        final LocationEntity location = LocationEntity.builder()
+                .address(locationRequestDTO.getAddress())
+                .province(locationRequestDTO.getProvince())
+                .district(locationRequestDTO.getDistrict())
+                .commune(locationRequestDTO.getCommune())
+                .defaultLocation(locationRequestDTO.isDefaultLocation())
+                .createdAt(Instant.now())
+                .user(userService.findById(authsProvider.getCurrentUserId()))
+                .build();
 
-        userService.save(userDTO);
-        return save(location);
+        return locationRepository.save(location);
     }
 
-    public LocationDTO setDefaultLocation(final UUID locationId) {
-        final LocationDTO locationDTO = findById(locationId);
+    public LocationEntity setDefaultLocation(final UUID locationId) {
+        final LocationEntity locationFound = findById(locationId);
         changeDefaultLocationIfAvailable();
-        locationDTO.setDefaultLocation(true);
+        locationFound.setDefaultLocation(true);
 
-        return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
+        return locationRepository.save(locationFound);
     }
 
-    public LocationDTO updateLocation(final UUID locationId, final LocationRequestDTO locationRequestDTO) {
-        final LocationDTO locationDTO = findById(locationId);
-        final List<LocationDTO> locationDTOS = findLocationsByUserId(authsProvider.getCurrentUserId());
+    public LocationEntity updateLocation(final UUID locationId, final LocationRequestDTO locationRequestDTO) {
+        final LocationEntity locationFound = findById(locationId);
+        final List<LocationEntity> locationsExisted = findLocationsByUserId(authsProvider.getCurrentUserId());
 
         if (locationRequestDTO.isDefaultLocation()) {
             changeDefaultLocationIfAvailable();
         }
 
-        verifyIfLocationExisted(locationDTOS, locationRequestDTO);
+        verifyIfLocationExisted(locationsExisted, locationRequestDTO);
 
-        locationDTO.setAddress(locationRequestDTO.getAddress());
-        locationDTO.setProvince(locationRequestDTO.getProvince());
-        locationDTO.setCommune(locationRequestDTO.getCommune());
-        locationDTO.setDistrict(locationRequestDTO.getDistrict());
-        locationDTO.setDefaultLocation(locationRequestDTO.isDefaultLocation());
-        locationDTO.setUpdatedAt(Instant.now());
+        locationFound.setAddress(locationRequestDTO.getAddress());
+        locationFound.setProvince(locationRequestDTO.getProvince());
+        locationFound.setCommune(locationRequestDTO.getCommune());
+        locationFound.setDistrict(locationRequestDTO.getDistrict());
+        locationFound.setDefaultLocation(locationRequestDTO.isDefaultLocation());
+        locationFound.setUpdatedAt(Instant.now());
 
-        return toLocationDTO(locationRepository.save(toLocationEntity(locationDTO)));
+        return locationRepository.save(locationFound);
     }
 
-    public Optional<LocationDTO> findByDefaultLocationTrue() {
-        return locationRepository.findByDefaultLocationTrue()
-                .map(LocationDTOMapper::toLocationDTO);
+    public Optional<LocationEntity> findByDefaultLocationTrue() {
+        return locationRepository.findByDefaultLocationTrue();
     }
 
-    public List<LocationDTO> findLocationsByUserId(final UUID userId) {
-        return toLocationDTOs(locationRepository.findLocationEntitiesByUserId(userId));
+    public List<LocationEntity> findLocationsByUserId(final UUID userId) {
+        return locationRepository.findLocationEntitiesByUserId(userId);
     }
 
     private void changeDefaultLocationIfAvailable() {
         findByDefaultLocationTrue()
                 .ifPresent(location -> {
                     location.setDefaultLocation(false);
-                    save(location);
+                    locationRepository.save(location);
                 });
     }
 }

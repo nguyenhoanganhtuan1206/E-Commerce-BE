@@ -1,6 +1,7 @@
 package com.ecommerce.domain.location;
 
 import com.ecommerce.api.location.dto.LocationRequestDTO;
+import com.ecommerce.persistent.location.LocationEntity;
 import lombok.experimental.UtilityClass;
 import org.apache.commons.lang3.StringUtils;
 
@@ -11,9 +12,9 @@ import static com.ecommerce.domain.location.LocationError.supplyLocationAlreadyE
 @UtilityClass
 public class LocationValidation {
 
-    public static void verifyIfLocationExisted(final List<LocationDTO> locationDTOS,
+    public static void verifyIfLocationExisted(final List<LocationEntity> locationsExisted,
                                                final LocationRequestDTO locationRequestDTOs) {
-        for (LocationDTO location : locationDTOS) {
+        for (LocationEntity location : locationsExisted) {
             if (StringUtils.equals(location.getAddress(), locationRequestDTOs.getAddress()) &&
                     StringUtils.equals(location.getProvince(), locationRequestDTOs.getProvince()) &&
                     StringUtils.equals(location.getDistrict(), locationRequestDTOs.getCommune())) {
