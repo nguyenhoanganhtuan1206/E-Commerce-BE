@@ -4,7 +4,6 @@ import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -39,14 +38,15 @@ public class UserEntity {
 
     private String password;
 
+    private boolean sellingEnabled;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    @JsonIgnore
     private Set<LocationEntity> locations;
 
-    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    @OneToOne(mappedBy = "user", cascade = CascadeType.MERGE)
     private SellerEntity seller;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(name = "user_roles",
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id"))

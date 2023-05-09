@@ -26,6 +26,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static com.ecommerce.domain.user.UserError.*;
+import static com.ecommerce.domain.user.UserValidation.validateUsername;
 import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserSignUpResponseDTO;
@@ -60,12 +61,16 @@ public class UserService {
 
     public UserSignUpResponseDTO signUp(final UserSignUpRequestDTO userRequestDTO) {
         verifyIfUserAvailable(userRequestDTO.getEmail());
+        validateUsername(userRequestDTO.getUsername());
 
         final RoleEntity role = roleService.findByName("ROLE_USER");
 
         final UserEntity userCreate = UserEntity.builder()
+                .username(userRequestDTO.getUsername())
+                .email(userRequestDTO.getEmail())
                 .password(passwordEncoder.encode(userRequestDTO.getPassword()))
                 .createdAt(Instant.now())
+                .phoneNumber(userRequestDTO.getPhoneNumber())
                 .roles(Collections.singleton(role))
                 .address(userRequestDTO.getAddress())
                 .build();
