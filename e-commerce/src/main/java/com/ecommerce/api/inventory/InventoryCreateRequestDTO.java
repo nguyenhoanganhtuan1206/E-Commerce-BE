@@ -1,16 +1,13 @@
-package com.ecommerce.domain.inventory;
+package com.ecommerce.api.inventory;
 
-import lombok.*;
-
-import java.time.Instant;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Getter
 @Setter
-@With
-@Builder
-@AllArgsConstructor
 @NoArgsConstructor
-public class InventoryDTO {
+public class InventoryCreateRequestDTO {
 
     private String colorName;
 
@@ -23,8 +20,4 @@ public class InventoryDTO {
     private int quantity;
 
     private long price;
-
-    private Instant createdAt;
-
-    private Instant updatedAt;
 }

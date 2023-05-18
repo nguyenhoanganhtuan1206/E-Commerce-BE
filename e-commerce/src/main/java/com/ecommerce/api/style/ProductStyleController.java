@@ -18,12 +18,22 @@ public class ProductStyleController {
     private final ProductStyleService productStyleService;
 
     @GetMapping
-    public List<ProductStyleResponseDTO> findAll() {
-        return toProductStyleResponseDTOs(productStyleService.findAll());
+    public List<ProductStyleResponseDTO> findAllWithoutSellerId() {
+        return toProductStyleResponseDTOs(productStyleService.findAllWithoutSellerId());
     }
 
     @PostMapping
     public ProductStyleResponseDTO createProductStyle(@RequestBody final ProductStyleRequestDTO productStyleRequestDTO) {
         return toProductStyleResponseDTO(productStyleService.createProductStyle(toProductStyleEntity(productStyleRequestDTO)));
+    }
+
+    @GetMapping("/seller")
+    public List<ProductStyleResponseDTO> findBySellerId() {
+        return toProductStyleResponseDTOs(productStyleService.findBySellerId());
+    }
+
+    @DeleteMapping
+    public void deleteBySellerId(@RequestParam final String styleName) {
+        productStyleService.deleteByNameAndSellerId(styleName);
     }
 }

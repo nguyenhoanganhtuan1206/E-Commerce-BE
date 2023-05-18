@@ -1,10 +1,9 @@
 package com.ecommerce.persistent.style;
 
 import com.ecommerce.persistent.product.ProductEntity;
+import com.ecommerce.persistent.seller.SellerEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.List;
 import java.util.UUID;
@@ -13,6 +12,8 @@ import java.util.UUID;
 @Table(name = "product_style")
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class ProductStyleEntity {
 
@@ -27,6 +28,10 @@ public class ProductStyleEntity {
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "product_style_id"))
     private List<ProductEntity> products;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id")
+    private SellerEntity seller;
 
     public ProductStyleEntity(final String name) {
         this.name = name;

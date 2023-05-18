@@ -1,6 +1,6 @@
 package com.ecommerce.domain.variant;
 
-import com.ecommerce.error.BadRequestException;
+import com.ecommerce.error.NotFoundException;
 import lombok.experimental.UtilityClass;
 
 import java.util.function.Supplier;
@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 @UtilityClass
 public class VariantError {
 
-    public static <T> Supplier<BadRequestException> supplyVariantNotFound(final T input) {
-        return () -> new BadRequestException("Category Variant with %s not found", input);
+    public static Supplier<NotFoundException> supplyVariantNotFound(final String fieldName, final Object fieldValue) {
+        return () -> new NotFoundException("Category Variant with %s %s not found", fieldName, fieldValue);
     }
 }

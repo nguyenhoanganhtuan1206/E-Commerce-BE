@@ -1,26 +1,25 @@
 package com.ecommerce.api.variant;
 
-import com.ecommerce.api.variant.dto.CategoryVariantResponseDTO;
+import com.ecommerce.domain.variant.CategoryVariantDTO;
 import com.ecommerce.domain.variant.CategoryVariantService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
-import static com.ecommerce.api.variant.mapper.CategoryVariantDTOMapper.toCategoryVariantResponseDTOs;
+import static com.ecommerce.domain.variant.mapper.CategoryVariantDTOMapper.toCategoryVariantDTOs;
 
 @RestController
-@RequestMapping(value = "/api/v1/category-variant")
+@RequestMapping("/api/v1/variants")
 @RequiredArgsConstructor
 public class CategoryVariantController {
 
     private final CategoryVariantService categoryVariantService;
 
     @GetMapping
-    public List<CategoryVariantResponseDTO> find(final @RequestParam String categoryName) {
-        return toCategoryVariantResponseDTOs(categoryVariantService.findByCategoryName(categoryName));
+    public List<CategoryVariantDTO> findAll() {
+        return toCategoryVariantDTOs(categoryVariantService.findAll());
     }
 }

@@ -15,5 +15,5 @@ public class CategoryVariantDTO {
 
     private UUID id;
 
-    private String variantName;
+    private String name;
 }
