@@ -1,6 +1,9 @@
 package com.ecommerce.domain.product.mapper;
 
+import com.ecommerce.api.inventory.InventoryResponseDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
+import com.ecommerce.domain.inventory.mapper.InventoryDTOMapper;
+import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
@@ -16,6 +19,19 @@ public class ProductCreateDTOMapper {
         final ProductResponseDTO productDTO = modelMapper.map(entity, ProductResponseDTO.class);
 
         productDTO.setSellerId(entity.getSeller().getId());
+        productDTO.setBrandName(entity.getBrand().getBrandName());
+        productDTO.setVariantName(entity.getCategoryVariant().getName());
+
+        final List<String> categoryNames = entity.getCategories().stream()
+                .map(CategoryEntity::getCategoryName)
+                .toList();
+        productDTO.setCategories(categoryNames);
+
+        final List<InventoryResponseDTO> inventories = entity.getInventories().stream()
+                .map(InventoryDTOMapper::toInventoryResponseDTO)
+                .toList();
+        productDTO.setInventories(inventories);
+
         return productDTO;
     }
 

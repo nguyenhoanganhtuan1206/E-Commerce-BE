@@ -1,10 +1,12 @@
 package com.ecommerce.api.product.dto;
 
-import com.ecommerce.domain.category.CategoryDTO;
+import com.ecommerce.api.inventory.InventoryResponseDTO;
+import com.ecommerce.persistent.status.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.UUID;
 
 @Getter
@@ -18,11 +20,19 @@ public class ProductResponseDTO {
 
     private double price;
 
-    private String condition;
-
-    private boolean productApproval;
+    private Status productApproval;
 
     private String description;
 
-    private CategoryDTO category;
+    private UUID sellerId;
+
+    private List<String> categories;
+
+    private String brandName;
+
+    private String variantName;
+
+    private List<String> paymentMethods;
+
+    private List<InventoryResponseDTO> inventories;
 }
