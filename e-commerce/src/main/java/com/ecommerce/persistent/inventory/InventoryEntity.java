@@ -20,15 +20,23 @@ public class InventoryEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String colorName;
+
+    private String colorValue;
+
+    private String sizeName;
+
+    private String sizeValue;
+
     private int quantity;
+
+    private long price;
 
     private Instant createdAt;
 
     private Instant updatedAt;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "inventory_product",
-            joinColumns = {@JoinColumn(name = "product_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "inventory_id", referencedColumnName = "id")})
+    @ManyToOne(cascade = CascadeType.ALL)
+    @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 }

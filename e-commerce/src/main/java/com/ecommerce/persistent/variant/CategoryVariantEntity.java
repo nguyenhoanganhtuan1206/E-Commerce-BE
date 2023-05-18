@@ -1,19 +1,18 @@
 package com.ecommerce.persistent.variant;
 
-import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "product_variant")
 @Getter
 @Setter
-@NoArgsConstructor
 @Builder
+@NoArgsConstructor
 @AllArgsConstructor
 public class CategoryVariantEntity {
 
@@ -21,12 +20,12 @@ public class CategoryVariantEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private String variantName;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "category_id")
-    private CategoryEntity category;
+    private String name;
 
     @OneToMany(mappedBy = "categoryVariant")
-    private Set<ProductEntity> products;
+    private List<ProductEntity> products;
+
+    public CategoryVariantEntity(final String name) {
+        this.name = name;
+    }
 }
