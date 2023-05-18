@@ -59,6 +59,6 @@ public class SellerEntity {
     @OneToMany(mappedBy = "seller")
     private Set<CartEntity> carts;
 
-    @OneToMany(mappedBy = "seller")
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<ProductStyleEntity> productStyles;
 }

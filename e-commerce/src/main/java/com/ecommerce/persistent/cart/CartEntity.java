@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.Instant;
-import java.util.Set;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -32,10 +32,8 @@ public class CartEntity {
     @ManyToOne
     private SellerEntity seller;
 
-    @ManyToMany(mappedBy = "carts",
-            fetch = FetchType.LAZY,
-            cascade = CascadeType.ALL)
-    private Set<ProductEntity> products;
+    @ManyToMany(mappedBy = "carts")
+    private List<ProductEntity> products;
 
     @OneToOne(cascade = CascadeType.ALL)
     @JoinTable(name = "user_cart",

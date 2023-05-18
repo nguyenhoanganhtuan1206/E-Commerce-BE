@@ -13,7 +13,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.List;
-import java.util.Set;
 import java.util.UUID;
 
 @Entity
@@ -33,7 +32,7 @@ public class ProductEntity {
 
     private long price;
 
-    private int quantity;
+    private long quantity;
 
     @Enumerated(EnumType.STRING)
     private Status productApproval;
@@ -44,7 +43,7 @@ public class ProductEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private SellerEntity seller;
 
-    @OneToMany(mappedBy = "product")
+    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
     private List<InventoryEntity> inventories;
 
     @ManyToMany
@@ -61,7 +60,7 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     private BrandEntity brand;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany
     @JoinTable(
             name = "cart_product",
             joinColumns = @JoinColumn(name = "cart_id"),
@@ -73,7 +72,7 @@ public class ProductEntity {
     @JoinTable(name = "product_payment_method",
             joinColumns = @JoinColumn(name = "product_id"),
             inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
-    private Set<PaymentMethodEntity> paymentMethods;
+    private List<PaymentMethodEntity> paymentMethods;
 
     @ManyToMany(mappedBy = "products")
     private List<ProductStyleEntity> productStyles;
