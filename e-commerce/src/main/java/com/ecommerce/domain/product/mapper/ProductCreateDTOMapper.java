@@ -4,6 +4,7 @@ import com.ecommerce.api.inventory.InventoryResponseDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
 import com.ecommerce.domain.inventory.mapper.InventoryDTOMapper;
 import com.ecommerce.persistent.category.CategoryEntity;
+import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
@@ -27,10 +28,17 @@ public class ProductCreateDTOMapper {
                 .toList();
         productDTO.setCategories(categoryNames);
 
-        final List<InventoryResponseDTO> inventories = entity.getInventories().stream()
-                .map(InventoryDTOMapper::toInventoryResponseDTO)
+        final List<String> paymentMethodsName = entity.getPaymentMethods().stream()
+                .map(PaymentMethodEntity::getName)
                 .toList();
-        productDTO.setInventories(inventories);
+        productDTO.setPaymentMethods(paymentMethodsName);
+
+        if (entity.getInventories() != null) {
+            final List<InventoryResponseDTO> inventories = entity.getInventories().stream()
+                    .map(InventoryDTOMapper::toInventoryResponseDTO)
+                    .toList();
+            productDTO.setInventories(inventories);
+        }
 
         return productDTO;
     }

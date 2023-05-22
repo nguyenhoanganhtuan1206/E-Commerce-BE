@@ -5,25 +5,18 @@ import lombok.experimental.UtilityClass;
 
 import static com.ecommerce.error.CommonError.supplyValidationError;
 import static org.apache.commons.lang3.StringUtils.isBlank;
+import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @UtilityClass
 public class InventoryValidation {
 
     public static void validateInventoryInformationNotEmpty(final InventoryCreateRequestDTO inventoryRequestDTO) {
-        if (isBlank(inventoryRequestDTO.getColorName())) {
+        if (isBlank(inventoryRequestDTO.getColorName()) && isNotBlank(inventoryRequestDTO.getColorValue())) {
             throw supplyValidationError("Color name cannot be empty.").get();
         }
 
-        if (isBlank(inventoryRequestDTO.getColorValue())) {
-            throw supplyValidationError("Color value cannot be empty.").get();
-        }
-
-        if (isBlank(inventoryRequestDTO.getSizeName())) {
+        if (isBlank(inventoryRequestDTO.getSizeName()) && isNotBlank(inventoryRequestDTO.getSizeValue())) {
             throw supplyValidationError("Size name cannot be empty.").get();
-        }
-
-        if (isBlank(inventoryRequestDTO.getSizeValue())) {
-            throw supplyValidationError("Size value cannot be empty.").get();
         }
 
         if (inventoryRequestDTO.getPrice() < 0 || inventoryRequestDTO.getPrice() > 1000000) {

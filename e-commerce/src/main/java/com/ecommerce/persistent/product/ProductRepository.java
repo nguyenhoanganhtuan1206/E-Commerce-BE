@@ -11,7 +11,8 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
-    List<ProductEntity> findBySellerId(final UUID sellerId);
+    @Query("select p from ProductEntity p where p.seller.user.id = :userId ")
+    List<ProductEntity> findByUserId(final UUID userId);
 
     Optional<ProductEntity> findByNameContainingIgnoreCase(final String productName);
 

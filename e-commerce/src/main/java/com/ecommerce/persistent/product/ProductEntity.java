@@ -30,7 +30,7 @@ public class ProductEntity {
 
     private String name;
 
-    private long price;
+    private double price;
 
     private long quantity;
 

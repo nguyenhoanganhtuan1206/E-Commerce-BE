@@ -22,25 +22,31 @@ public class ProductController {
 
     public final ProductService productService;
 
-    @GetMapping
+    @GetMapping("search")
     public List<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
         return productService.findByNameOrSellerName(searchTemp);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    @GetMapping("{sellerId}")
-    public List<ProductResponseDTO> findBySellerId(final @PathVariable UUID sellerId) {
-        return productService.findBySellerId(sellerId);
+    @GetMapping
+    public List<ProductResponseDTO> findByCurrentUserId() {
+        return productService.findByCurrentUserId();
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
+    @GetMapping("{productId}")
+    public ProductResponseDTO findById(@PathVariable final UUID productId) {
+        return productService.findById(productId);
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
     @PostMapping
-    public void create(
+    public ProductResponseDTO create(
             final @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
             final BindingResult bindingResult
     ) {
         handleValidationError(bindingResult);
 
-        productService.create(productCreateRequestDTO);
+        return productService.create(productCreateRequestDTO);
     }
 }

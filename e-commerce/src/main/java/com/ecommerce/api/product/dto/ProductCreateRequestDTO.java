@@ -19,7 +19,7 @@ public class ProductCreateRequestDTO {
     @Size(min = 6, max = 255, message = "Product name must be at between 6 to 255 characters")
     private String name;
 
-    private long price;
+    private double price;
 
     @NotBlank(message = "Description cannot be empty")
     @Size(min = 6, max = 255, message = "Product description must be at between 6 to 255 characters")

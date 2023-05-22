@@ -20,6 +20,8 @@ public class ProductResponseDTO {
 
     private double price;
 
+    private long quantity;
+
     private Status productApproval;
 
     private String description;
@@ -35,4 +37,6 @@ public class ProductResponseDTO {
     private List<String> paymentMethods;
 
     private List<InventoryResponseDTO> inventories;
+
+    private List<String> productStyles;
 }

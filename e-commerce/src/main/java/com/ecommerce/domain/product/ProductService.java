@@ -25,7 +25,9 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryEntities;
 import static com.ecommerce.domain.product.ProductError.supplyProductExisted;
+import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
 import static com.ecommerce.domain.product.ProductVariation.*;
+import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTOs;
 
@@ -51,19 +53,24 @@ public class ProductService {
 
     private final AuthsProvider authsProvider;
 
+    public ProductResponseDTO findById(final UUID id) {
+        return toProductResponseDTO(productRepository.findById(id)
+                .orElseThrow(supplyProductNotFound("id", id)));
+    }
+
     public List<ProductResponseDTO> findAll() {
         return toProductResponseDTOs(productRepository.findAll());
     }
 
-    public List<ProductResponseDTO> findBySellerId(final UUID sellerId) {
-        return toProductResponseDTOs(productRepository.findBySellerId(sellerId));
+    public List<ProductResponseDTO> findByCurrentUserId() {
+        return toProductResponseDTOs(productRepository.findByUserId(authsProvider.getCurrentUserId()));
     }
 
     public List<ProductDTO> findByNameOrSellerName(final String searchTemp) {
         return toProductDTOs(productRepository.findByNameOrSellerName(searchTemp));
     }
 
-    public void create(final ProductCreateRequestDTO productRequestDTO) {
+    public ProductResponseDTO create(final ProductCreateRequestDTO productRequestDTO) {
         final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
         validatePaymentMethodNotEmpty(productRequestDTO.getPaymentMethods());
         validateCategoriesNotEmpty(productRequestDTO.getCategories());
@@ -72,11 +79,15 @@ public class ProductService {
         verifyIfProductAvailable(productRequestDTO.getName());
 
         final ProductEntity productCreate = buildProductEntity(productRequestDTO, seller);
-        if (productRequestDTO.getInventories().isEmpty()) {
-            validatePriceProduct(productRequestDTO.getPrice());
+
+        if (!productRequestDTO.getInventories().isEmpty()) {
             inventoryService.createInventories(toInventoryEntities(productRequestDTO.getInventories()), productRepository.save(productCreate));
+            
+            return toProductResponseDTO(productCreate);
         } else {
-            productRepository.save(productCreate);
+            validatePriceProduct(productRequestDTO.getPrice());
+            validateQuantityProduct(productRequestDTO.getQuantity());
+            return toProductResponseDTO(productRepository.save(productCreate));
         }
     }
 
@@ -90,6 +101,8 @@ public class ProductService {
                 .paymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
                 .categories(findCategoriesByName(productRequestDTO.getCategories()))
                 .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
+                .quantity(productRequestDTO.getQuantity())
+                .price(productRequestDTO.getPrice())
                 .seller(seller)
                 .build();
     }
