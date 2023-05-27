@@ -23,10 +23,7 @@ public class ProductStyleEntity {
 
     private String name;
 
-    @ManyToMany
-    @JoinTable(name = "product_product_style",
-            joinColumns = @JoinColumn(name = "product_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_style_id"))
+    @ManyToMany(mappedBy = "productStyles")
     private List<ProductEntity> products;
 
     @ManyToOne
