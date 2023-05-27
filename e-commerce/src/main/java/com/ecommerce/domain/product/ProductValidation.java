@@ -7,15 +7,25 @@ import java.util.List;
 import static com.ecommerce.error.CommonError.supplyValidationError;
 
 @UtilityClass
-public class ProductVariation {
+public class ProductValidation {
+
+    private final static String ONLY_NUMBER_REGEX = "\\b\\d+\\b";
 
     public static void validatePriceProduct(final double price) {
+        if (!ONLY_NUMBER_REGEX.matches(String.valueOf(price))) {
+            throw supplyValidationError("Price must be number.").get();
+        }
+
         if (price < 5 || price > 1000000) {
             throw supplyValidationError("Price must be between 5 and 1000000.").get();
         }
     }
 
     public static void validateQuantityProduct(final long quantity) {
+        if (!ONLY_NUMBER_REGEX.matches(String.valueOf(quantity))) {
+            throw supplyValidationError("Quantity must be number.").get();
+        }
+
         if (quantity > 100000) {
             throw supplyValidationError("Price must be less than 10000 unit.").get();
         }

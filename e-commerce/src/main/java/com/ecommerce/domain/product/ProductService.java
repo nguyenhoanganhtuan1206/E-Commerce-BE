@@ -2,6 +2,7 @@ package com.ecommerce.domain.product;
 
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
+import com.ecommerce.api.product.dto.ProductUpdateRequestDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.brand.BrandService;
 import com.ecommerce.domain.category.CategoryService;
@@ -24,9 +25,10 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryEntities;
+import static com.ecommerce.domain.inventory.mapper.InventoryUpdateDTOMapper.toInventoryEntities;
 import static com.ecommerce.domain.product.ProductError.supplyProductExisted;
 import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
-import static com.ecommerce.domain.product.ProductVariation.*;
+import static com.ecommerce.domain.product.ProductValidation.*;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTOs;
@@ -53,9 +55,9 @@ public class ProductService {
 
     private final AuthsProvider authsProvider;
 
-    public ProductResponseDTO findById(final UUID id) {
-        return toProductResponseDTO(productRepository.findById(id)
-                .orElseThrow(supplyProductNotFound("id", id)));
+    public ProductEntity findById(final UUID id) {
+        return productRepository.findById(id)
+                .orElseThrow(supplyProductNotFound("id", id));
     }
 
     public List<ProductResponseDTO> findAll() {
@@ -82,13 +84,50 @@ public class ProductService {
 
         if (!productRequestDTO.getInventories().isEmpty()) {
             inventoryService.createInventories(toInventoryEntities(productRequestDTO.getInventories()), productRepository.save(productCreate));
-            
+
             return toProductResponseDTO(productCreate);
         } else {
             validatePriceProduct(productRequestDTO.getPrice());
             validateQuantityProduct(productRequestDTO.getQuantity());
+
             return toProductResponseDTO(productRepository.save(productCreate));
         }
+    }
+
+    public ProductResponseDTO update(final UUID productId, final ProductUpdateRequestDTO productRequestDTO) {
+        final ProductEntity productUpdate = findById(productId);
+
+        validatePaymentMethodNotEmpty(productRequestDTO.getPaymentMethods());
+        validateCategoriesNotEmpty(productRequestDTO.getCategories());
+        validateProductStylesNotEmpty(productRequestDTO.getProductStyles());
+
+        return toProductResponseDTO(productRepository.save(updateCurrentProductProperties(productUpdate, productRequestDTO)));
+    }
+
+    private ProductEntity updateCurrentProductProperties(final ProductEntity currentProduct, final ProductUpdateRequestDTO productRequestDTO) {
+        if (!currentProduct.getName().equals(productRequestDTO.getName())) {
+            verifyIfProductAvailable(productRequestDTO.getName());
+
+            currentProduct.setName(productRequestDTO.getName());
+        }
+
+        if (!productRequestDTO.getInventories().isEmpty()) {
+            inventoryService.updateInventoryWithProductId(currentProduct.getId(), toInventoryEntities(productRequestDTO.getInventories()));
+        } else {
+            validatePriceProduct(productRequestDTO.getPrice());
+            validateQuantityProduct(productRequestDTO.getQuantity());
+        }
+
+        return currentProduct
+                .withDescription(productRequestDTO.getDescription())
+                .withCategoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
+                .withBrand(brandService.findByBrandName(productRequestDTO.getBrandName()))
+                .withCategories(findCategoriesByName(productRequestDTO.getCategories()))
+                .withPrice(productRequestDTO.getPrice())
+                .withPaymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
+                .withProductStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
+                .withQuantity(productRequestDTO.getQuantity())
+                .withProductApproval(Status.PENDING);
     }
 
     private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {

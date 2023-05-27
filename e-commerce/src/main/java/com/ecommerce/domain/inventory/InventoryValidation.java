@@ -1,7 +1,9 @@
 package com.ecommerce.domain.inventory;
 
-import com.ecommerce.api.inventory.InventoryCreateRequestDTO;
+import com.ecommerce.domain.inventory.dto.InventoryCreateRequestDTO;
 import lombok.experimental.UtilityClass;
+
+import java.util.List;
 
 import static com.ecommerce.error.CommonError.supplyValidationError;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -9,6 +11,10 @@ import static org.apache.commons.lang3.StringUtils.isNotBlank;
 
 @UtilityClass
 public class InventoryValidation {
+
+    public static void validateIfColorNameAvailable(final List<InventoryCreateRequestDTO> inventories) {
+        inventories.forEach(inventory -> inventory.getColorName());
+    }
 
     public static void validateInventoryInformationNotEmpty(final InventoryCreateRequestDTO inventoryRequestDTO) {
         if (isBlank(inventoryRequestDTO.getColorName()) && isNotBlank(inventoryRequestDTO.getColorValue())) {

@@ -20,6 +20,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@With
 @NoArgsConstructor
 @AllArgsConstructor
 public class ProductEntity {
@@ -43,7 +44,7 @@ public class ProductEntity {
     @JoinColumn(name = "seller_id", nullable = false)
     private SellerEntity seller;
 
-    @OneToMany(mappedBy = "product", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<InventoryEntity> inventories;
 
     @ManyToMany
@@ -74,6 +75,11 @@ public class ProductEntity {
             inverseJoinColumns = @JoinColumn(name = "payment_method_id"))
     private List<PaymentMethodEntity> paymentMethods;
 
-    @ManyToMany(mappedBy = "products")
+    @ManyToMany
+    @JoinTable(
+            name = "product_product_style",
+            joinColumns = @JoinColumn(name = "product_id"),
+            inverseJoinColumns = @JoinColumn(name = "product_style_id")
+    )
     private List<ProductStyleEntity> productStyles;
 }
