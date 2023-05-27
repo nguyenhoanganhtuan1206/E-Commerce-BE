@@ -1,6 +1,6 @@
 package com.ecommerce.domain.product;
 
-import com.ecommerce.domain.inventory.InventoryDTO;
+import com.ecommerce.domain.inventory.dto.InventoryDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;
 import com.ecommerce.persistent.status.Status;

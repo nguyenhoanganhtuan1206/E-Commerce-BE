@@ -1,6 +1,6 @@
 package com.ecommerce.api.product.dto;
 
-import com.ecommerce.api.inventory.InventoryCreateRequestDTO;
+import com.ecommerce.domain.inventory.dto.InventoryCreateRequestDTO;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;

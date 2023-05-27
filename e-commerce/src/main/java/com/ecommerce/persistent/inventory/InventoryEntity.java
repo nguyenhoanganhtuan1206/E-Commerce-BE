@@ -36,7 +36,7 @@ public class InventoryEntity {
 
     private Instant updatedAt;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
 }

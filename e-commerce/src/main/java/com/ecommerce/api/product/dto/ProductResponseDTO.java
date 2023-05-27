@@ -1,6 +1,6 @@
 package com.ecommerce.api.product.dto;
 
-import com.ecommerce.api.inventory.InventoryResponseDTO;
+import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

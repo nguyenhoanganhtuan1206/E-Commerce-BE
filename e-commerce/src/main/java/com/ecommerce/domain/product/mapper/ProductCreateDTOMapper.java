@@ -1,11 +1,12 @@
 package com.ecommerce.domain.product.mapper;
 
-import com.ecommerce.api.inventory.InventoryResponseDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
+import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.domain.inventory.mapper.InventoryDTOMapper;
 import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
+import com.ecommerce.persistent.style.ProductStyleEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
@@ -32,6 +33,11 @@ public class ProductCreateDTOMapper {
                 .map(PaymentMethodEntity::getName)
                 .toList();
         productDTO.setPaymentMethods(paymentMethodsName);
+
+        final List<String> productStylesName = entity.getProductStyles().stream()
+                .map(ProductStyleEntity::getName)
+                .toList();
+        productDTO.setProductStyles(productStylesName);
 
         if (entity.getInventories() != null) {
             final List<InventoryResponseDTO> inventories = entity.getInventories().stream()

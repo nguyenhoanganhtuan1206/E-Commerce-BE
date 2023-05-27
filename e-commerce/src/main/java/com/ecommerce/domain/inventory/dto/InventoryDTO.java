@@ -1,4 +1,4 @@
-package com.ecommerce.domain.inventory;
+package com.ecommerce.domain.inventory.dto;
 
 import lombok.*;
 

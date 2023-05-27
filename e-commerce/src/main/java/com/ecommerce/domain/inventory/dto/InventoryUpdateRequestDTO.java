@@ -1,13 +1,17 @@
-package com.ecommerce.api.inventory;
+package com.ecommerce.domain.inventory.dto;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.UUID;
+
 @Getter
 @Setter
 @NoArgsConstructor
-public class InventoryCreateRequestDTO {
+public class InventoryUpdateRequestDTO {
+
+    private UUID id;
 
     private String colorName;
 

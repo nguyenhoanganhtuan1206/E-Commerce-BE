@@ -1,7 +1,7 @@
 package com.ecommerce.domain.inventory.mapper;
 
-import com.ecommerce.api.inventory.InventoryCreateRequestDTO;
-import com.ecommerce.api.inventory.InventoryResponseDTO;
+import com.ecommerce.domain.inventory.dto.InventoryCreateRequestDTO;
+import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
