@@ -22,7 +22,7 @@ public class BrandEntity {
 
     private String brandName;
 
-    @OneToMany(mappedBy = "brand")
+    @OneToMany(mappedBy = "brand", cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     public List<ProductEntity> products;
 
     public BrandEntity(final String brandName) {

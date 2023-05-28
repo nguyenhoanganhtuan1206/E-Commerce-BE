@@ -40,7 +40,7 @@ public class ProductEntity {
 
     private String description;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private SellerEntity seller;
 
@@ -57,7 +57,7 @@ public class ProductEntity {
     @JoinColumn(name = "product_variant_id", nullable = false)
     private CategoryVariantEntity categoryVariant; // Bags, ...
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private BrandEntity brand;
 

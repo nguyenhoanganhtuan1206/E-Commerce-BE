@@ -49,7 +49,7 @@ public class SellerEntity {
     @Enumerated(EnumType.STRING)
     private Status sellerApproval;
 
-    @OneToMany(mappedBy = "seller")
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private Set<ProductEntity> products;
 
     @OneToOne(cascade = CascadeType.ALL)

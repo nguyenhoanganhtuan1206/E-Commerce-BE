@@ -63,4 +63,10 @@ public class ProductController {
 
         return productService.update(productId, productUpdateRequestDTO);
     }
+
+    @PreAuthorize("hasRole('ROLE_SELLER')")
+    @DeleteMapping("{productId}")
+    public void delete(final @PathVariable UUID productId) {
+        productService.delete(productId);
+    }
 }

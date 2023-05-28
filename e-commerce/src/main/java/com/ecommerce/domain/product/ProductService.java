@@ -104,6 +104,13 @@ public class ProductService {
         return toProductResponseDTO(productRepository.save(updateCurrentProductProperties(productUpdate, productRequestDTO)));
     }
 
+    public void delete(final UUID productId) {
+        final ProductEntity currentProduct = findById(productId);
+
+        productRepository.delete(currentProduct);
+    }
+
+
     private ProductEntity updateCurrentProductProperties(final ProductEntity currentProduct, final ProductUpdateRequestDTO productRequestDTO) {
         if (!currentProduct.getName().equals(productRequestDTO.getName())) {
             verifyIfProductAvailable(productRequestDTO.getName());

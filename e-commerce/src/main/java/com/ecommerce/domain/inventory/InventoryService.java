@@ -68,8 +68,6 @@ public class InventoryService {
                     currentInventory.setPrice(inventoryUpdate.getPrice());
 
                     inventoryRepository.save(currentInventory);
-                } else {
-                    inventoryRepository.delete(currentInventory);
                 }
             });
         });
