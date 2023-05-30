@@ -110,6 +110,20 @@ public class ProductService {
         productRepository.delete(currentProduct);
     }
 
+    public List<ProductEntity> findProductWithOutOfStockAndSellerId() {
+        final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
+        return productRepository.findProductWithOutOfStockAndSellerId(seller.getId());
+    }
+
+    public List<ProductEntity> findProductWithInStockAndSellerId() {
+        final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
+        return productRepository.findProductWithInStockAndSellerId(seller.getId());
+    }
+
+    public List<ProductEntity> findProductWithApproval() {
+        final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
+        return productRepository.findProductWithStatusAndSellerId(Status.ACTIVE, seller.getId());
+    }
 
     private ProductEntity updateCurrentProductProperties(final ProductEntity currentProduct, final ProductUpdateRequestDTO productRequestDTO) {
         if (!currentProduct.getName().equals(productRequestDTO.getName())) {

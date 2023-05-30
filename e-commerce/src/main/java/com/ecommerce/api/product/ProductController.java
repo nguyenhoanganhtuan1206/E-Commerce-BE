@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
+import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -68,5 +69,23 @@ public class ProductController {
     @DeleteMapping("{productId}")
     public void delete(final @PathVariable UUID productId) {
         productService.delete(productId);
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_SELLER')")
+    @GetMapping("out-of-stock")
+    public List<ProductResponseDTO> findProductWithOutOfStockAndSellerId() {
+        return toProductResponseDTOs(productService.findProductWithOutOfStockAndSellerId());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_SELLER')")
+    @GetMapping("in-stock")
+    public List<ProductResponseDTO> findProductWithInStockAndSellerId() {
+        return toProductResponseDTOs(productService.findProductWithInStockAndSellerId());
+    }
+
+    @PreAuthorize("hasAnyRole('ROLE_SELLER')")
+    @GetMapping("approval")
+    public List<ProductResponseDTO> findProductWithApproval() {
+        return toProductResponseDTOs(productService.findProductWithApproval());
     }
 }
