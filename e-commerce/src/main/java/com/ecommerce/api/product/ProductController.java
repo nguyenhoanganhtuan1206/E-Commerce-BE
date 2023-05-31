@@ -3,8 +3,9 @@ package com.ecommerce.api.product;
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
 import com.ecommerce.api.product.dto.ProductUpdateRequestDTO;
+import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.product.ProductDTO;
-import com.ecommerce.domain.product.ProductService;
+import com.ecommerce.domain.product.user.UserProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,23 +24,25 @@ import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 @RequiredArgsConstructor
 public class ProductController {
 
-    public final ProductService productService;
+    public final UserProductService userProductService;
+
+    public final CommonProductService commonProductService;
 
     @GetMapping("search")
     public List<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
-        return productService.findByNameOrSellerName(searchTemp);
+        return commonProductService.findByNameOrSellerName(searchTemp);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping
     public List<ProductResponseDTO> findByCurrentUserId() {
-        return productService.findByCurrentUserId();
+        return userProductService.findByCurrentUserId();
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("{productId}")
     public ProductResponseDTO findById(@PathVariable final UUID productId) {
-        return toProductResponseDTO(productService.findById(productId));
+        return toProductResponseDTO(commonProductService.findById(productId));
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
@@ -50,7 +53,7 @@ public class ProductController {
     ) {
         handleValidationError(bindingResult);
 
-        return productService.create(productCreateRequestDTO);
+        return userProductService.create(productCreateRequestDTO);
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
@@ -62,30 +65,30 @@ public class ProductController {
     ) {
         handleValidationError(bindingResult);
 
-        return productService.update(productId, productUpdateRequestDTO);
+        return userProductService.update(productId, productUpdateRequestDTO);
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
     @DeleteMapping("{productId}")
     public void delete(final @PathVariable UUID productId) {
-        productService.delete(productId);
+        userProductService.delete(productId);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_SELLER')")
     @GetMapping("out-of-stock")
     public List<ProductResponseDTO> findProductWithOutOfStockAndSellerId() {
-        return toProductResponseDTOs(productService.findProductWithOutOfStockAndSellerId());
+        return toProductResponseDTOs(userProductService.findProductWithOutOfStockAndSellerId());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_SELLER')")
     @GetMapping("in-stock")
     public List<ProductResponseDTO> findProductWithInStockAndSellerId() {
-        return toProductResponseDTOs(productService.findProductWithInStockAndSellerId());
+        return toProductResponseDTOs(userProductService.findProductWithInStockAndSellerId());
     }
 
     @PreAuthorize("hasAnyRole('ROLE_SELLER')")
     @GetMapping("approval")
     public List<ProductResponseDTO> findProductWithApproval() {
-        return toProductResponseDTOs(productService.findProductWithApproval());
+        return toProductResponseDTOs(userProductService.findProductWithApproval());
     }
 }

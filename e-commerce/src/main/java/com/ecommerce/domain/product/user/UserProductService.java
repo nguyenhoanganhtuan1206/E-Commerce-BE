@@ -1,4 +1,4 @@
-package com.ecommerce.domain.product;
+package com.ecommerce.domain.product.user;
 
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
@@ -7,7 +7,9 @@ import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.brand.BrandService;
 import com.ecommerce.domain.category.CategoryService;
 import com.ecommerce.domain.inventory.InventoryService;
+import com.ecommerce.domain.inventory.mapper.InventoryUpdateDTOMapper;
 import com.ecommerce.domain.payment.PaymentMethodService;
+import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.seller.SellerService;
 import com.ecommerce.domain.style.ProductStyleService;
 import com.ecommerce.domain.variant.CategoryVariantService;
@@ -25,19 +27,18 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryEntities;
-import static com.ecommerce.domain.inventory.mapper.InventoryUpdateDTOMapper.toInventoryEntities;
 import static com.ecommerce.domain.product.ProductError.supplyProductExisted;
-import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
 import static com.ecommerce.domain.product.ProductValidation.*;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
-import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTOs;
 
 @Service
 @RequiredArgsConstructor
-public class ProductService {
+public class UserProductService {
 
     private final ProductRepository productRepository;
+
+    private final CommonProductService commonProductService;
 
     private final PaymentMethodService paymentMethodService;
 
@@ -55,21 +56,8 @@ public class ProductService {
 
     private final AuthsProvider authsProvider;
 
-    public ProductEntity findById(final UUID id) {
-        return productRepository.findById(id)
-                .orElseThrow(supplyProductNotFound("id", id));
-    }
-
-    public List<ProductResponseDTO> findAll() {
-        return toProductResponseDTOs(productRepository.findAll());
-    }
-
     public List<ProductResponseDTO> findByCurrentUserId() {
         return toProductResponseDTOs(productRepository.findByUserId(authsProvider.getCurrentUserId()));
-    }
-
-    public List<ProductDTO> findByNameOrSellerName(final String searchTemp) {
-        return toProductDTOs(productRepository.findByNameOrSellerName(searchTemp));
     }
 
     public ProductResponseDTO create(final ProductCreateRequestDTO productRequestDTO) {
@@ -94,8 +82,24 @@ public class ProductService {
         }
     }
 
+    private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {
+        return ProductEntity.builder()
+                .name(productRequestDTO.getName())
+                .description(productRequestDTO.getDescription())
+                .productApproval(Status.PENDING)
+                .categoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
+                .brand(brandService.findByBrandName(productRequestDTO.getBrandName()))
+                .paymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
+                .categories(findCategoriesByName(productRequestDTO.getCategories()))
+                .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
+                .quantity(productRequestDTO.getQuantity())
+                .price(productRequestDTO.getPrice())
+                .seller(seller)
+                .build();
+    }
+
     public ProductResponseDTO update(final UUID productId, final ProductUpdateRequestDTO productRequestDTO) {
-        final ProductEntity productUpdate = findById(productId);
+        final ProductEntity productUpdate = commonProductService.findById(productId);
 
         validatePaymentMethodNotEmpty(productRequestDTO.getPaymentMethods());
         validateCategoriesNotEmpty(productRequestDTO.getCategories());
@@ -105,7 +109,7 @@ public class ProductService {
     }
 
     public void delete(final UUID productId) {
-        final ProductEntity currentProduct = findById(productId);
+        final ProductEntity currentProduct = commonProductService.findById(productId);
 
         productRepository.delete(currentProduct);
     }
@@ -133,7 +137,7 @@ public class ProductService {
         }
 
         if (!productRequestDTO.getInventories().isEmpty()) {
-            inventoryService.updateInventoryWithProductId(currentProduct.getId(), toInventoryEntities(productRequestDTO.getInventories()));
+            inventoryService.updateInventoryWithProductId(currentProduct.getId(), InventoryUpdateDTOMapper.toInventoryEntities(productRequestDTO.getInventories()));
         } else {
             validatePriceProduct(productRequestDTO.getPrice());
             validateQuantityProduct(productRequestDTO.getQuantity());
@@ -149,22 +153,6 @@ public class ProductService {
                 .withProductStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
                 .withQuantity(productRequestDTO.getQuantity())
                 .withProductApproval(Status.PENDING);
-    }
-
-    private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {
-        return ProductEntity.builder()
-                .name(productRequestDTO.getName())
-                .description(productRequestDTO.getDescription())
-                .productApproval(Status.PENDING)
-                .categoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
-                .brand(brandService.findByBrandName(productRequestDTO.getBrandName()))
-                .paymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
-                .categories(findCategoriesByName(productRequestDTO.getCategories()))
-                .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
-                .quantity(productRequestDTO.getQuantity())
-                .price(productRequestDTO.getPrice())
-                .seller(seller)
-                .build();
     }
 
     private void verifyIfProductAvailable(final String name) {

@@ -1,7 +1,7 @@
 package com.ecommerce.api.admin.product;
 
 import com.ecommerce.api.product.dto.ProductResponseDTO;
-import com.ecommerce.domain.product.ProductService;
+import com.ecommerce.domain.product.CommonProductService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,10 +14,10 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ProductControllerAdmin {
 
-    private final ProductService productService;
+    private final CommonProductService commonProductService;
 
     @GetMapping
     public List<ProductResponseDTO> findAll() {
-        return productService.findAll();
+        return commonProductService.findAll();
     }
 }
