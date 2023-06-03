@@ -4,7 +4,6 @@ import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Entity
@@ -31,10 +30,6 @@ public class InventoryEntity {
     private int quantity;
 
     private long price;
-
-    private Instant createdAt;
-
-    private Instant updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)

@@ -2,6 +2,7 @@ package com.ecommerce.api.product;
 
 import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
 import com.ecommerce.api.product.dto.ProductResponseDTO;
+import com.ecommerce.api.product.dto.ProductResponseDetailDTO;
 import com.ecommerce.api.product.dto.ProductUpdateRequestDTO;
 import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.product.ProductDTO;
@@ -15,8 +16,8 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
-import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
+import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductResponseDetailDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -41,8 +42,8 @@ public class ProductController {
 
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("{productId}")
-    public ProductResponseDTO findById(@PathVariable final UUID productId) {
-        return toProductResponseDTO(commonProductService.findById(productId));
+    public ProductResponseDetailDTO findById(@PathVariable final UUID productId) {
+        return toProductResponseDetailDTO(commonProductService.findById(productId));
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")

@@ -12,6 +12,9 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
+    @Query(value = "select p from ProductEntity p where p.productApproval = 'PENDING'")
+    List<ProductEntity> findALlSorted();
+
     @Query("select p from ProductEntity p where p.seller.user.id = :userId ")
     List<ProductEntity> findByUserId(final UUID userId);
 

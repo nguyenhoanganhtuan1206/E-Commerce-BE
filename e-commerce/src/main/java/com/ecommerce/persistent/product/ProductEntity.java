@@ -12,6 +12,7 @@ import com.ecommerce.persistent.variant.CategoryVariantEntity;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -39,6 +40,10 @@ public class ProductEntity {
     private Status productApproval;
 
     private String description;
+
+    private Instant createdAt;
+
+    private Instant updatedAt;
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)

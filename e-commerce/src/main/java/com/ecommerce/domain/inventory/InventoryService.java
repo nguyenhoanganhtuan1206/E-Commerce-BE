@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
-import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -38,7 +37,6 @@ public class InventoryService {
                     inventory.setPrice(inventory.getPrice());
                     inventory.setSizeName(inventory.getSizeName());
                     inventory.setSizeValue(inventory.getSizeValue());
-                    inventory.setCreatedAt(Instant.now());
                     inventory.setProduct(product);
 
                     inventoryRepository.save(inventory);
