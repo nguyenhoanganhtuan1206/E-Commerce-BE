@@ -23,6 +23,7 @@ import com.ecommerce.persistent.style.ProductStyleEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
 
@@ -94,6 +95,7 @@ public class UserProductService {
                 .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
                 .quantity(productRequestDTO.getQuantity())
                 .price(productRequestDTO.getPrice())
+                .createdAt(Instant.now())
                 .seller(seller)
                 .build();
     }
@@ -143,15 +145,25 @@ public class UserProductService {
             validateQuantityProduct(productRequestDTO.getQuantity());
         }
 
+        if (productRequestDTO.getPaymentMethods().size() > 0) {
+            productRequestDTO.getPaymentMethods().forEach(paymentMethod -> {
+                currentProduct.getPaymentMethods().forEach(paymentMethodEntity -> {
+                    if (!paymentMethod.equals(paymentMethodEntity.getName())) {
+                        currentProduct.setPaymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()));
+                    }
+                });
+            });
+        }
+
         return currentProduct
                 .withDescription(productRequestDTO.getDescription())
                 .withCategoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
                 .withBrand(brandService.findByBrandName(productRequestDTO.getBrandName()))
                 .withCategories(findCategoriesByName(productRequestDTO.getCategories()))
                 .withPrice(productRequestDTO.getPrice())
-                .withPaymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
                 .withProductStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
                 .withQuantity(productRequestDTO.getQuantity())
+                .withUpdatedAt(Instant.now())
                 .withProductApproval(Status.PENDING);
     }
 
