@@ -33,6 +33,11 @@ public class ProductControllerAdmin {
         return toProductResponseDTO(adminProductService.approvalProduct(productId));
     }
 
+    @PostMapping("{productId}/feedback")
+    public void sendFeedbackToSeller(@PathVariable final UUID productId, @RequestBody final Map<String, String> requestBody) {
+        adminProductService.sendFeedbackAboutProductToUser(productId, requestBody.get("contentFeedback"));
+    }
+
     @PutMapping("/{productId}/deactivate")
     public ProductResponseDTO deactivateProduct(@PathVariable final UUID productId, final @RequestBody Map<String, String> requestBody) {
         return toProductResponseDTO(adminProductService.deActivateProduct(productId, requestBody.get("contentFeedback")));
