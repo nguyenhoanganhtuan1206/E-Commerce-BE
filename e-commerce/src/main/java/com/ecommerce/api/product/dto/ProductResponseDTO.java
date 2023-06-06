@@ -26,6 +26,8 @@ public class ProductResponseDTO {
 
     private String description;
 
+    private Long amountSoldOut;
+
     private UUID sellerId;
 
     private List<String> categories;

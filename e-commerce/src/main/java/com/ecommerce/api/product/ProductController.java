@@ -18,6 +18,7 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
 import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductResponseDetailDTO;
+import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductsResponseDetailDTOs;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
@@ -29,13 +30,18 @@ public class ProductController {
 
     public final CommonProductService commonProductService;
 
+    @GetMapping
+    public List<ProductResponseDetailDTO> findAllSortedByAmountSoldOut() {
+        return toProductsResponseDetailDTOs(commonProductService.findAllSortedByAmountSoldOut());
+    }
+
     @GetMapping("search")
     public List<ProductDTO> searchProducts(final @RequestParam String searchTemp) {
         return commonProductService.findByNameOrSellerName(searchTemp);
     }
 
     @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
-    @GetMapping
+    @GetMapping("/user")
     public List<ProductResponseDTO> findByCurrentUserId() {
         return userProductService.findByCurrentUserId();
     }

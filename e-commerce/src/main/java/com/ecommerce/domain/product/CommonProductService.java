@@ -22,6 +22,10 @@ public class CommonProductService {
                 .orElseThrow(supplyProductNotFound("id", id));
     }
 
+    public List<ProductEntity> findAllSortedByAmountSoldOut() {
+        return productRepository.findAllSortedByAmountSoldOut();
+    }
+
     public List<ProductEntity> findALlSorted() {
         return productRepository.findALlSorted();
     }

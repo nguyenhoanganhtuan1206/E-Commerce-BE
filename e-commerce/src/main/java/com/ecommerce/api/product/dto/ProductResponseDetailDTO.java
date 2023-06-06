@@ -30,6 +30,8 @@ public class ProductResponseDetailDTO {
 
     private SellerDTO seller;
 
+    private Long amountSoldOut;
+
     private Instant createdAt;
 
     private Instant updatedAt;

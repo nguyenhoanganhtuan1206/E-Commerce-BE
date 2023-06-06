@@ -45,6 +45,8 @@ public class ProductEntity {
 
     private Instant updatedAt;
 
+    private Long amountSoldOut;
+
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)
     private SellerEntity seller;

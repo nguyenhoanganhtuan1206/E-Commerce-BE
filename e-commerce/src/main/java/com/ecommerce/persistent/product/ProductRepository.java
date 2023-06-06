@@ -12,6 +12,9 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
+    @Query("select p from ProductEntity p order by p.amountSoldOut desc")
+    List<ProductEntity> findAllSortedByAmountSoldOut();
+
     @Query(value = "select p from ProductEntity p order by p.createdAt desc ")
     List<ProductEntity> findALlSorted();
 
