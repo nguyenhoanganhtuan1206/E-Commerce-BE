@@ -1,5 +1,7 @@
 package com.ecommerce.domain.product;
 
+import com.ecommerce.api.product.dto.ProductDetailsDTO;
+import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
@@ -10,6 +12,7 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTOs;
+import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductDetailsDTO;
 
 @Service
 @RequiredArgsConstructor
@@ -17,9 +20,18 @@ public class CommonProductService {
 
     private final ProductRepository productRepository;
 
-    public ProductEntity findById(final UUID id) {
-        return productRepository.findById(id)
-                .orElseThrow(supplyProductNotFound("id", id));
+    private final InventoryService inventoryService;
+
+    public ProductEntity findById(final UUID productId) {
+        return productRepository.findById(productId)
+                .orElseThrow(supplyProductNotFound("id", productId));
+    }
+
+    public ProductDetailsDTO findProductDetailById(final UUID productId) {
+        final ProductDetailsDTO productDetailDTO = toProductDetailsDTO(productRepository.findById(productId)
+                .orElseThrow(supplyProductNotFound("id", productId)));
+        return productDetailDTO
+                .withInventory(inventoryService.findInventoryDetailByProductId(productId));
     }
 
     public List<ProductEntity> findAllSortedByAmountSoldOut() {

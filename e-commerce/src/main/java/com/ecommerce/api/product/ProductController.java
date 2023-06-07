@@ -1,9 +1,6 @@
 package com.ecommerce.api.product;
 
-import com.ecommerce.api.product.dto.ProductCreateRequestDTO;
-import com.ecommerce.api.product.dto.ProductResponseDTO;
-import com.ecommerce.api.product.dto.ProductResponseDetailDTO;
-import com.ecommerce.api.product.dto.ProductUpdateRequestDTO;
+import com.ecommerce.api.product.dto.*;
 import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.product.ProductDTO;
 import com.ecommerce.domain.product.user.UserProductService;
@@ -17,7 +14,6 @@ import java.util.List;
 import java.util.UUID;
 
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
-import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductResponseDetailDTO;
 import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductsResponseDetailDTOs;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
@@ -46,10 +42,9 @@ public class ProductController {
         return userProductService.findByCurrentUserId();
     }
 
-    @PreAuthorize("hasAnyRole('ROLE_USER', 'ROLE_ADMIN')")
     @GetMapping("{productId}")
-    public ProductResponseDetailDTO findById(@PathVariable final UUID productId) {
-        return toProductResponseDetailDTO(commonProductService.findById(productId));
+    public ProductDetailsDTO findProductDetailById(@PathVariable final UUID productId) {
+        return commonProductService.findProductDetailById(productId);
     }
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
