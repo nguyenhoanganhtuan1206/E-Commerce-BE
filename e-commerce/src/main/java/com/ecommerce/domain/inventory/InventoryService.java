@@ -1,5 +1,6 @@
 package com.ecommerce.domain.inventory;
 
+import com.ecommerce.domain.inventory.dto.InventoryDetailResponseDTO;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.inventory.InventoryRepository;
 import com.ecommerce.persistent.product.ProductEntity;
@@ -25,6 +26,30 @@ public class InventoryService {
 
     public List<InventoryEntity> findInventoriesByProductId(final UUID productId) {
         return inventoryRepository.findByProductId(productId);
+    }
+
+    public InventoryDetailResponseDTO findInventoryDetailByProductId(final UUID productId) {
+        final List<InventoryEntity> inventoryEntities = findInventoriesByProductId(productId);
+
+        final int quantityProducts = inventoryEntities.stream().mapToInt(InventoryEntity::getQuantity).sum();
+
+        return InventoryDetailResponseDTO
+                .builder()
+                .colorName(inventoryEntities.get(0).getColorName())
+                .sizeName(inventoryEntities.get(0).getSizeName())
+                .price(inventoryEntities.get(0).getPrice())
+                .quantity(quantityProducts)
+                .colorValues(inventoryRepository.findColorValueByProductId(productId))
+                .sizeValues(inventoryRepository.findSizeValueByProductId(productId))
+                .build();
+    }
+
+    public List<String> findColorValueByColorName(final String colorName) {
+        return inventoryRepository.findColorValueByColorName(colorName);
+    }
+
+    public List<String> findSizeValueBySizeName(final String sizeName) {
+        return inventoryRepository.findSizeValueBySizeName(sizeName);
     }
 
     public void createInventories(final List<InventoryEntity> inventories, final ProductEntity product) {

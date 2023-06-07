@@ -1,5 +1,6 @@
 package com.ecommerce.domain.product.mapper;
 
+import com.ecommerce.api.product.dto.ProductDetailsDTO;
 import com.ecommerce.api.product.dto.ProductResponseDetailDTO;
 import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.domain.inventory.mapper.InventoryDTOMapper;
@@ -51,6 +52,36 @@ public class ProductDetailDTOMapper {
     public static List<ProductResponseDetailDTO> toProductsResponseDetailDTOs(final List<ProductEntity> productEntities) {
         return productEntities.stream()
                 .map(ProductDetailDTOMapper::toProductResponseDetailDTO)
+                .toList();
+    }
+
+    public static ProductDetailsDTO toProductDetailsDTO(final ProductEntity productEntity) {
+        final ProductDetailsDTO productDetailsDTO = modelMapper.map(productEntity, ProductDetailsDTO.class);
+
+        productDetailsDTO.setBrandName(productEntity.getBrand().getBrandName());
+        productDetailsDTO.setVariantName(productEntity.getCategoryVariant().getName());
+
+        final List<String> categoryNames = productEntity.getCategories().stream()
+                .map(CategoryEntity::getCategoryName)
+                .toList();
+        productDetailsDTO.setCategories(categoryNames);
+
+        final List<String> paymentMethodsName = productEntity.getPaymentMethods().stream()
+                .map(PaymentMethodEntity::getName)
+                .toList();
+        productDetailsDTO.setPaymentMethods(paymentMethodsName);
+
+        final List<String> productStylesName = productEntity.getProductStyles().stream()
+                .map(ProductStyleEntity::getName)
+                .toList();
+        productDetailsDTO.setProductStyles(productStylesName);
+
+        return productDetailsDTO;
+    }
+
+    public static List<ProductDetailsDTO> toProductDetailsDTOs(final List<ProductEntity> productEntities) {
+        return productEntities.stream()
+                .map(ProductDetailDTOMapper::toProductDetailsDTO)
                 .toList();
     }
 }
