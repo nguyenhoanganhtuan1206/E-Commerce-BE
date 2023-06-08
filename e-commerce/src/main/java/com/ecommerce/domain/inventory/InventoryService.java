@@ -24,6 +24,19 @@ public class InventoryService {
 
     private final ProductRepository productRepository;
 
+    public InventoryEntity findByColorValueAndSizeValueAndProductId(final UUID productId, final String sizeValue, final String colorValue) {
+        return inventoryRepository.findByColorValueAndSizeValueAndProductId(colorValue, sizeValue, productId);
+    }
+
+    public List<String> findSizeValuesByColorValueAndProductId(final String colorValue, final UUID productId) {
+        return inventoryRepository.findSizeValuesByColorValueAndProductId(colorValue, productId);
+    }
+
+    public List<String> findColorValuesBySizeValueAndProductId(final String sizeValue, final UUID productId) {
+        return inventoryRepository.findColorValuesBySizeValueAndProductId(sizeValue, productId);
+    }
+
+
     public List<InventoryEntity> findInventoriesByProductId(final UUID productId) {
         return inventoryRepository.findByProductId(productId);
     }
@@ -42,14 +55,6 @@ public class InventoryService {
                 .colorValues(inventoryRepository.findColorValueByProductId(productId))
                 .sizeValues(inventoryRepository.findSizeValueByProductId(productId))
                 .build();
-    }
-
-    public List<String> findColorValueByColorName(final String colorName) {
-        return inventoryRepository.findColorValueByColorName(colorName);
-    }
-
-    public List<String> findSizeValueBySizeName(final String sizeName) {
-        return inventoryRepository.findSizeValueBySizeName(sizeName);
     }
 
     public void createInventories(final List<InventoryEntity> inventories, final ProductEntity product) {

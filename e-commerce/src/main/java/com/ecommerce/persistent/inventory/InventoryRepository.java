@@ -18,9 +18,11 @@ public interface InventoryRepository extends JpaRepository<InventoryEntity, UUID
     @Query("select distinct i.sizeValue from InventoryEntity i where i.product.id = :productId")
     List<String> findSizeValueByProductId(final UUID productId);
 
-    @Query("select i.colorValue from InventoryEntity i where i.colorName = :colorName")
-    List<String> findColorValueByColorName(final String colorName);
+    @Query("select i.sizeValue from InventoryEntity i where i.colorValue = :colorValue and i.product.id = :productId")
+    List<String> findSizeValuesByColorValueAndProductId(final String colorValue, final UUID productId);
 
-    @Query("select i.sizeValue from InventoryEntity i where i.sizeName = :sizeName")
-    List<String> findSizeValueBySizeName(final String sizeName);
+    @Query("select i.colorValue from InventoryEntity i where i.sizeValue = :sizeValue and i.product.id = :productId")
+    List<String> findColorValuesBySizeValueAndProductId(final String sizeValue, final UUID productId);
+
+    InventoryEntity findByColorValueAndSizeValueAndProductId(final String colorValue, final String sizeValue, final UUID productId);
 }

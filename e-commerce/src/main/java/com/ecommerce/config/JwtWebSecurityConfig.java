@@ -53,6 +53,7 @@ public class JwtWebSecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/v1/product-styles/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/variant/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/v1/brands/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/v1/inventories/**").permitAll()
                 .requestMatchers("/api/v1/address/**").permitAll()
                 .requestMatchers("/api/v1/auth/**").permitAll()
                 .requestMatchers("/api/v1/admin/**").hasAuthority("ROLE_ADMIN")
