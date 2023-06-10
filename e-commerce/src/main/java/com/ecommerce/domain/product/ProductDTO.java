@@ -1,11 +1,11 @@
 package com.ecommerce.domain.product;
 
-import com.ecommerce.domain.inventory.dto.InventoryDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.*;
 
+import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -19,17 +19,21 @@ public class ProductDTO {
 
     private String name;
 
-    private long price;
+    private double price;
 
-    private String condition;
+    private long quantity;
 
     private Status productApproval;
 
     private String description;
 
+    private Instant createdAt;
+
+    private Instant updatedAt;
+
+    private Long amountSoldOut;
+
     private SellerDTO seller;
 
     private CategoryVariantDTO categoryVariant;
-
-    private InventoryDTO inventory;
 }

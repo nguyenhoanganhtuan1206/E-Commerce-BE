@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecommerce.domain.inventory.InventoryError.supplyInventoryNotFound;
 import static com.ecommerce.domain.inventory.InventoryValidation.validateInventoryInformationNotEmpty;
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryRequestDTO;
 import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
@@ -23,6 +24,11 @@ public class InventoryService {
     private final InventoryRepository inventoryRepository;
 
     private final ProductRepository productRepository;
+
+    public InventoryEntity findById(final UUID inventoryId) {
+        return inventoryRepository.findById(inventoryId)
+                .orElseThrow(supplyInventoryNotFound("id", inventoryId));
+    }
 
     public InventoryEntity findByColorValueAndSizeValueAndProductId(final UUID productId, final String sizeValue, final String colorValue) {
         return inventoryRepository.findByColorValueAndSizeValueAndProductId(colorValue, sizeValue, productId);

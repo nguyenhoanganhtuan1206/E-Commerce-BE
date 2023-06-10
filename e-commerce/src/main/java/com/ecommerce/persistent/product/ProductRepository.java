@@ -39,4 +39,9 @@ public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
     @Query(value = "select p from ProductEntity p where p.productApproval = :status and p.seller.id = :sellerId ")
     List<ProductEntity> findProductWithStatusAndSellerId(final Status status, final UUID sellerId);
+
+    @Query(value = "select p from ProductEntity p " +
+            " inner join p.inventories iv " +
+            " where iv.id = :inventoryId")
+    Optional<ProductEntity> findByInventoryId(final UUID inventoryId);
 }
