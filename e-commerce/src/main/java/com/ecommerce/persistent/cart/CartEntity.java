@@ -1,21 +1,21 @@
 package com.ecommerce.persistent.cart;
 
+import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.product.ProductEntity;
-import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
 @Table(name = "cart")
 @Getter
 @Setter
+@With
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
 public class CartEntity {
 
@@ -25,19 +25,18 @@ public class CartEntity {
 
     private int quantity;
 
+    private double totalPrice;
+
     private Instant createdAt;
 
-    private Instant dateAdded;
+    @ManyToOne
+    @JoinColumn(name = "product_id")
+    private ProductEntity product;
 
     @ManyToOne
-    private SellerEntity seller;
+    @JoinColumn(name = "inventory_id")
+    private InventoryEntity inventory;
 
-    @ManyToMany(mappedBy = "carts")
-    private List<ProductEntity> products;
-
-    @OneToOne(cascade = CascadeType.ALL)
-    @JoinTable(name = "user_cart",
-            joinColumns = {@JoinColumn(name = "user_id", referencedColumnName = "id")},
-            inverseJoinColumns = {@JoinColumn(name = "cart_id", referencedColumnName = "id")})
+    @ManyToOne
     private UserEntity user;
 }

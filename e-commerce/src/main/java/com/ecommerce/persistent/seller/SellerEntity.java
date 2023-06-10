@@ -1,6 +1,5 @@
 package com.ecommerce.persistent.seller;
 
-import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.style.ProductStyleEntity;
@@ -55,9 +54,6 @@ public class SellerEntity {
     @OneToOne(cascade = CascadeType.ALL)
     @JoinColumn(name = "user_id", referencedColumnName = "id")
     private UserEntity user;
-
-    @OneToMany(mappedBy = "seller")
-    private Set<CartEntity> carts;
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<ProductStyleEntity> productStyles;

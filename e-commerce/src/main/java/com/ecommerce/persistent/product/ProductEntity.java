@@ -68,12 +68,7 @@ public class ProductEntity {
     @JoinColumn(name = "brand_id", nullable = false)
     private BrandEntity brand;
 
-    @ManyToMany
-    @JoinTable(
-            name = "cart_product",
-            joinColumns = @JoinColumn(name = "cart_id"),
-            inverseJoinColumns = @JoinColumn(name = "product_id")
-    )
+    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
     private List<CartEntity> carts;
 
     @ManyToMany
