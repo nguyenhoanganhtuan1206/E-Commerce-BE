@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.UUID;
 
+import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTO;
 import static com.ecommerce.domain.product.mapper.ProductCreateDTOMapper.toProductResponseDTOs;
 import static com.ecommerce.domain.product.mapper.ProductDetailDTOMapper.toProductsResponseDetailDTOs;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
@@ -42,10 +43,17 @@ public class ProductController {
         return userProductService.findByCurrentUserId();
     }
 
-    @GetMapping("{productId}")
+    @GetMapping("{productId}/productDetail")
     public ProductDetailsDTO findProductDetailById(@PathVariable final UUID productId) {
         return commonProductService.findProductDetailById(productId);
     }
+
+    @PreAuthorize("hasAnyRole('SELLER', 'ADMIN')")
+    @GetMapping("{productId}")
+    public ProductResponseDTO findProductById(@PathVariable final UUID productId) {
+        return toProductResponseDTO(commonProductService.findById(productId));
+    }
+
 
     @PreAuthorize("hasRole('ROLE_SELLER')")
     @PostMapping
