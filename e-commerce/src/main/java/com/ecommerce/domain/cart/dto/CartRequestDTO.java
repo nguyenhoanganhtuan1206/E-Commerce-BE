@@ -14,4 +14,6 @@ public class CartRequestDTO {
     private UUID productId;
 
     private UUID inventoryId;
+
+    private int quantity;
 }

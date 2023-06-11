@@ -8,7 +8,7 @@ import java.util.function.Supplier;
 @UtilityClass
 public class CartError {
 
-    public static Supplier<BadRequestException> supplyCartEmpty() {
-        return () -> new BadRequestException("Your cart is currently empty! Please select some products.");
+    public static Supplier<BadRequestException> supplyCartValidation(final String message) {
+        return () -> new BadRequestException(message);
     }
 }

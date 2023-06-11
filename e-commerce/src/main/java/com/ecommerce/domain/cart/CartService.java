@@ -15,7 +15,7 @@ import org.springframework.stereotype.Service;
 import java.time.Instant;
 import java.util.Optional;
 
-import static com.ecommerce.domain.cart.CartError.supplyCartEmpty;
+import static com.ecommerce.domain.cart.CartError.supplyCartValidation;
 
 @Service
 @RequiredArgsConstructor
@@ -33,7 +33,7 @@ public class CartService {
 
     public CartEntity addProductToCart(final CartRequestDTO cartRequestDTO) {
         if (cartRequestDTO.getInventoryId() == null && cartRequestDTO.getProductId() == null) {
-            throw supplyCartEmpty().get();
+            throw supplyCartValidation("Your cart is currently empty! Please select some products.").get();
         }
 
         if (cartRequestDTO.getProductId() != null) {
@@ -47,16 +47,20 @@ public class CartService {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndProductId(authProvider.getCurrentUserId(), cartRequestDTO.getProductId());
         final ProductEntity productSelected = commonProductService.findById(cartRequestDTO.getProductId());
 
+        if (cartRequestDTO.getQuantity() > productSelected.getQuantity()) {
+            throw supplyCartValidation("Your order quantity exceeds the current availability.").get();
+        }
+
         CartEntity cartEntity;
         if (currentCart.isPresent()) {
             cartEntity = currentCart.get();
-            cartEntity.setQuantity(cartEntity.getQuantity() + 1);
+            cartEntity.setQuantity(cartEntity.getQuantity() + cartRequestDTO.getQuantity());
             cartEntity.setTotalPrice(productSelected.getPrice() * cartEntity.getQuantity());
         } else {
             cartEntity = CartEntity.builder()
                     .createdAt(Instant.now())
                     .product(productSelected)
-                    .quantity(1)
+                    .quantity(cartRequestDTO.getQuantity())
                     .totalPrice(productSelected.getPrice())
                     .user(userService.findById(authProvider.getCurrentUserId()))
                     .build();
@@ -69,16 +73,20 @@ public class CartService {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndInventoryId(authProvider.getCurrentUserId(), cartRequestDTO.getInventoryId());
         final InventoryEntity inventorySelected = inventoryService.findById(cartRequestDTO.getInventoryId());
 
+        if (cartRequestDTO.getQuantity() > inventorySelected.getQuantity()) {
+            throw supplyCartValidation("Your order quantity exceeds the current availability.").get();
+        }
+
         CartEntity cartEntity;
         if (currentCart.isPresent()) {
             cartEntity = currentCart.get();
-            cartEntity.setQuantity(cartEntity.getQuantity() + 1);
+            cartEntity.setQuantity(cartEntity.getQuantity() + cartRequestDTO.getQuantity());
             cartEntity.setTotalPrice(inventorySelected.getPrice() * cartEntity.getQuantity());
         } else {
             cartEntity = CartEntity.builder()
                     .createdAt(Instant.now())
                     .inventory(inventorySelected)
-                    .quantity(1)
+                    .quantity(cartRequestDTO.getQuantity())
                     .totalPrice(inventorySelected.getPrice())
                     .user(userService.findById(authProvider.getCurrentUserId()))
                     .build();
