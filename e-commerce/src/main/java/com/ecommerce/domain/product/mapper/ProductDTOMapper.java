@@ -1,6 +1,6 @@
 package com.ecommerce.domain.product.mapper;
 
-import com.ecommerce.domain.product.ProductDTO;
+import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.persistent.product.ProductEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;

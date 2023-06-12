@@ -2,7 +2,7 @@ package com.ecommerce.api.product;
 
 import com.ecommerce.api.product.dto.*;
 import com.ecommerce.domain.product.CommonProductService;
-import com.ecommerce.domain.product.ProductDTO;
+import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.domain.product.user.UserProductService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

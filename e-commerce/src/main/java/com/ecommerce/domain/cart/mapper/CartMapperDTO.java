@@ -17,7 +17,7 @@ public class CartMapperDTO {
         if (cart.getProduct() != null) {
             cartResponseDTO.setProductId(cart.getProduct().getId());
         }
-        
+
         return cartResponseDTO;
     }
 }

@@ -13,6 +13,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 import static com.ecommerce.domain.cart.CartError.supplyCartValidation;
@@ -30,6 +31,10 @@ public class CartService {
     private final UserService userService;
 
     private final AuthsProvider authProvider;
+
+    public List<CartEntity> findCartByCurrentUserId() {
+        return cartRepository.findByUserId(authProvider.getCurrentUserId());
+    }
 
     public CartEntity addProductToCart(final CartRequestDTO cartRequestDTO) {
         if (cartRequestDTO.getInventoryId() == null && cartRequestDTO.getProductId() == null) {
@@ -61,7 +66,7 @@ public class CartService {
                     .createdAt(Instant.now())
                     .product(productSelected)
                     .quantity(cartRequestDTO.getQuantity())
-                    .totalPrice(productSelected.getPrice())
+                    .totalPrice(productSelected.getPrice() * cartRequestDTO.getQuantity())
                     .user(userService.findById(authProvider.getCurrentUserId()))
                     .build();
         }
@@ -87,7 +92,7 @@ public class CartService {
                     .createdAt(Instant.now())
                     .inventory(inventorySelected)
                     .quantity(cartRequestDTO.getQuantity())
-                    .totalPrice(inventorySelected.getPrice())
+                    .totalPrice(inventorySelected.getPrice() * cartRequestDTO.getQuantity())
                     .user(userService.findById(authProvider.getCurrentUserId()))
                     .build();
         }

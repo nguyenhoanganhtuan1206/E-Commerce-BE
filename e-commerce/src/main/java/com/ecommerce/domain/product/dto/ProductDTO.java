@@ -1,4 +1,4 @@
-package com.ecommerce.domain.product;
+package com.ecommerce.domain.product.dto;
 
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;

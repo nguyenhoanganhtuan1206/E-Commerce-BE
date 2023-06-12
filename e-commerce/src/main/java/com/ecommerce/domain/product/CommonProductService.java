@@ -2,6 +2,7 @@ package com.ecommerce.domain.product;
 
 import com.ecommerce.api.product.dto.ProductDetailsDTO;
 import com.ecommerce.domain.inventory.InventoryService;
+import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
