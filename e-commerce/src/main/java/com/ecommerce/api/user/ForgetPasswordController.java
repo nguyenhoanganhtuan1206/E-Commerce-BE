@@ -25,7 +25,7 @@ public class ForgetPasswordController {
     }
 
     @GetMapping("check-expiration-code")
-    public void verifyCodeResetPassword(@RequestParam final String code) {
+    public void verifyCodeResetPassword(final @RequestParam(value = "code") String code) {
         userService.verifyCodeResetPassword(code);
     }
 

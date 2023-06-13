@@ -128,10 +128,11 @@ public class UserService {
     }
 
     public void sendEmailForgetPassword(final String email) {
-        final String RESET_PASSWORD_DOMAIN = "http://localhost:3000/reset-password";
+        final String codeResetPassword = randomUUID().toString();
         final UserEntity user = findByEmail(email);
+        final String RESET_PASSWORD_DOMAIN = "http://localhost:3000/reset-password/code=" + codeResetPassword;
 
-        user.setCodeResetPassword(randomUUID().toString());
+        user.setCodeResetPassword(codeResetPassword);
         user.setLastSendResetPasswordAt(Instant.now());
 
         userRepository.save(user);
