@@ -8,18 +8,18 @@ import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
 import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
+import com.ecommerce.domain.email.EmailService;
 import com.ecommerce.domain.role.RoleService;
 import com.ecommerce.domain.user.mapper.UserDTOMapper;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import com.ecommerce.persistent.user.UserRepository;
 import lombok.RequiredArgsConstructor;
-import org.springframework.mail.javamail.JavaMailSender;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
@@ -31,11 +31,8 @@ import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTOs;
 import static com.ecommerce.domain.user.mapper.UserResponseDTOMapper.toUserResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserSignUpMapper.toUserSignUpResponseDTO;
 import static com.ecommerce.domain.user.mapper.UserUpdateMapper.toUserUpdateResponseDTO;
-import static com.ecommerce.error.CommonError.supplyErrorProcesses;
 import static com.ecommerce.error.CommonError.supplyValidationError;
-import static com.ecommerce.utils.FormEmailSender.formEmail;
-import static com.ecommerce.utils.TokenGenerator.generateToken;
-import static com.ecommerce.utils.TokenGenerator.parse;
+import static java.util.UUID.randomUUID;
 
 @Service
 @RequiredArgsConstructor
@@ -49,7 +46,9 @@ public class UserService {
 
     private final PasswordEncoder passwordEncoder;
 
-    private final JavaMailSender javaMailSender;
+    private final EmailService emailService;
+
+    private final String RESET_PASSWORD_DOMAIN = "http://localhost:3000/reset-password";
 
     public List<UserDTO> findAll() {
         return toUserDTOs(userRepository.findAll());
@@ -92,6 +91,11 @@ public class UserService {
         return userRepository.findById(userId).orElseThrow(supplyUserNotFound("id", userId));
     }
 
+    public UserEntity findByCodeResetPassword(final String code) {
+        return userRepository.findByCodeResetPassword(code)
+                .orElseThrow(supplierCodeResetPasswordInvalid("Your request to reset password is invalid"));
+    }
+
     public UserUpdateResponseDTO updatePassword(final UserUpdatePasswordDTO userRequestDTO) {
         final UserEntity userUpdate = findById(authsProvider.getCurrentUserId());
 
@@ -125,63 +129,44 @@ public class UserService {
         return toUserUpdateResponseDTO(userRepository.save(user));
     }
 
-    /* FORGET PASSWORD HANDLER */
-    public void handleForgetPassword(final String email) {
-        final String BASE_URL_FORGET_PASSWORD = "http://localhost:3000/reset-password/";
-        final UserEntity userFound = findByEmail(email);
+    public void sendEmailForgetPassword(final String email) {
+        final UserEntity user = findByEmail(email);
 
-        /* Generate token */
-        final String token = generateToken(userFound.getEmail(), (long) 1000000);
+        user.setCodeResetPassword(randomUUID().toString());
+        user.setLastSendResetPasswordAt(Instant.now());
 
-        final String linkResetPassword = BASE_URL_FORGET_PASSWORD + token;
-        sendEmailResetPassword(userFound, linkResetPassword);
+        userRepository.save(user);
+
+        emailService.sendEmailForgetPassword(user, RESET_PASSWORD_DOMAIN);
     }
 
-    public void handleResetPassword(final UserRequestResetPasswordDTO userRequestDTO, final String token) {
-        final Authentication authentication = parse(token);
-        final UserEntity user = findByEmail(authentication.getCredentials().toString());
+    public void verifyCodeResetPassword(final String codeResetPassword) {
+        final UserEntity user = findByCodeResetPassword(codeResetPassword);
 
-        if (passwordEncoder.matches(userRequestDTO.getNewPassword(), user.getPassword())) {
-            throw supplyConflictError("You used this password recently. Please choose a different one.").get();
-        }
+        verifyExpirationTimeResetPassword(user.getLastSendResetPasswordAt());
+    }
 
-        user.setPassword(passwordEncoder.encode(userRequestDTO.getNewPassword()));
+    public void resetPassword(final UserRequestResetPasswordDTO requestResetPassword) {
+        final UserEntity user = findByCodeResetPassword(requestResetPassword.getCode());
+
+        verifyExpirationTimeResetPassword(user.getLastSendResetPasswordAt());
+
+        final String newPassword = passwordEncoder.encode(requestResetPassword.getNewPassword());
+
+        user.setPassword(newPassword);
+        user.setCodeResetPassword(null);
+        user.setLastSendResetPasswordAt(null);
+
         userRepository.save(user);
     }
 
-    private void sendEmailResetPassword(final UserEntity user, final String linkResetPassword) {
-        try {
-            final String subject = "Here's the link to reset your password";
-            String content = "<body style=\"padding: 0;margin: 0;\">" +
-                    "    <div style=\"width: 600px;" +
-                    "    display: flex;" +
-                    "    justify-content: center;" +
-                    "    margin: auto;" +
-                    "    flex-direction: column;\">" +
-                    "        <div style=\"padding: 20px;border: 1px solid #dadada;\">" +
-                    "            <p style=\"font-size: 16px;color: #000;\">Greetings, \"" + user.getUsername() + "\"</p>" +
-                    "            <p style=\"font-size: 16px;color: #000;\">We received a request to reset your password.<br>Click the button" +
-                    "                below to setup a new password</p>" +
-                    "            <a href=\"" + linkResetPassword + "\" style=\"padding: 8px;display: inline-block;cursor: pointer; border-radius: 3px;" +
-                    "            font-size: 15px;text-decoration: none;background-color: #0167f3;color: #fff;font-weight: 500;\">Change" +
-                    "                my password</a>" +
-                    "            <p>This link will expire after 10 minutes. If you didn't request a password reset , ignore this email and continue using your current password." +
-                    "            <br>" +
-                    "            Thank you for using our service.<br>" +
-                    "            <br>If you have any question, Please contact us immediately at <a href=\"mailto:gridshopvn@gmail.com@gmail.com\">gridshopvn@gmail.com</a>" +
-                    "            </p>" +
-                    "            <p>Thanks you.</p>" +
-                    "            <p>Grid Shop Team.</p>" +
-                    "        </div>" +
-                    "    </div>" +
-                    "</body>";
+    private void verifyExpirationTimeResetPassword(final Instant lastSendResetPassword) {
+        final Instant expirationTime = lastSendResetPassword.plus(10, ChronoUnit.MINUTES);
 
-            formEmail(javaMailSender, user.getEmail(), subject, content);
-        } catch (Exception ex) {
-            throw supplyErrorProcesses("An error occurred while processing your request. Please try again later!").get();
+        if (Instant.now().isAfter(expirationTime)) {
+            throw supplierCodeResetPasswordInvalid("Your request to reset password is expired! Please request another one").get();
         }
     }
-    /* FORGET PASSWORD HANDLER */
 
     private void verifyIfUserAvailable(final String email) {
         Optional<UserDTO> user = userRepository.findByEmail(email).map(UserDTOMapper::toUserDTO);

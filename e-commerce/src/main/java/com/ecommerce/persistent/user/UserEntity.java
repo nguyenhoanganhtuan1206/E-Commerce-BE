@@ -41,6 +41,10 @@ public class UserEntity {
 
     private boolean sellingEnabled;
 
+    private String codeResetPassword;
+
+    private Instant lastSendResetPasswordAt;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private Set<LocationEntity> locations;
 

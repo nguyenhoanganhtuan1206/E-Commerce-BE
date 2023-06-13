@@ -14,6 +14,10 @@ public class UserError {
         return () -> new NotFoundException("User with %s %s cannot found", fieldName, fieldValue);
     }
 
+    public static Supplier<BadRequestException> supplierCodeResetPasswordInvalid(final String message) {
+        return () -> new BadRequestException(message);
+    }
+
     public static Supplier<BadRequestException> supplyUserExisted(final String email) {
         return () -> new BadRequestException("User with email %s has been taken", email);
     }

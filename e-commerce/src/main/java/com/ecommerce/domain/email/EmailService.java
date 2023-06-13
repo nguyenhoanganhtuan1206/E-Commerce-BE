@@ -2,6 +2,7 @@ package com.ecommerce.domain.email;
 
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
+import com.ecommerce.persistent.user.UserEntity;
 import jakarta.mail.internet.MimeMessage;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -20,7 +21,10 @@ import static com.ecommerce.utils.StringUtils.replaceText;
 public class EmailService {
 
     private static final String APPROVE_PRODUCT_TEMPLATE_PATH = "/templates/email/ApproveProduct.html";
+
     private static final String FEEDBACK_PRODUCT_TEMPLATE_PATH = "/templates/email/FeedbackProduct.html";
+
+    private static final String FORGET_PASSWORD_TEMPLATE_PATH = "/templates/email/ForgetPasswordEmail.html";
 
     private static final String EMAIL_SUBJECT_REGEX = "<title>(.*?)</title>";
 
@@ -50,6 +54,14 @@ public class EmailService {
         mailSender.send(buildMessage(email, formattedMailContent));
     }
 
+    public void sendEmailForgetPassword(final UserEntity user, final String linkResetPassword) {
+        final String mailContent = readResource(FORGET_PASSWORD_TEMPLATE_PATH);
+        final Map<String, String> replacements = createReplacementsMapForgetPassword(user, linkResetPassword);
+        final String formattedMailContent = replacePlaceholders(mailContent, replacements);
+
+        mailSender.send(buildMessage(user.getEmail(), formattedMailContent));
+    }
+
     private Map<String, String> createReplacementsMapApproveProduct(final SellerEntity seller, final ProductEntity product) {
         return Map.of(
                 "username", seller.getUser().getUsername(),
@@ -62,6 +74,13 @@ public class EmailService {
                 "username", seller.getUser().getUsername(),
                 "productName", product.getName(),
                 "contentFeedback", contentFeedback
+        );
+    }
+
+    private Map<String, String> createReplacementsMapForgetPassword(final UserEntity user, final String linkResetPassword) {
+        return Map.of(
+                "username", user.getUsername(),
+                "linkResetPassword", linkResetPassword
         );
     }
 

@@ -8,7 +8,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
-import static com.ecommerce.error.CommonError.supplyValidationError;
+import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 
 @RestController
 @RequestMapping(value = "/api/v1/auth")
@@ -17,23 +17,23 @@ public class ForgetPasswordController {
 
     private final UserService userService;
 
-    @PostMapping("/forget-password")
+    @PostMapping("forget-password")
     public void handleForgetPassword(final @Valid @RequestBody UserRequestConfirmEmailDTO userRequestDTO, final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
-        }
+        handleValidationError(bindingResult);
 
-        userService.handleForgetPassword(userRequestDTO.getEmail());
+        userService.sendEmailForgetPassword(userRequestDTO.getEmail());
     }
 
-    @PutMapping("/reset-password")
-    public void handleResetPassword(final @Valid @RequestBody UserRequestResetPasswordDTO userRequestDTO,
-                                    final @RequestParam String token,
-                                    final BindingResult bindingResult) {
-        if (bindingResult.hasErrors()) {
-            throw supplyValidationError(bindingResult.getFieldError().getDefaultMessage()).get();
-        }
+    @GetMapping("check-expiration-code")
+    public void verifyCodeResetPassword(@RequestParam final String code) {
+        userService.verifyCodeResetPassword(code);
+    }
 
-        userService.handleResetPassword(userRequestDTO, token);
+    @PutMapping("reset-password")
+    public void handleResetPassword(final @Valid @RequestBody UserRequestResetPasswordDTO userRequestDTO,
+                                    final BindingResult bindingResult) {
+        handleValidationError(bindingResult);
+
+        userService.resetPassword(userRequestDTO);
     }
 }

@@ -12,6 +12,8 @@ public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
     Optional<UserEntity> findByEmail(final String email);
 
+    Optional<UserEntity> findByCodeResetPassword(final String code);
+
     @Query("select u from UserEntity u " +
             "left join LocationEntity l " +
             "on l.user.id = u.id " +
