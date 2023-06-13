@@ -48,8 +48,6 @@ public class UserService {
 
     private final EmailService emailService;
 
-    private final String RESET_PASSWORD_DOMAIN = "http://localhost:3000/reset-password";
-
     public List<UserDTO> findAll() {
         return toUserDTOs(userRepository.findAll());
     }
@@ -130,6 +128,7 @@ public class UserService {
     }
 
     public void sendEmailForgetPassword(final String email) {
+        final String RESET_PASSWORD_DOMAIN = "http://localhost:3000/reset-password";
         final UserEntity user = findByEmail(email);
 
         user.setCodeResetPassword(randomUUID().toString());
