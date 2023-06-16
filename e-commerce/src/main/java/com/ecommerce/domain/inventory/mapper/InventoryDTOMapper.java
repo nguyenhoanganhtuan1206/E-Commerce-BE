@@ -1,6 +1,7 @@
 package com.ecommerce.domain.inventory.mapper;
 
 import com.ecommerce.domain.inventory.dto.InventoryCreateRequestDTO;
+import com.ecommerce.domain.inventory.dto.InventoryDTO;
 import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import lombok.experimental.UtilityClass;
@@ -12,6 +13,10 @@ import java.util.List;
 public class InventoryDTOMapper {
 
     private static final ModelMapper modelMapper = new ModelMapper();
+
+    public static InventoryDTO toInventoryDTO(final InventoryEntity inventory) {
+        return modelMapper.map(inventory, InventoryDTO.class);
+    }
 
     public static InventoryCreateRequestDTO toInventoryRequestDTO(final InventoryEntity inventory) {
         return modelMapper.map(inventory, InventoryCreateRequestDTO.class);

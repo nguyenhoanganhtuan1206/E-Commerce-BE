@@ -7,13 +7,30 @@ import org.modelmapper.ModelMapper;
 
 import java.util.List;
 
+import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryDTO;
+import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTO;
+
 @UtilityClass
 public class CartDetailMapperDTO {
 
     private final ModelMapper modelMapper = new ModelMapper();
 
     public static CartDetailResponseDTO toCartDetailDTO(final CartEntity cartEntity) {
-        return modelMapper.map(cartEntity, CartDetailResponseDTO.class);
+        final CartDetailResponseDTO cartDetailResponseDTO = modelMapper.map(cartEntity, CartDetailResponseDTO.class);
+
+        cartDetailResponseDTO.setSellerId(cartDetailResponseDTO.getSellerId());
+
+        if (cartEntity.getProduct() != null) {
+            cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getProduct()));
+        }
+
+        if (cartEntity.getInventory() != null) {
+            cartDetailResponseDTO
+                    .setProduct(toProductDTO(cartEntity.getInventory().getProduct())
+                            .withInventory(toInventoryDTO(cartEntity.getInventory())));
+        }
+
+        return cartDetailResponseDTO;
     }
 
     public static List<CartDetailResponseDTO> toCartDetailDTOs(final List<CartEntity> carts) {

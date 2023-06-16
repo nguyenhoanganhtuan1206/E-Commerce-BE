@@ -3,6 +3,7 @@ package com.ecommerce.domain.product.dto;
 import com.ecommerce.api.category.dto.CategoryResponseDTO;
 import com.ecommerce.api.style.dto.ProductStyleResponseDTO;
 import com.ecommerce.domain.brand.BrandDTO;
+import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.variant.CategoryVariantDTO;
@@ -33,6 +34,8 @@ public class ProductCartDetailDTO {
     private BrandDTO brand;
 
     private SellerDTO seller;
+
+    private InventoryResponseDTO inventory;
 
     private List<PaymentMethodDTO> paymentMethods;
 

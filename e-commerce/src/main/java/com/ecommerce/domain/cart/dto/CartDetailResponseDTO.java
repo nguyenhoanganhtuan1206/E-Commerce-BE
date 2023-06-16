@@ -1,16 +1,17 @@
 package com.ecommerce.domain.cart.dto;
 
-import com.ecommerce.domain.inventory.dto.InventoryCartResponseDTO;
-import com.ecommerce.domain.product.dto.ProductCartDetailDTO;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import com.ecommerce.domain.product.dto.ProductDTO;
+import com.ecommerce.domain.user.UserDTO;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@With
+@AllArgsConstructor
 @NoArgsConstructor
 public class CartDetailResponseDTO {
 
@@ -22,7 +23,9 @@ public class CartDetailResponseDTO {
 
     private Instant createdAt;
 
-    private ProductCartDetailDTO product;
+    private UUID sellerId;
 
-    private InventoryCartResponseDTO inventory;
+    private ProductDTO product;
+
+    private UserDTO user;
 }

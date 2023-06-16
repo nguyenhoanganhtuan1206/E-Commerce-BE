@@ -3,6 +3,7 @@ package com.ecommerce.domain.inventory.dto;
 import lombok.*;
 
 import java.time.Instant;
+import java.util.UUID;
 
 @Getter
 @Setter
@@ -11,6 +12,8 @@ import java.time.Instant;
 @AllArgsConstructor
 @NoArgsConstructor
 public class InventoryDTO {
+
+    private UUID id;
 
     private String colorName;
 
