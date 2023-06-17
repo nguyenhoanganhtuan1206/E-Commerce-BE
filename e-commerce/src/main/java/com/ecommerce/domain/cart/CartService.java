@@ -60,6 +60,29 @@ public class CartService {
         }
     }
 
+    public void increaseQuantity(final UUID cartId) {
+        final CartEntity currentCart = findById(cartId);
+        validateCartQuantityLimits(currentCart);
+
+        currentCart.setQuantity(currentCart.getQuantity() + 1);
+        updatePriceWhenInteractWithQuantity(currentCart);
+
+        cartRepository.save(currentCart);
+    }
+
+    public void decreaseQuantity(final UUID cartId) {
+        final CartEntity currentCart = findById(cartId);
+
+        if (currentCart.getQuantity() < 0) {
+            throw supplyCartValidation("Something went wrong, please try again.").get();
+        }
+
+        currentCart.setQuantity(currentCart.getQuantity() - 1);
+        updatePriceWhenInteractWithQuantity(currentCart);
+        
+        cartRepository.save(currentCart);
+    }
+
     public void deleteById(final UUID cartId) {
         final CartEntity cartEntity = findById(cartId);
 
@@ -73,6 +96,10 @@ public class CartService {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndProductId(authProvider.getCurrentUserId(), cartRequestDTO.getProductId());
         final ProductEntity productSelected = commonProductService.findById(cartRequestDTO.getProductId());
         final double totalPrice = productSelected.getPrice() * cartRequestDTO.getQuantity();
+
+        if (cartRequestDTO.getQuantity() > productSelected.getQuantity()) {
+            throw supplyCartValidation("Can't select exceeds current quantity.").get();
+        }
 
         if (currentCart.isEmpty()) {
             return CartEntity.builder()
@@ -97,6 +124,10 @@ public class CartService {
         final InventoryEntity inventorySelected = inventoryService.findById(cartRequestDTO.getInventoryId());
         final double totalPrice = inventorySelected.getPrice() * cartRequestDTO.getQuantity();
 
+        if (cartRequestDTO.getQuantity() > inventorySelected.getQuantity()) {
+            throw supplyCartValidation("Can't select exceeds current quantity.").get();
+        }
+
         if (currentCart.isEmpty()) {
             return CartEntity.builder()
                     .createdAt(Instant.now())
@@ -110,5 +141,25 @@ public class CartService {
         return currentCart.get()
                 .withTotalPrice(currentCart.get().getTotalPrice() + totalPrice)
                 .withQuantity(currentCart.get().getQuantity() + cartRequestDTO.getQuantity());
+    }
+
+    private void updatePriceWhenInteractWithQuantity(final CartEntity currentCart) {
+        if (currentCart.getProduct() != null) {
+            currentCart.setTotalPrice(currentCart.getQuantity() * currentCart.getProduct().getPrice());
+        }
+
+        if (currentCart.getInventory() != null) {
+            currentCart.setTotalPrice(currentCart.getQuantity() * currentCart.getInventory().getPrice());
+        }
+    }
+
+    private void validateCartQuantityLimits(final CartEntity currentCart) {
+        if (currentCart.getProduct() != null && currentCart.getQuantity() > currentCart.getProduct().getQuantity()) {
+            throw supplyCartValidation("Can't select exceeds current quantity.").get();
+        }
+
+        if (currentCart.getQuantity() > currentCart.getInventory().getQuantity()) {
+            throw supplyCartValidation("Can't select exceeds current quantity.").get();
+        }
     }
 }

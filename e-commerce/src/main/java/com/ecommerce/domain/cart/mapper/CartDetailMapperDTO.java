@@ -18,16 +18,16 @@ public class CartDetailMapperDTO {
     public static CartDetailResponseDTO toCartDetailDTO(final CartEntity cartEntity) {
         final CartDetailResponseDTO cartDetailResponseDTO = modelMapper.map(cartEntity, CartDetailResponseDTO.class);
 
-        cartDetailResponseDTO.setSellerId(cartDetailResponseDTO.getSellerId());
-
         if (cartEntity.getProduct() != null) {
             cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getProduct()));
+            cartDetailResponseDTO.setSellerId(cartEntity.getProduct().getSeller().getId());
         }
 
         if (cartEntity.getInventory() != null) {
             cartDetailResponseDTO
-                    .setProduct(toProductDTO(cartEntity.getInventory().getProduct())
-                            .withInventory(toInventoryDTO(cartEntity.getInventory())));
+                    .setSellerId(cartEntity.getInventory().getProduct().getSeller().getId());
+            cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getInventory().getProduct())
+                    .withInventory(toInventoryDTO(cartEntity.getInventory())));
         }
 
         return cartDetailResponseDTO;
