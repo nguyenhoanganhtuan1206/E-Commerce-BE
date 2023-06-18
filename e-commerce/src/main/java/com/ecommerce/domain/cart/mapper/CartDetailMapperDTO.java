@@ -9,6 +9,7 @@ import java.util.List;
 
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryDTO;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTO;
+import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
 
 @UtilityClass
 public class CartDetailMapperDTO {
@@ -20,12 +21,12 @@ public class CartDetailMapperDTO {
 
         if (cartEntity.getProduct() != null) {
             cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getProduct()));
-            cartDetailResponseDTO.setSellerId(cartEntity.getProduct().getSeller().getId());
+            cartDetailResponseDTO.setSeller(toSellerDTO(cartEntity.getProduct().getSeller()));
         }
 
         if (cartEntity.getInventory() != null) {
             cartDetailResponseDTO
-                    .setSellerId(cartEntity.getInventory().getProduct().getSeller().getId());
+                    .setSeller(toSellerDTO(cartEntity.getInventory().getProduct().getSeller()));
             cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getInventory().getProduct())
                     .withInventory(toInventoryDTO(cartEntity.getInventory())));
         }

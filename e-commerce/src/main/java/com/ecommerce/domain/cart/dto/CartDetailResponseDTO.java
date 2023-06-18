@@ -1,6 +1,7 @@
 package com.ecommerce.domain.cart.dto;
 
 import com.ecommerce.domain.product.dto.ProductDTO;
+import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
 import lombok.*;
 
@@ -23,7 +24,7 @@ public class CartDetailResponseDTO {
 
     private Instant createdAt;
 
-    private UUID sellerId;
+    private SellerDTO seller;
 
     private ProductDTO product;
 

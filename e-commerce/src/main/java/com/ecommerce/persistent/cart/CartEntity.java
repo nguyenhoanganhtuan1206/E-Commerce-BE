@@ -23,7 +23,7 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private int quantity;
+    private long quantity;
 
     private double totalPrice;
 

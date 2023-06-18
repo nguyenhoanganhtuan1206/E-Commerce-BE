@@ -78,10 +78,4 @@ public class ProductDetailDTOMapper {
 
         return productDetailsDTO;
     }
-
-    public static List<ProductDetailsDTO> toProductDetailsDTOs(final List<ProductEntity> productEntities) {
-        return productEntities.stream()
-                .map(ProductDetailDTOMapper::toProductDetailsDTO)
-                .toList();
-    }
 }
