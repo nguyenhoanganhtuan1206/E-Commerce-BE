@@ -50,17 +50,20 @@ public class InventoryService {
     public InventoryDetailResponseDTO findInventoryDetailByProductId(final UUID productId) {
         final List<InventoryEntity> inventoryEntities = findInventoriesByProductId(productId);
 
-        final int quantityProducts = inventoryEntities.stream().mapToInt(InventoryEntity::getQuantity).sum();
+        if (!inventoryEntities.isEmpty()) {
+            final int quantityProducts = inventoryEntities.stream().mapToInt(InventoryEntity::getQuantity).sum();
 
-        return InventoryDetailResponseDTO
-                .builder()
-                .colorName(inventoryEntities.get(0).getColorName())
-                .sizeName(inventoryEntities.get(0).getSizeName())
-                .price(inventoryEntities.get(0).getPrice())
-                .quantity(quantityProducts)
-                .colorValues(inventoryRepository.findColorValueByProductId(productId))
-                .sizeValues(inventoryRepository.findSizeValueByProductId(productId))
-                .build();
+            return InventoryDetailResponseDTO
+                    .builder()
+                    .colorName(inventoryEntities.get(0).getColorName())
+                    .sizeName(inventoryEntities.get(0).getSizeName())
+                    .price(inventoryEntities.get(0).getPrice())
+                    .quantity(quantityProducts)
+                    .colorValues(inventoryRepository.findColorValueByProductId(productId))
+                    .sizeValues(inventoryRepository.findSizeValueByProductId(productId))
+                    .build();
+        }
+        return null;
     }
 
     public void createInventories(final List<InventoryEntity> inventories, final ProductEntity product) {

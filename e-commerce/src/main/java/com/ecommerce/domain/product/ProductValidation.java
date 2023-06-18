@@ -5,14 +5,15 @@ import lombok.experimental.UtilityClass;
 import java.util.List;
 
 import static com.ecommerce.error.CommonError.supplyValidationError;
+import static java.util.regex.Pattern.matches;
 
 @UtilityClass
 public class ProductValidation {
 
-    private final static String ONLY_NUMBER_REGEX = "\\b\\d+\\b";
+    private final static String ONLY_NUMBER_REGEX = "^[0-9]*$";
 
     public static void validatePriceProduct(final double price) {
-        if (!ONLY_NUMBER_REGEX.matches(String.valueOf(price))) {
+        if (!matches(ONLY_NUMBER_REGEX, String.valueOf((long) price))) {
             throw supplyValidationError("Price must be number.").get();
         }
 
@@ -22,7 +23,7 @@ public class ProductValidation {
     }
 
     public static void validateQuantityProduct(final long quantity) {
-        if (!ONLY_NUMBER_REGEX.matches(String.valueOf(quantity))) {
+        if (!matches(ONLY_NUMBER_REGEX, String.valueOf(quantity))) {
             throw supplyValidationError("Quantity must be number.").get();
         }
 

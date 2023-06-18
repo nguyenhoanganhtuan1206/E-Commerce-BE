@@ -2,6 +2,7 @@ package com.ecommerce.domain.product;
 
 import com.ecommerce.api.product.dto.ProductDetailsDTO;
 import com.ecommerce.domain.inventory.InventoryService;
+import com.ecommerce.domain.inventory.dto.InventoryDetailResponseDTO;
 import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
@@ -31,8 +32,14 @@ public class CommonProductService {
     public ProductDetailsDTO findProductDetailById(final UUID productId) {
         final ProductDetailsDTO productDetailDTO = toProductDetailsDTO(productRepository.findById(productId)
                 .orElseThrow(supplyProductNotFound("id", productId)));
-        return productDetailDTO
-                .withInventory(inventoryService.findInventoryDetailByProductId(productId));
+        final InventoryDetailResponseDTO inventoryEntities = inventoryService.findInventoryDetailByProductId(productId);
+
+        if (inventoryEntities != null) {
+            return productDetailDTO
+                    .withInventory(inventoryEntities);
+        }
+
+        return productDetailDTO;
     }
 
     public List<ProductEntity> findAllSortedByAmountSoldOut() {

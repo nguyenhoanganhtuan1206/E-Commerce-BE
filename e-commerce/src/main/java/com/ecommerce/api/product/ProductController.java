@@ -55,7 +55,7 @@ public class ProductController {
     }
 
 
-    @PreAuthorize("hasRole('ROLE_SELLER')")
+    @PreAuthorize("hasAnyRole('ROLE_SELLER', 'ROLE_USER')")
     @PostMapping
     public ProductResponseDTO create(
             final @Valid @RequestBody ProductCreateRequestDTO productCreateRequestDTO,
