@@ -63,6 +63,7 @@ public class UserProductService {
 
     public ProductResponseDTO create(final ProductCreateRequestDTO productRequestDTO) {
         final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
+
         validatePaymentMethodNotEmpty(productRequestDTO.getPaymentMethods());
         validateCategoriesNotEmpty(productRequestDTO.getCategories());
         validateProductStylesNotEmpty(productRequestDTO.getProductStyles());
@@ -75,12 +76,12 @@ public class UserProductService {
             inventoryService.createInventories(toInventoryEntities(productRequestDTO.getInventories()), productRepository.save(productCreate));
 
             return toProductResponseDTO(productCreate);
-        } else {
-            validatePriceProduct(productRequestDTO.getPrice());
-            validateQuantityProduct(productRequestDTO.getQuantity());
-
-            return toProductResponseDTO(productRepository.save(productCreate));
         }
+
+        validatePriceProduct(productRequestDTO.getPrice());
+        validateQuantityProduct(productRequestDTO.getQuantity());
+
+        return toProductResponseDTO(productRepository.save(productCreate));
     }
 
     private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {
