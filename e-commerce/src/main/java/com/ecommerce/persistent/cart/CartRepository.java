@@ -18,4 +18,12 @@ public interface CartRepository extends JpaRepository<CartEntity, UUID> {
 
     @Query("select c from CartEntity c where c.user.id = :userId and c.inventory.id  = :inventoryId ")
     Optional<CartEntity> findByUserIdAndInventoryId(final UUID userId, final UUID inventoryId);
+
+    @Query("select c from CartEntity c " +
+            " where c.inventory.product.seller.id = :sellerId and c.user.id = :userId")
+    List<CartEntity> findBySellerIdByUserIdAndExistedInventory(final UUID userId, final UUID sellerId);
+
+    @Query("select c from CartEntity c " +
+            " where c.product.seller.id = :sellerId and c.user.id = :userId")
+    List<CartEntity> findBySellerIdByUserIdAndExistedProduct(final UUID userId, final UUID sellerId);
 }

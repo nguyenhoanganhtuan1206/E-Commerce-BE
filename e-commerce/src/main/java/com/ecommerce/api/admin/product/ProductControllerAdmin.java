@@ -39,7 +39,7 @@ public class ProductControllerAdmin {
     }
 
     @PutMapping("/{productId}/deactivate")
-    public ProductResponseDTO deactivateProduct(@PathVariable final UUID productId, final @RequestBody Map<String, String> requestBody) {
-        return toProductResponseDTO(adminProductService.deActivateProduct(productId, requestBody.get("contentFeedback")));
+    public ProductResponseDTO deactivateProduct(@PathVariable final UUID productId) {
+        return toProductResponseDTO(adminProductService.deActivateProduct(productId));
     }
 }

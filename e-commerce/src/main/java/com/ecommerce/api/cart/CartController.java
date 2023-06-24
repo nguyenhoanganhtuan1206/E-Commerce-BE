@@ -25,6 +25,11 @@ public class CartController {
         return toCartDetailDTOs(cartService.findCartByCurrentUserId());
     }
 
+    @GetMapping("{sellerId}/user/cart-details")
+    public List<CartDetailResponseDTO> findByUserIdAndSellerId(@PathVariable final UUID sellerId) {
+        return toCartDetailDTOs(cartService.findByUserIdAndSellerId(sellerId));
+    }
+
     @PostMapping("add-to-cart")
     public void addProductToCart(@RequestBody final CartRequestDTO cartRequestDTO) {
         cartService.addProductToCart(cartRequestDTO);

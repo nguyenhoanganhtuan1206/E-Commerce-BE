@@ -1,5 +1,6 @@
 package com.ecommerce.domain.user;
 
+import com.ecommerce.domain.location.LocationDTO;
 import com.ecommerce.domain.role.RoleDTO;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -26,7 +27,7 @@ public class UserDTO {
 
     private Instant updatedAt;
 
-    private String password;
+    private Set<LocationDTO> locations;
 
     private String address;
 

@@ -10,6 +10,7 @@ import java.util.List;
 import static com.ecommerce.domain.inventory.mapper.InventoryDTOMapper.toInventoryDTO;
 import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTO;
 import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 
 @UtilityClass
 public class CartDetailMapperDTO {
@@ -30,6 +31,8 @@ public class CartDetailMapperDTO {
             cartDetailResponseDTO.setProduct(toProductDTO(cartEntity.getInventory().getProduct())
                     .withInventory(toInventoryDTO(cartEntity.getInventory())));
         }
+
+        cartDetailResponseDTO.setUser(toUserDTO(cartEntity.getUser()));
 
         return cartDetailResponseDTO;
     }

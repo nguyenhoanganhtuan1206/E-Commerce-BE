@@ -79,7 +79,7 @@ public class CartService {
 
         currentCart.setQuantity(currentCart.getQuantity() - 1);
         updatePriceWhenInteractWithQuantity(currentCart);
-        
+
         cartRepository.save(currentCart);
     }
 
@@ -111,9 +111,13 @@ public class CartService {
                     .build();
         }
 
+        final long quantityCurrentCart = currentCart.get().getQuantity() == productSelected.getQuantity()
+                ? productSelected.getQuantity()
+                : currentCart.get().getQuantity() + cartRequestDTO.getQuantity();
+
         return currentCart.get()
                 .withTotalPrice(currentCart.get().getTotalPrice() + totalPrice)
-                .withQuantity(currentCart.get().getQuantity() + cartRequestDTO.getQuantity());
+                .withQuantity(quantityCurrentCart);
     }
 
     public CartEntity updateCartIfInventoryIdAvailable(
@@ -138,9 +142,22 @@ public class CartService {
                     .build();
         }
 
+        final long quantityCurrentCart = currentCart.get().getQuantity() == inventorySelected.getQuantity()
+                ? inventorySelected.getQuantity()
+                : currentCart.get().getQuantity() + cartRequestDTO.getQuantity();
+
         return currentCart.get()
                 .withTotalPrice(currentCart.get().getTotalPrice() + totalPrice)
-                .withQuantity(currentCart.get().getQuantity() + cartRequestDTO.getQuantity());
+                .withQuantity(quantityCurrentCart);
+    }
+
+    public List<CartEntity> findByUserIdAndSellerId(final UUID sellerId) {
+        final List<CartEntity> carts = cartRepository.findBySellerIdByUserIdAndExistedProduct(authProvider.getCurrentUserId(), sellerId);
+        if (!carts.isEmpty()) {
+            return carts;
+        }
+
+        return cartRepository.findBySellerIdByUserIdAndExistedInventory(authProvider.getCurrentUserId(), sellerId);
     }
 
     private void updatePriceWhenInteractWithQuantity(final CartEntity currentCart) {
@@ -154,8 +171,11 @@ public class CartService {
     }
 
     private void validateCartQuantityLimits(final CartEntity currentCart) {
-        if (currentCart.getProduct() != null && currentCart.getQuantity() > currentCart.getProduct().getQuantity()) {
-            throw supplyCartValidation("Can't select exceeds current quantity.").get();
+        if (currentCart.getProduct() != null) {
+            if (currentCart.getQuantity() > currentCart.getProduct().getQuantity()) {
+                throw supplyCartValidation("Can't select exceeds current quantity.").get();
+            }
+            return;
         }
 
         if (currentCart.getQuantity() > currentCart.getInventory().getQuantity()) {
