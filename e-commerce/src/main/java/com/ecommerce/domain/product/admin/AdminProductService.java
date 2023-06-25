@@ -28,7 +28,7 @@ public class AdminProductService {
         return productRepository.save(currentProduct);
     }
 
-    public ProductEntity deActivateProduct(final UUID productId, final String contentFeedback) {
+    public ProductEntity deActivateProduct(final UUID productId) {
         final ProductEntity currentProduct = commonProductService.findById(productId);
         currentProduct.setProductApproval(Status.DEACTIVATE);
 
