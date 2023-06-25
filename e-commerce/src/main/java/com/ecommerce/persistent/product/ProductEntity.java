@@ -60,7 +60,7 @@ public class ProductEntity {
             inverseJoinColumns = @JoinColumn(name = "category_id"))
     private List<CategoryEntity> categories; // Men, Women
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne(cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     @JoinColumn(name = "product_variant_id", nullable = false)
     private CategoryVariantEntity categoryVariant; // Bags, ...
 
