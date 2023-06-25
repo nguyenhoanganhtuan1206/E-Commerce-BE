@@ -1,5 +1,7 @@
 package com.ecommerce.persistent.paymentOrder;
 
+import com.ecommerce.domain.delivery_status.DeliveryStatus;
+import com.ecommerce.domain.payment_status.PaymentStatus;
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
 import jakarta.persistence.*;
@@ -25,6 +27,10 @@ public class PaymentOrderEntity {
     private Instant orderedAt;
 
     private Instant deliveryAt;
+
+    private PaymentStatus paymentStatus;
+
+    private DeliveryStatus deliveryStatus;
 
     @ManyToOne
     @JoinColumn(name = "payment_method_id", nullable = false)
