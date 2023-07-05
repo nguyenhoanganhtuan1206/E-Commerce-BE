@@ -1,4 +1,4 @@
-package com.ecommerce.persistent.paymentMethod;
+package com.ecommerce.persistent.payment_method;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;

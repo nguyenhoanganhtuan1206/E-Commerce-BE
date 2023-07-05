@@ -1,4 +1,4 @@
-package com.ecommerce.config.product;
+package com.ecommerce.configuration.dummy_data.product;
 
 import com.ecommerce.persistent.brand.BrandEntity;
 import com.ecommerce.persistent.brand.BrandRepository;

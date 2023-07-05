@@ -1,11 +1,13 @@
-package com.ecommerce.persistent.paymentMethod;
+package com.ecommerce.persistent.payment_method;
 
+import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 
@@ -24,6 +26,9 @@ public class PaymentMethodEntity {
 
     @ManyToMany(mappedBy = "paymentMethods")
     private Set<ProductEntity> products;
+
+    @OneToMany(mappedBy = "paymentMethod")
+    private List<PaymentOrderEntity> paymentOrders;
 
     public PaymentMethodEntity(String name) {
         this.name = name;

@@ -1,4 +1,4 @@
-package com.ecommerce.config;
+package com.ecommerce.configuration;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;

@@ -1,7 +1,7 @@
 package com.ecommerce.domain.payment;
 
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodRepository;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

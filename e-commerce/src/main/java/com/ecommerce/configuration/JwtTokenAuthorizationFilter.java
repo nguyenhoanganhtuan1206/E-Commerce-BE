@@ -1,4 +1,4 @@
-package com.ecommerce.config;
+package com.ecommerce.configuration;
 
 import com.ecommerce.domain.auth.JwtTokenService;
 import jakarta.servlet.FilterChain;

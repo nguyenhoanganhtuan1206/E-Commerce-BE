@@ -25,6 +25,10 @@ public class InventoryService {
 
     private final ProductRepository productRepository;
 
+    public InventoryEntity save(final InventoryEntity inventory) {
+        return inventoryRepository.save(inventory);
+    }
+
     public InventoryEntity findById(final UUID inventoryId) {
         return inventoryRepository.findById(inventoryId)
                 .orElseThrow(supplyInventoryNotFound("id", inventoryId));
@@ -67,19 +71,7 @@ public class InventoryService {
     }
 
     public void createInventories(final List<InventoryEntity> inventories, final ProductEntity product) {
-        inventories
-                .forEach(inventory -> {
-                    validateInventoryInformationNotEmpty(toInventoryRequestDTO(inventory));
-
-                    inventory.setColorName(inventory.getColorName());
-                    inventory.setColorValue(inventory.getColorValue());
-                    inventory.setPrice(inventory.getPrice());
-                    inventory.setSizeName(inventory.getSizeName());
-                    inventory.setSizeValue(inventory.getSizeValue());
-                    inventory.setProduct(product);
-
-                    inventoryRepository.save(inventory);
-                });
+        inventories.forEach(inventory -> updateInventoryWithInformation(inventory, product));
     }
 
     public void updateInventoryWithProductId(final UUID productId, final List<InventoryEntity> inventoriesUpdate) {
@@ -87,26 +79,41 @@ public class InventoryService {
         final ProductEntity product = productRepository.findById(productId)
                 .orElseThrow(supplyProductNotFound("id", productId));
 
-        currentInventories.forEach(currentInventory -> {
-            inventoriesUpdate.forEach(inventoryUpdate -> {
-                if (inventoryUpdate.getId() == null) {
-                    inventoryUpdate.setProduct(product);
-                    inventoryRepository.save(inventoryUpdate);
-                }
+        currentInventories.forEach(currentInventory ->
+                inventoriesUpdate.forEach(inventoryUpdate -> validateAndSaveInventory(currentInventory, inventoryUpdate, product))
+        );
+    }
 
-                if (StringUtils.equals(currentInventory.getId().toString(), inventoryUpdate.getId().toString())) {
-                    validateInventoryInformationNotEmpty(toInventoryRequestDTO(inventoryUpdate));
+    private void updateInventoryWithInformation(final InventoryEntity inventory, final ProductEntity product) {
+        validateInventoryInformationNotEmpty(toInventoryRequestDTO(inventory));
 
-                    currentInventory.setColorName(inventoryUpdate.getColorName());
-                    currentInventory.setColorValue(inventoryUpdate.getColorValue());
-                    currentInventory.setSizeName(inventoryUpdate.getSizeName());
-                    currentInventory.setSizeValue(inventoryUpdate.getSizeValue());
-                    currentInventory.setQuantity(inventoryUpdate.getQuantity());
-                    currentInventory.setPrice(inventoryUpdate.getPrice());
+        inventory.setColorName(inventory.getColorName());
+        inventory.setColorValue(inventory.getColorValue());
+        inventory.setPrice(inventory.getPrice());
+        inventory.setSizeName(inventory.getSizeName());
+        inventory.setSizeValue(inventory.getSizeValue());
+        inventory.setProduct(product);
 
-                    inventoryRepository.save(currentInventory);
-                }
-            });
-        });
+        inventoryRepository.save(inventory);
+    }
+
+    private void validateAndSaveInventory(final InventoryEntity currentInventory, final InventoryEntity inventoryUpdate, final ProductEntity product) {
+        if (inventoryUpdate.getId() == null) {
+            inventoryUpdate.setProduct(product);
+            inventoryRepository.save(inventoryUpdate);
+        }
+
+        if (StringUtils.equals(currentInventory.getId().toString(), inventoryUpdate.getId().toString())) {
+            validateInventoryInformationNotEmpty(toInventoryRequestDTO(inventoryUpdate));
+
+            currentInventory.setColorName(inventoryUpdate.getColorName());
+            currentInventory.setColorValue(inventoryUpdate.getColorValue());
+            currentInventory.setSizeName(inventoryUpdate.getSizeName());
+            currentInventory.setSizeValue(inventoryUpdate.getSizeValue());
+            currentInventory.setQuantity(inventoryUpdate.getQuantity());
+            currentInventory.setPrice(inventoryUpdate.getPrice());
+
+            inventoryRepository.save(currentInventory);
+        }
     }
 }

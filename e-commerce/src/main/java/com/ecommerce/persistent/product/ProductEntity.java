@@ -4,7 +4,7 @@ import com.ecommerce.persistent.brand.BrandEntity;
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.inventory.InventoryEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.style.ProductStyleEntity;
@@ -32,7 +32,7 @@ public class ProductEntity {
 
     private String name;
 
-    private double price;
+    private long price;
 
     private long quantity;
 

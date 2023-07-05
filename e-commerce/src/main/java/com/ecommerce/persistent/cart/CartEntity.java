@@ -1,6 +1,7 @@
 package com.ecommerce.persistent.cart;
 
 import com.ecommerce.persistent.inventory.InventoryEntity;
+import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import jakarta.persistence.*;
@@ -23,9 +24,9 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
-    private long quantity;
+    private int quantity;
 
-    private double totalPrice;
+    private long totalPrice;
 
     private Instant createdAt;
 
@@ -40,4 +41,8 @@ public class CartEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "payment_order_id")
+    private PaymentOrderEntity paymentOrder;
 }

@@ -5,7 +5,7 @@ import com.ecommerce.api.product.dto.ProductResponseDetailDTO;
 import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.domain.inventory.mapper.InventoryDTOMapper;
 import com.ecommerce.persistent.category.CategoryEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.style.ProductStyleEntity;
 import lombok.experimental.UtilityClass;

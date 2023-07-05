@@ -6,6 +6,8 @@ import com.ecommerce.persistent.cart.CartEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
+import java.util.List;
+
 @UtilityClass
 public class CartMapperDTO {
 
@@ -19,5 +21,11 @@ public class CartMapperDTO {
         }
 
         return cartResponseDTO;
+    }
+
+    public static List<CartResponseDTO> toCartResponseDTOs(final List<CartEntity> carts) {
+        return carts.stream()
+                .map(CartMapperDTO::toCartResponseDTO)
+                .toList();
     }
 }

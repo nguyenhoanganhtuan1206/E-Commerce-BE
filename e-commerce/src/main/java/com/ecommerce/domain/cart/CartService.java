@@ -44,6 +44,10 @@ public class CartService {
                 .orElseThrow(supplyCartNotFound(cartId, "id"));
     }
 
+    public CartEntity save(final CartEntity cartEntity) {
+        return cartRepository.save(cartEntity);
+    }
+
     public void addProductToCart(final CartRequestDTO cartRequestDTO) {
         if (cartRequestDTO.getInventoryId() == null && cartRequestDTO.getProductId() == null) {
             throw supplyCartValidation("Your cart is currently empty! Please select some products.").get();
@@ -89,13 +93,22 @@ public class CartService {
         cartRepository.delete(cartEntity);
     }
 
-    public CartEntity updateCartIfProductIdAvailable(
+    public List<CartEntity> findByUserIdAndSellerId(final UUID sellerId) {
+        final List<CartEntity> carts = cartRepository.findBySellerIdByUserIdAndExistedProduct(authProvider.getCurrentUserId(), sellerId);
+        if (!carts.isEmpty()) {
+            return carts;
+        }
+
+        return cartRepository.findBySellerIdByUserIdAndExistedInventory(authProvider.getCurrentUserId(), sellerId);
+    }
+
+    private CartEntity updateCartIfProductIdAvailable(
             final CartRequestDTO cartRequestDTO,
             final UserEntity currentUser
     ) {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndProductId(authProvider.getCurrentUserId(), cartRequestDTO.getProductId());
         final ProductEntity productSelected = commonProductService.findById(cartRequestDTO.getProductId());
-        final double totalPrice = productSelected.getPrice() * cartRequestDTO.getQuantity();
+        final long totalPrice = productSelected.getPrice() * cartRequestDTO.getQuantity();
 
         if (cartRequestDTO.getQuantity() > productSelected.getQuantity()) {
             throw supplyCartValidation("Can't select exceeds current quantity.").get();
@@ -111,8 +124,8 @@ public class CartService {
                     .build();
         }
 
-        final long quantityCurrentCart = currentCart.get().getQuantity() == productSelected.getQuantity()
-                ? productSelected.getQuantity()
+        final int quantityCurrentCart = currentCart.get().getQuantity() == productSelected.getQuantity()
+                ? (int) productSelected.getQuantity()
                 : currentCart.get().getQuantity() + cartRequestDTO.getQuantity();
 
         return currentCart.get()
@@ -120,13 +133,13 @@ public class CartService {
                 .withQuantity(quantityCurrentCart);
     }
 
-    public CartEntity updateCartIfInventoryIdAvailable(
+    private CartEntity updateCartIfInventoryIdAvailable(
             final CartRequestDTO cartRequestDTO,
             final UserEntity currentUser
     ) {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndInventoryId(authProvider.getCurrentUserId(), cartRequestDTO.getInventoryId());
         final InventoryEntity inventorySelected = inventoryService.findById(cartRequestDTO.getInventoryId());
-        final double totalPrice = inventorySelected.getPrice() * cartRequestDTO.getQuantity();
+        final long totalPrice = inventorySelected.getPrice() * cartRequestDTO.getQuantity();
 
         if (cartRequestDTO.getQuantity() > inventorySelected.getQuantity()) {
             throw supplyCartValidation("Can't select exceeds current quantity.").get();
@@ -142,22 +155,13 @@ public class CartService {
                     .build();
         }
 
-        final long quantityCurrentCart = currentCart.get().getQuantity() == inventorySelected.getQuantity()
+        final int quantityCurrentCart = currentCart.get().getQuantity() == inventorySelected.getQuantity()
                 ? inventorySelected.getQuantity()
                 : currentCart.get().getQuantity() + cartRequestDTO.getQuantity();
 
         return currentCart.get()
                 .withTotalPrice(currentCart.get().getTotalPrice() + totalPrice)
                 .withQuantity(quantityCurrentCart);
-    }
-
-    public List<CartEntity> findByUserIdAndSellerId(final UUID sellerId) {
-        final List<CartEntity> carts = cartRepository.findBySellerIdByUserIdAndExistedProduct(authProvider.getCurrentUserId(), sellerId);
-        if (!carts.isEmpty()) {
-            return carts;
-        }
-
-        return cartRepository.findBySellerIdByUserIdAndExistedInventory(authProvider.getCurrentUserId(), sellerId);
     }
 
     private void updatePriceWhenInteractWithQuantity(final CartEntity currentCart) {

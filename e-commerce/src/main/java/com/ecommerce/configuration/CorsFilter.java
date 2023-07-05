@@ -1,4 +1,4 @@
-package com.ecommerce.config;
+package com.ecommerce.configuration;
 
 import jakarta.servlet.*;
 import jakarta.servlet.http.HttpServletRequest;

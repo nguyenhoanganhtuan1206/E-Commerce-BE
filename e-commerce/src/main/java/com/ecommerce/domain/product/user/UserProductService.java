@@ -14,7 +14,7 @@ import com.ecommerce.domain.seller.SellerService;
 import com.ecommerce.domain.style.ProductStyleService;
 import com.ecommerce.domain.variant.CategoryVariantService;
 import com.ecommerce.persistent.category.CategoryEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
 import com.ecommerce.persistent.seller.SellerEntity;
@@ -84,23 +84,6 @@ public class UserProductService {
         return toProductResponseDTO(productRepository.save(productCreate));
     }
 
-    private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {
-        return ProductEntity.builder()
-                .name(productRequestDTO.getName())
-                .description(productRequestDTO.getDescription())
-                .productApproval(Status.PENDING)
-                .categoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
-                .brand(brandService.findByBrandName(productRequestDTO.getBrandName()))
-                .paymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
-                .categories(findCategoriesByName(productRequestDTO.getCategories()))
-                .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
-                .quantity(productRequestDTO.getQuantity())
-                .price(productRequestDTO.getPrice())
-                .createdAt(Instant.now())
-                .seller(seller)
-                .build();
-    }
-
     public ProductResponseDTO update(final UUID productId, final ProductUpdateRequestDTO productRequestDTO) {
         final ProductEntity productUpdate = commonProductService.findById(productId);
 
@@ -131,6 +114,24 @@ public class UserProductService {
         final SellerEntity seller = sellerService.findByUserId(authsProvider.getCurrentUserId());
         return productRepository.findProductWithStatusAndSellerId(Status.ACTIVE, seller.getId());
     }
+
+    private ProductEntity buildProductEntity(final ProductCreateRequestDTO productRequestDTO, final SellerEntity seller) {
+        return ProductEntity.builder()
+                .name(productRequestDTO.getName())
+                .description(productRequestDTO.getDescription())
+                .productApproval(Status.PENDING)
+                .categoryVariant(categoryVariantService.findByName(productRequestDTO.getVariantName()))
+                .brand(brandService.findByBrandName(productRequestDTO.getBrandName()))
+                .paymentMethods(findPaymentMethodsByName(productRequestDTO.getPaymentMethods()))
+                .categories(findCategoriesByName(productRequestDTO.getCategories()))
+                .productStyles(findProductStyleByName(productRequestDTO.getProductStyles()))
+                .quantity(productRequestDTO.getQuantity())
+                .price(productRequestDTO.getPrice())
+                .createdAt(Instant.now())
+                .seller(seller)
+                .build();
+    }
+
 
     private ProductEntity updateCurrentProductProperties(final ProductEntity currentProduct, final ProductUpdateRequestDTO productRequestDTO) {
         if (!currentProduct.getName().equals(productRequestDTO.getName())) {
