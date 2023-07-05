@@ -1,7 +1,7 @@
-package com.ecommerce.config;
+package com.ecommerce.configuration.dummy_data.common;
 
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
-import com.ecommerce.persistent.paymentMethod.PaymentMethodRepository;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodRepository;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.role.RoleRepository;
 import com.ecommerce.persistent.user.UserEntity;

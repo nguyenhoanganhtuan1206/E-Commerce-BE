@@ -1,6 +1,6 @@
 package com.ecommerce.domain.payment.dto;
 
-import com.ecommerce.persistent.paymentMethod.PaymentMethodEntity;
+import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
 import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
