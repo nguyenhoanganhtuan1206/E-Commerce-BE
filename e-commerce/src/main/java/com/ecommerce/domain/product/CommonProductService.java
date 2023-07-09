@@ -1,15 +1,20 @@
 package com.ecommerce.domain.product;
 
 import com.ecommerce.api.product.dto.ProductDetailsDTO;
+import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.domain.inventory.dto.InventoryDetailResponseDTO;
 import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
+import com.ecommerce.persistent.user.UserEntity;
+import com.ecommerce.persistent.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import static com.ecommerce.domain.product.ProductError.supplyProductNotFound;
@@ -22,7 +27,11 @@ public class CommonProductService {
 
     private final ProductRepository productRepository;
 
+    private final UserRepository userRepository;
+
     private final InventoryService inventoryService;
+
+    private final AuthsProvider authsProvider;
 
     public ProductEntity findById(final UUID productId) {
         return productRepository.findById(productId)
@@ -42,8 +51,14 @@ public class CommonProductService {
         return productDetailDTO;
     }
 
-    public List<ProductEntity> findAllSortedByAmountSoldOut() {
-        return productRepository.findAllSortedByAmountSoldOut();
+    public List<ProductEntity> findAllSortedByAmountSoldOutAndDifferentSeller() {
+        final Optional<UserEntity> currentUser = userRepository.findById(authsProvider.getCurrentUserId());
+
+        if (currentUser.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        return productRepository.findAllSortedByAmountSoldOutAndDifferentUser(currentUser.get().getId());
     }
 
     public List<ProductEntity> findALlSorted() {

@@ -12,8 +12,8 @@ import java.util.UUID;
 @Repository
 public interface ProductRepository extends JpaRepository<ProductEntity, UUID> {
 
-    @Query("select p from ProductEntity p where p.productApproval = 'PENDING' order by p.amountSoldOut desc")
-    List<ProductEntity> findAllSortedByAmountSoldOut();
+    @Query("select p from ProductEntity p where p.productApproval = 'ACTIVE' and p.seller.user.id != :userId order by p.amountSoldOut desc")
+    List<ProductEntity> findAllSortedByAmountSoldOutAndDifferentUser(final UUID userId);
 
     @Query(value = "select p from ProductEntity p order by p.createdAt desc ")
     List<ProductEntity> findALlSorted();

@@ -20,7 +20,6 @@ public class ProductCreateDTOMapper {
     public static ProductResponseDTO toProductResponseDTO(final ProductEntity entity) {
         final ProductResponseDTO productDTO = modelMapper.map(entity, ProductResponseDTO.class);
 
-        productDTO.setSellerId(entity.getSeller().getId());
         productDTO.setBrandName(entity.getBrand().getBrandName());
         productDTO.setVariantName(entity.getCategoryVariant().getName());
 

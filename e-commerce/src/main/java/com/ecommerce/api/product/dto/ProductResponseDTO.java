@@ -1,6 +1,7 @@
 package com.ecommerce.api.product.dto;
 
 import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
+import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -28,7 +29,7 @@ public class ProductResponseDTO {
 
     private Long amountSoldOut;
 
-    private UUID sellerId;
+    private SellerDTO seller;
 
     private List<String> categories;
 

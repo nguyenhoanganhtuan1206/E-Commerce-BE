@@ -22,7 +22,7 @@ public class CartController {
 
     @GetMapping("details")
     public List<CartDetailResponseDTO> findCartByUserId() {
-        return toCartDetailDTOs(cartService.findCartByCurrentUserId());
+        return toCartDetailDTOs(cartService.findCartByCurrentUserIdAndUnOrder());
     }
 
     @GetMapping("{sellerId}/user/cart-details")
