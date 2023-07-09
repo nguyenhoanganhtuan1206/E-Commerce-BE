@@ -40,7 +40,7 @@ public class PaymentOrderService {
 
     private final PaymentMethodService paymentMethodService;
 
-    private final long SHIPPING_FEE = 20;
+    private static final long SHIPPING_FEE = 20;
 
     public PaymentOrderEntity createPaymentOrder(final PaymentOrderRequestDTO paymentOrder) {
         if (paymentOrder.getCartIds().isEmpty()) {
@@ -90,7 +90,7 @@ public class PaymentOrderService {
         if (inventory != null && cart.getQuantity() > inventory.getQuantity()) {
             final InventoryEntity inventoryProduct = cart.getInventory();
             final String preMessage = inventoryProduct.getProduct().getName() + " with " + inventoryProduct.getColorValue() + ", " + inventoryProduct.getSizeValue();
-            
+
             throw supplyExceedsCurrentQuantity(preMessage, inventoryProduct.getQuantity()).get();
         }
     }
@@ -110,6 +110,11 @@ public class PaymentOrderService {
 
     private PaymentOrderEntity buildPaymentOrder(final PaymentOrderRequestDTO paymentOrderRequest) {
         final PaymentOrderEntity paymentOrderCreate = PaymentOrderEntity.builder()
+                .location(paymentOrderRequest.getLocation())
+                .username(paymentOrderRequest.getUsername())
+                .emailAddress(paymentOrderRequest.getEmailAddress())
+                .phoneNumber(paymentOrderRequest.getPhoneNumber())
+                .address(paymentOrderRequest.getAddress())
                 .totalPrice(calculateTotalPrice(paymentOrderRequest.getCartIds()))
                 .orderedAt(Instant.now())
                 .deliveryStatus(DeliveryStatus.WAITING_PICKUP)

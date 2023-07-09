@@ -14,5 +14,15 @@ public class PaymentOrderRequestDTO {
 
     private List<UUID> cartIds;
 
+    private String username;
+
+    private String address;
+
+    private String phoneNumber;
+
+    private String emailAddress;
+
+    private String location;
+
     private String paymentMethod;
 }

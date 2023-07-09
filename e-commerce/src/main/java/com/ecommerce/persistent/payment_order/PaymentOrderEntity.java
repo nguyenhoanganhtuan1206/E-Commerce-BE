@@ -25,6 +25,16 @@ public class PaymentOrderEntity {
     @GeneratedValue(strategy = GenerationType.UUID)
     private UUID id;
 
+    private String username;
+
+    private String address;
+
+    private String phoneNumber;
+
+    private String emailAddress;
+
+    private String location;
+
     private long totalPrice;
 
     private Instant orderedAt;
