@@ -25,7 +25,7 @@ public class ProductControllerAdmin {
 
     @GetMapping
     public List<ProductResponseDetailDTO> findAll() {
-        return toProductsResponseDetailDTOs(commonProductService.findALlSorted());
+        return toProductsResponseDetailDTOs(commonProductService.findAllByCreatedAt());
     }
 
     @PutMapping("/{productId}/approval")

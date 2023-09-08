@@ -28,6 +28,12 @@ public class ProductController {
     public final CommonProductService commonProductService;
 
     @GetMapping
+    public List<ProductResponseDetailDTO> findAll() {
+        return toProductsResponseDetailDTOs(commonProductService.findAll());
+    }
+
+    @GetMapping("different-seller")
+    @PreAuthorize("hasAnyRole('ROLE_USER')")
     public List<ProductResponseDetailDTO> findAllSortedByAmountSoldOutAndDifferentSeller() {
         return toProductsResponseDetailDTOs(commonProductService.findAllSortedByAmountSoldOutAndDifferentSeller());
     }
@@ -43,7 +49,7 @@ public class ProductController {
         return userProductService.findByCurrentUserId();
     }
 
-    @GetMapping("{productId}/productDetail")
+    @GetMapping("{productId}/detail")
     public ProductDetailsDTO findProductDetailById(@PathVariable final UUID productId) {
         return commonProductService.findProductDetailById(productId);
     }
