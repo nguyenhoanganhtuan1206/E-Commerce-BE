@@ -4,9 +4,9 @@ import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.style.ProductStyleEntity;
 import com.ecommerce.persistent.user.UserEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class SellerEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String sellerName;

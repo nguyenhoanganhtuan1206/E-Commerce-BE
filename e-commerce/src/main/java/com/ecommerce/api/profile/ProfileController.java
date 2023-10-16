@@ -6,11 +6,12 @@ import com.ecommerce.api.profile.dto.UserUpdateResponseDTO;
 import com.ecommerce.api.user.dto.UserResponseDTO;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.user.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 

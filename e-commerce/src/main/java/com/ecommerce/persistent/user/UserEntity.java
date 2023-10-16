@@ -4,9 +4,9 @@ import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.Set;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class UserEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String username;

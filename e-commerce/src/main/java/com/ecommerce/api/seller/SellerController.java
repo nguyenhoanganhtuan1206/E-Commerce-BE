@@ -3,11 +3,12 @@ package com.ecommerce.api.seller;
 import com.ecommerce.api.seller.dto.SellerResponseDTO;
 import com.ecommerce.api.seller.dto.SellerSignUpRequestDTO;
 import com.ecommerce.domain.seller.SellerService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.ecommerce.domain.seller.mapper.SellerResponseDTOMapper.toSellerResponseDTO;
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;

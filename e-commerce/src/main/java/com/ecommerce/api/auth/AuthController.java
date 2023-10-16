@@ -8,7 +8,6 @@ import com.ecommerce.domain.auth.JwtUserDetails;
 import com.ecommerce.domain.role.RoleDTO;
 import com.ecommerce.domain.user.UserDTO;
 import com.ecommerce.domain.user.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.core.Authentication;
@@ -18,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import javax.validation.Valid;
 import java.util.stream.Collectors;
 
 import static com.ecommerce.api.auth.mapper.UserAuthMapper.toAuthentication;

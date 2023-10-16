@@ -4,12 +4,12 @@ import com.ecommerce.api.product.dto.*;
 import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.domain.product.user.UserProductService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 

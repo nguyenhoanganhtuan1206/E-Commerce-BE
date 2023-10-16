@@ -4,9 +4,9 @@ import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.UUID;
 
@@ -21,7 +21,7 @@ import java.util.UUID;
 public class CartEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private int quantity;

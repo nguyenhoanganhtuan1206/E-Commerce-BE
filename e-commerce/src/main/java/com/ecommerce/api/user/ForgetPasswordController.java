@@ -3,10 +3,11 @@ package com.ecommerce.api.user;
 import com.ecommerce.api.user.dto.UserRequestConfirmEmailDTO;
 import com.ecommerce.api.user.dto.UserRequestResetPasswordDTO;
 import com.ecommerce.domain.user.UserService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import javax.validation.Valid;
 
 import static com.ecommerce.error.ValidationErrorHandling.handleValidationError;
 

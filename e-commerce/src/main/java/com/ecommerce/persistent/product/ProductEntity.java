@@ -9,9 +9,9 @@ import com.ecommerce.persistent.seller.SellerEntity;
 import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.style.ProductStyleEntity;
 import com.ecommerce.persistent.variant.CategoryVariantEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -27,7 +27,7 @@ import java.util.UUID;
 public class ProductEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String name;

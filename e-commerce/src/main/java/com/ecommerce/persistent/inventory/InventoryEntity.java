@@ -2,9 +2,9 @@ package com.ecommerce.persistent.inventory;
 
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.product.ProductEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -18,7 +18,7 @@ import java.util.UUID;
 public class InventoryEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String colorName;

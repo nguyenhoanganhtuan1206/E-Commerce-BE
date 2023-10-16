@@ -3,12 +3,12 @@ package com.ecommerce.api.location;
 import com.ecommerce.api.location.dto.LocationRequestDTO;
 import com.ecommerce.api.location.dto.LocationResponseDTO;
 import com.ecommerce.domain.location.LocationService;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
 import java.util.List;
 import java.util.UUID;
 

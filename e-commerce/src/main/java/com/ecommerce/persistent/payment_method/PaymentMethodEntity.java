@@ -2,11 +2,11 @@ package com.ecommerce.persistent.payment_method;
 
 import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
-import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import javax.persistence.*;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -19,7 +19,7 @@ import java.util.UUID;
 public class PaymentMethodEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String name;

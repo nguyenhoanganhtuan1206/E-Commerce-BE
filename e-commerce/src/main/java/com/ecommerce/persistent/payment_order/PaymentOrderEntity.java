@@ -4,9 +4,9 @@ import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.payment_status.PaymentStatus;
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
-import jakarta.persistence.*;
 import lombok.*;
 
+import javax.persistence.*;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;
@@ -22,7 +22,7 @@ import java.util.UUID;
 public class PaymentOrderEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
     private String username;
