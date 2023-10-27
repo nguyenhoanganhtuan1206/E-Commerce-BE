@@ -1,0 +1,41 @@
+version: '3'
+services:
+  e-commerce:
+    build: .
+    container_name: e-commerce-app
+    env_file:
+      - .env
+    ports:
+      - "8081:8080"
+    environment:
+      - MYSQL_URL=jdbc:mysql://mysqlserver/e-commerce
+    volumes:
+      - ./:/app
+    networks:
+      - ecommerce_network
+    depends_on:
+      - mysqlserver
+  mysqlserver:
+    image: mysql:8.0
+    container_name: ecommerce_database
+    restart: always
+    networks:
+      - ecommerce_network
+    ports:
+      - "3307:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=true
+      - MYSQL_ROOT_PASSWORD=
+      - MYSQL_USER=admin
+      - MYSQL_PASSWORD=anhtuan1206
+      - MYSQL_DATABASE=e-commerce
+    volumes:
+      - mysql_data:/var/lib/mysql
+      - mysql_config:/etc/mysql/conf.d
+volumes:
+  mysql_data:
+  mysql_config:
+networks:
+  ecommerce_network:
+    external: true
+    
