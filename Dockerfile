@@ -13,6 +13,6 @@ COPY src ./src
 RUN chmod +x gradlew 
 RUN ./gradlew clean build
 
-COPY /build/libs/e-commerce-*.jar /app/app.jar
+COPY /build/libs/e-commerce-0.0.1-SNAPSHOT.jar /app/app.jar
 
 CMD ["java", "-jar", "app.jar"]
