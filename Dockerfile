@@ -13,6 +13,6 @@ COPY src ./src
 RUN chmod +x gradlew 
 RUN ./gradlew clean build
 
-COPY /app/build/libs/e-commerce-0.0.1-SNAPSHOT.jar /app/app.jar
+EXPOSE 80
 
-CMD ["java", "-jar", "app.jar"]
+CMD ["./gradlew", "bootRun"]
