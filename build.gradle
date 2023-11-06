@@ -63,8 +63,8 @@ dependencies {
 
 sonar {
 	properties {
-		property "sonar.projectKey", "Demo-With-Sonarqube"
-		property "sonar.projectName", "Demo With Sonarqube"
+		property "sonar.projectKey", "e-commerce"
+		property "sonar.projectName", "e-commerce"
 	}
 }
 
