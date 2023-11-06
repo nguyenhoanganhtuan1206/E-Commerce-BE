@@ -13,10 +13,10 @@ jobs:
       - uses: actions/checkout@v2
         with:
           fetch-depth: 0  # Shallow clones should be disabled for a better relevancy of analysis
-      - name: Set up JDK 17
-        uses: actions/setup-java@v1
+      - uses: actions/setup-java@v3
         with:
-          java-version: 17
+          distribution: 'oracle' # See 'Supported distributions' for available options
+          java-version: '17'
       - name: Cache SonarQube packages
         uses: actions/cache@v1
         with:
@@ -35,4 +35,4 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           chmod +x gradlew
-          ./gradlew build sonar  -D sonar.projectKey="e-commerce" -D sonar.host.url="http://localhost:9000" -D sonar.login="squ_c72d59e024117f9a0fa11f8ee657563f81e47b9c"
+          ./gradlew build sonar -Dsonar.projectKey="e-commerce" -Dsonar.host.url='http://20.24.58.73:9001' -Dsonar.login='${SONAR_TOKEN}'

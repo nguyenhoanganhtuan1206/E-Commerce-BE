@@ -65,6 +65,8 @@ sonar {
 	properties {
 		property "sonar.projectKey", "e-commerce"
 		property "sonar.projectName", "e-commerce"
+		property "sonar.source", "src"
+		property "sonar.exclusions", "**/*Generated.java"
 	}
 }
 
