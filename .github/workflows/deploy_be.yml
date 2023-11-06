@@ -9,7 +9,6 @@ jobs:
   build:
     name: Build
     runs-on: ubuntu-latest
-    permissions: read-all
     steps:
       - uses: actions/checkout@v2
         with:
@@ -36,4 +35,4 @@ jobs:
           SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
         run: |
           chmod +x gradlew 
-          ./gradlew build sonar --info
+          ./gradlew build sonar  -D sonar.projectKey="Demo-With-SonarQube" -D sonar.host.url="http://localhost:9000" -D sonar.login="squ_c72d59e024117f9a0fa11f8ee657563f81e47b9c"
