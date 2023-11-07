@@ -9,8 +9,6 @@ services:
       - "8081:8080"
     environment:
       - MYSQL_URL=jdbc:mysql://mysqlserver/e-commerce
-    volumes:
-      - ./:/app
     networks:
       - ecommerce_network
     depends_on:
@@ -29,12 +27,7 @@ services:
       - MYSQL_USER=admin
       - MYSQL_PASSWORD=anhtuan1206
       - MYSQL_DATABASE=e-commerce
-    volumes:
-      - mysql_data:/var/lib/mysql
-      - mysql_config:/etc/mysql/conf.d
-volumes:
-  mysql_data:
-  mysql_config:
+
 networks:
   ecommerce_network:
     external: true

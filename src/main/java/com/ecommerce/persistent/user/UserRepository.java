@@ -10,6 +10,7 @@ import java.util.UUID;
 @Repository
 public interface UserRepository extends JpaRepository<UserEntity, UUID> {
 
+    @Query("SELECT u FROM UserEntity u LEFT JOIN FETCH u.roles WHERE u.email = :email")
     Optional<UserEntity> findByEmail(final String email);
 
     Optional<UserEntity> findByCodeResetPassword(final String code);
