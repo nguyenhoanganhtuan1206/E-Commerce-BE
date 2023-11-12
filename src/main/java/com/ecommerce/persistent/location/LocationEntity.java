@@ -28,10 +28,12 @@ public class LocationEntity {
 
     private String commune;
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     private Instant updatedAt;
 
+    @Column(name = "default_location")
     private boolean defaultLocation;
 
     @ManyToOne(fetch = FetchType.LAZY)

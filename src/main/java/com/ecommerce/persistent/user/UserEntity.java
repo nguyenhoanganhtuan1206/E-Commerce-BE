@@ -2,6 +2,7 @@ package com.ecommerce.persistent.user;
 
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.location.LocationEntity;
+import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.role.RoleEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.*;
@@ -31,6 +32,7 @@ public class UserEntity {
 
     private String phoneNumber;
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     private Instant updatedAt;
@@ -59,4 +61,7 @@ public class UserEntity {
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<CartEntity> cart;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<PaymentOrderEntity> paymentOrders;
 }

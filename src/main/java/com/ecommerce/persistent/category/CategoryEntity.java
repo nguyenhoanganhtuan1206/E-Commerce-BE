@@ -21,6 +21,7 @@ public class CategoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(name = "category_name")
     private String categoryName;
 
     @ManyToMany(mappedBy = "categories")

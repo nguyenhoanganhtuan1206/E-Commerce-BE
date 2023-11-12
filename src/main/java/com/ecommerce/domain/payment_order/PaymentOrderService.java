@@ -42,7 +42,7 @@ public class PaymentOrderService {
 
     private static final long SHIPPING_FEE = 20;
 
-    public PaymentOrderEntity createPaymentOrder(final PaymentOrderRequestDTO paymentOrder) {
+    public void createPaymentOrder(final PaymentOrderRequestDTO paymentOrder) {
         if (paymentOrder.getCartIds().isEmpty()) {
             throw supplyErrorProcesses("You cannot make your cart empty!").get();
         }
@@ -51,30 +51,31 @@ public class PaymentOrderService {
             throw supplyErrorProcesses("You have to select your payment method!").get();
         }
 
-        paymentOrder.getCartIds().forEach(this::verifyWhetherQuantityInStock);
+        paymentOrder.getCartIds()
+                .forEach(this::verifyWhetherQuantityInStock);
 
-        final PaymentOrderEntity paymentOrderCreated = paymentOrderRepository.save(buildPaymentOrder(paymentOrder));
+        for (final UUID cartId : paymentOrder.getCartIds()) {
+            final CartEntity currentCart = cartService.findById(cartId);
 
-        updateQuantityProductAfterPaymentSuccessfully(paymentOrderCreated, paymentOrderCreated.getCarts());
-
-        return paymentOrderCreated;
+            paymentOrderRepository.save(buildPaymentOrder(paymentOrder, currentCart));
+            updateQuantityProductAfterPaymentSuccessfully(paymentOrder.getCartIds());
+        }
     }
 
-    private void updateQuantityProductAfterPaymentSuccessfully(final PaymentOrderEntity paymentOrder, final List<CartEntity> carts) {
-        for (final CartEntity cart : carts) {
-            if (cart.getProduct() != null) {
-                final ProductEntity product = commonProductService.findById(cart.getProduct().getId());
-                product.setQuantity(product.getQuantity() - cart.getQuantity());
+    private void updateQuantityProductAfterPaymentSuccessfully(final List<UUID> cartIds) {
+        for (final UUID cartId : cartIds) {
+            final CartEntity currentCart = cartService.findById(cartId);
+            if (cartId != null) {
+                final ProductEntity product = commonProductService.findById(cartId);
+                product.setQuantity(product.getQuantity() - currentCart.getQuantity());
                 productRepository.save(product);
             }
 
-            if (cart.getInventory() != null) {
-                final InventoryEntity inventory = inventoryService.findById(cart.getInventory().getId());
-                inventory.setQuantity(inventory.getQuantity() - cart.getQuantity());
+            if (currentCart.getInventory() != null) {
+                final InventoryEntity inventory = inventoryService.findById(currentCart.getInventory().getId());
+                inventory.setQuantity(inventory.getQuantity() - currentCart.getQuantity());
                 inventoryService.save(inventory);
             }
-
-            cartService.save(cart.withPaymentOrder(paymentOrder));
         }
     }
 
@@ -108,7 +109,7 @@ public class PaymentOrderService {
         return totalPrice + SHIPPING_FEE;
     }
 
-    private PaymentOrderEntity buildPaymentOrder(final PaymentOrderRequestDTO paymentOrderRequest) {
+    private PaymentOrderEntity buildPaymentOrder(final PaymentOrderRequestDTO paymentOrderRequest, final CartEntity currentCart) {
         final PaymentOrderEntity paymentOrderCreate = PaymentOrderEntity.builder()
                 .location(paymentOrderRequest.getLocation())
                 .username(paymentOrderRequest.getUsername())
@@ -118,7 +119,8 @@ public class PaymentOrderService {
                 .totalPrice(calculateTotalPrice(paymentOrderRequest.getCartIds()))
                 .orderedAt(Instant.now())
                 .deliveryStatus(DeliveryStatus.WAITING_PICKUP)
-                .carts(buildCarts(paymentOrderRequest.getCartIds()))
+                .seller(currentCart.getUser().getSeller())
+                .user(currentCart.getUser())
                 .build();
 
         if (paymentOrderRequest.getPaymentMethod().equals("COD")) {
@@ -132,11 +134,5 @@ public class PaymentOrderService {
         }
 
         return paymentOrderCreate;
-    }
-
-    private List<CartEntity> buildCarts(final List<UUID> cartIds) {
-        return cartIds.stream()
-                .map(cartService::findById)
-                .toList();
     }
 }

@@ -5,6 +5,7 @@ import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.persistent.status.Status;
 import lombok.*;
 
+import javax.persistence.Column;
 import java.time.Instant;
 import java.util.List;
 import java.util.UUID;

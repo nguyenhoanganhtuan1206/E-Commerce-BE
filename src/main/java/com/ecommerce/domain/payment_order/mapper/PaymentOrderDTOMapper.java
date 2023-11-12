@@ -16,7 +16,6 @@ public class PaymentOrderDTOMapper {
                 .deliveryStatus(paymentOrder.getDeliveryStatus())
                 .paymentMethod(paymentOrder.getPaymentMethod().getName())
                 .totalPrice(paymentOrder.getTotalPrice())
-                .carts(toCartResponseDTOs(paymentOrder.getCarts()))
                 .deliveryAt(paymentOrder.getDeliveryAt())
                 .orderedAt(paymentOrder.getOrderedAt())
                 .build();

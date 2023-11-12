@@ -14,6 +14,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
 import java.time.Instant;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -36,7 +37,7 @@ public class CartService {
     private final AuthsProvider authProvider;
 
     public List<CartEntity> findCartByCurrentUserIdAndUnOrder() {
-        return cartRepository.findByUserIdAndUnOrder(authProvider.getCurrentUserId());
+        return cartRepository.findByUserId(authProvider.getCurrentUserId());
     }
 
     public CartEntity findById(final UUID cartId) {
@@ -94,19 +95,21 @@ public class CartService {
     }
 
     public List<CartEntity> findByUserIdAndSellerId(final UUID sellerId) {
-        final List<CartEntity> carts = cartRepository.findBySellerIdByUserIdAndExistedProductWithoutPaymentOrder(authProvider.getCurrentUserId(), sellerId);
+        final List<CartEntity> carts = cartRepository.findBySellerIdByUserIdAndExistedProduct(authProvider.getCurrentUserId(), sellerId);
         if (!carts.isEmpty()) {
             return carts;
         }
 
-        return cartRepository.findBySellerIdByUserIdAndExistedInventoryWithoutPaymentOrder(authProvider.getCurrentUserId(), sellerId);
+        return new ArrayList<>();
+//        return cartRepository.findBySellerIdByUserIdAndExistedInventoryWithoutPaymentOrder(authProvider.getCurrentUserId(), sellerId);
     }
 
     private CartEntity updateCartIfProductIdAvailable(
             final CartRequestDTO cartRequestDTO,
             final UserEntity currentUser
     ) {
-        final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndProductIdWithoutPaymentOrder(authProvider.getCurrentUserId(), cartRequestDTO.getProductId());
+//        final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndProductIdWithoutPaymentOrder(authProvider.getCurrentUserId(), cartRequestDTO.getProductId());
+        final Optional<CartEntity> currentCart = Optional.empty();
         final ProductEntity productSelected = commonProductService.findById(cartRequestDTO.getProductId());
         final long totalPrice = productSelected.getPrice() * cartRequestDTO.getQuantity();
 
@@ -137,7 +140,8 @@ public class CartService {
             final CartRequestDTO cartRequestDTO,
             final UserEntity currentUser
     ) {
-        final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndInventoryIdWithoutPaymentOrder(authProvider.getCurrentUserId(), cartRequestDTO.getInventoryId());
+//        final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndInventoryIdWithoutPaymentOrder(authProvider.getCurrentUserId(), cartRequestDTO.getInventoryId());
+        final Optional<CartEntity> currentCart = Optional.empty();
         final InventoryEntity inventorySelected = inventoryService.findById(cartRequestDTO.getInventoryId());
         final long totalPrice = inventorySelected.getPrice() * cartRequestDTO.getQuantity();
 

@@ -41,10 +41,12 @@ public class ProductEntity {
 
     private String description;
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     private Instant updatedAt;
 
+    @Column(name = "amount_sold_out")
     private Long amountSoldOut;
 
     @ManyToOne

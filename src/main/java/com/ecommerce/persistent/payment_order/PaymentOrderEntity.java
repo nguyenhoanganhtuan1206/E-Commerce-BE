@@ -2,13 +2,13 @@ package com.ecommerce.persistent.payment_order;
 
 import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.payment_status.PaymentStatus;
-import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
+import com.ecommerce.persistent.seller.SellerEntity;
+import com.ecommerce.persistent.user.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -49,6 +49,11 @@ public class PaymentOrderEntity {
     @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethodEntity paymentMethod;
 
-    @OneToMany(mappedBy = "paymentOrder", cascade = {CascadeType.PERSIST, CascadeType.REFRESH, CascadeType.MERGE})
-    private List<CartEntity> carts;
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "seller_id", nullable = false)
+    private SellerEntity seller;
 }

@@ -1,7 +1,6 @@
 package com.ecommerce.persistent.cart;
 
 import com.ecommerce.persistent.inventory.InventoryEntity;
-import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import lombok.*;
@@ -28,6 +27,7 @@ public class CartEntity {
 
     private long totalPrice;
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     @ManyToOne
@@ -41,8 +41,4 @@ public class CartEntity {
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
-
-    @ManyToOne
-    @JoinColumn(name = "payment_order_id")
-    private PaymentOrderEntity paymentOrder;
 }

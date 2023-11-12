@@ -1,5 +1,6 @@
 package com.ecommerce.persistent.seller;
 
+import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.status.Status;
 import com.ecommerce.persistent.style.ProductStyleEntity;
@@ -41,6 +42,7 @@ public class SellerEntity {
 
     private String commune;
 
+    @Column(name = "created_at")
     private Instant createdAt;
 
     private Instant updatedAt;
@@ -57,4 +59,7 @@ public class SellerEntity {
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<ProductStyleEntity> productStyles;
+
+    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
+    private List<PaymentOrderEntity> paymentOrders;
 }

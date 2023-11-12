@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.UUID;
 
 @Entity
-@Table(name = "inventory")
+@Table(name = "inventories")
 @Getter
 @Setter
 @Builder
@@ -21,12 +21,16 @@ public class InventoryEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    @Column(name = "color_name")
     private String colorName;
 
+    @Column(name = "color_value")
     private String colorValue;
 
+    @Column(name = "size_name")
     private String sizeName;
 
+    @Column(name = "size_value")
     private String sizeValue;
 
     private int quantity;
