@@ -86,8 +86,7 @@ public class UserService {
     }
 
     public UserEntity findById(final UUID userId) {
-        return userRepository.findById(userId)
-                .orElseThrow(supplyUserNotFound("id", userId));
+        return userRepository.findById(userId).orElseThrow(supplyUserNotFound("id", userId));
     }
 
     public UserEntity findByCodeResetPassword(final String code) {
