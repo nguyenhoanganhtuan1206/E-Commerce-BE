@@ -1,7 +1,5 @@
 package com.ecommerce.persistent.cart;
 
-import com.ecommerce.persistent.inventory.InventoryEntity;
-import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.user.UserEntity;
 import lombok.*;
 
@@ -23,20 +21,8 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private int quantity;
-
-    private long totalPrice;
-
     @Column(name = "created_at")
     private Instant createdAt;
-
-    @ManyToOne
-    @JoinColumn(name = "product_id")
-    private ProductEntity product;
-
-    @ManyToOne
-    @JoinColumn(name = "inventory_id")
-    private InventoryEntity inventory;
 
     @ManyToOne
     @JoinColumn(name = "user_id")

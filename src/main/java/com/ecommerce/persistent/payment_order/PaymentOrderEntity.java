@@ -4,7 +4,6 @@ import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.payment_status.PaymentStatus;
 import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
 import com.ecommerce.persistent.seller.SellerEntity;
-import com.ecommerce.persistent.user.UserEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -48,10 +47,6 @@ public class PaymentOrderEntity {
     @ManyToOne
     @JoinColumn(name = "payment_method_id", nullable = false)
     private PaymentMethodEntity paymentMethod;
-
-    @ManyToOne
-    @JoinColumn(name = "user_id", nullable = false)
-    private UserEntity user;
 
     @ManyToOne
     @JoinColumn(name = "seller_id", nullable = false)

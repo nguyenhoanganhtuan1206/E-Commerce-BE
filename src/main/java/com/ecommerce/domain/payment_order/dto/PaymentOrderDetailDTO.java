@@ -1,12 +1,10 @@
-package com.ecommerce.domain.orders.dto;
+package com.ecommerce.domain.payment_order.dto;
 
 import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.inventory.dto.InventoryResponseDTO;
 import com.ecommerce.domain.payment.dto.PaymentMethodDTO;
 import com.ecommerce.domain.payment_status.PaymentStatus;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
 import java.util.List;
@@ -14,8 +12,10 @@ import java.util.UUID;
 
 @Getter
 @Setter
+@Builder
+@AllArgsConstructor
 @NoArgsConstructor
-public class OrderResponseDTO {
+public class PaymentOrderDetailDTO {
 
     private UUID id;
 

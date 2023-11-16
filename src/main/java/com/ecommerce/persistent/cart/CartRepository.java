@@ -23,8 +23,4 @@ public interface CartRepository extends JpaRepository<CartEntity, UUID> {
 //    @Query("select c from CartEntity c " +
 //            " where c.inventory.product.seller.id = :sellerId and c.user.id = :userId and c.paymentOrder is null ")
 //    List<CartEntity> findBySellerIdByUserIdAndExistedInventoryWithoutPaymentOrder(final UUID userId, final UUID sellerId);
-
-    @Query("select c from CartEntity c " +
-            " where c.product.seller.id = :sellerId and c.user.id = :userId ")
-    List<CartEntity> findBySellerIdByUserIdAndExistedProduct(final UUID userId, final UUID sellerId);
 }

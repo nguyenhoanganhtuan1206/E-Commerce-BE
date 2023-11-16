@@ -1,7 +1,6 @@
 package com.ecommerce.persistent.product;
 
 import com.ecommerce.persistent.brand.BrandEntity;
-import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.category.CategoryEntity;
 import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
@@ -69,9 +68,6 @@ public class ProductEntity {
     @ManyToOne
     @JoinColumn(name = "brand_id", nullable = false)
     private BrandEntity brand;
-
-    @OneToMany(mappedBy = "product", cascade = CascadeType.REMOVE)
-    private List<CartEntity> carts;
 
     @ManyToMany
     @JoinTable(name = "product_payment_method",

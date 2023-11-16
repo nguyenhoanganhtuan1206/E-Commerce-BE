@@ -27,6 +27,10 @@ public class CommonProductService {
 
     private final AuthsProvider authsProvider;
 
+    public ProductEntity save(final ProductEntity product) {
+        return productRepository.save(product);
+    }
+
     public List<ProductEntity> findAll() {
         return productRepository.findAll();
     }

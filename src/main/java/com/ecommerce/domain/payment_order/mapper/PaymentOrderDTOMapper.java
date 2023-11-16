@@ -4,8 +4,6 @@ import com.ecommerce.domain.payment_order.dto.PaymentOrderResponseDTO;
 import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import lombok.experimental.UtilityClass;
 
-import static com.ecommerce.domain.cart.mapper.CartMapperDTO.toCartResponseDTOs;
-
 @UtilityClass
 public class PaymentOrderDTOMapper {
 

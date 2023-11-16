@@ -1,11 +1,9 @@
 package com.ecommerce.persistent.inventory;
 
-import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.product.ProductEntity;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -13,6 +11,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
+@With
 @NoArgsConstructor
 @AllArgsConstructor
 public class InventoryEntity {
@@ -40,7 +39,4 @@ public class InventoryEntity {
     @ManyToOne
     @JoinColumn(name = "product_id", nullable = false)
     private ProductEntity product;
-
-    @OneToMany(mappedBy = "inventory", cascade = CascadeType.REMOVE)
-    private List<CartEntity> carts;
 }
