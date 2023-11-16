@@ -9,3 +9,21 @@ services:
       - "8081:8080"
     volumes:
       - ./:/app
+      - ./logs:/app/logs
+  ecommerce-db:
+    image: postgres:12.6
+    env_file:
+      - .env
+    container_name: e-commerce-db
+    command: postgres -c 'max_connections=300'
+    ports:
+      - "5433:5432"
+    environment:
+      POSTGRES_DB: e-commerce
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - postgres:/data/postgres
+
+volumes:
+  postgres:
