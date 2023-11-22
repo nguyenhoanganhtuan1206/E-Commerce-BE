@@ -1,6 +1,7 @@
 package com.ecommerce.domain.cart_product_inventory;
 
 import com.ecommerce.domain.auth.AuthsProvider;
+import com.ecommerce.domain.cart.dto.CartDetailResponseDTO;
 import com.ecommerce.domain.cart.dto.CartRequestDTO;
 import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.domain.product.CommonProductService;
@@ -22,7 +23,10 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.cart.CartError.supplyCartValidation;
 import static com.ecommerce.domain.cart_product_inventory.CartProductInventoryError.supplyCartProductInventoryNotFound;
-import static com.ecommerce.error.CommonError.supplyNotFoundException;
+import static com.ecommerce.domain.cart_product_inventory.CartProductInventoryValidation.validateCartRequestNotEmpty;
+import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTO;
+import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static java.time.Instant.now;
 
 @Service
@@ -45,35 +49,33 @@ public class CartProductInventoryService {
         return cartProductInventoryRepository.findByCartId(cartId);
     }
 
-    public CartProductInventoryEntity findByCartIdAndProductId(final UUID currentCartId, final UUID productId) {
-        return cartProductInventoryRepository.findByCartIdAndProductId(currentCartId, productId)
-                .orElseThrow(supplyNotFoundException("This cart is not existed!"));
+    /*
+     TODO: ItemId which mean that it can be inventory or product
+    * */
+    public CartProductInventoryEntity findByCartIdAndItemId(final UUID currentCartId, final UUID itemId) {
+        final List<CartProductInventoryEntity> cartProductInventories = findByCartId(currentCartId);
+
+        return cartProductInventories.stream()
+                .filter(cartProductInventory -> isCartMatching(cartProductInventory, itemId))
+                .findFirst()
+                .orElse(null);
     }
 
-    public CartProductInventoryEntity findByCartIdAndInventoryIdOrProductId(final UUID currentCartId, final UUID itemId) {
-        return cartProductInventoryRepository.findByCartIdAndInventoryIdOrProductId(currentCartId, itemId)
-                .orElseThrow(supplyNotFoundException("This cart is not existed!"));
-    }
+    private boolean isCartMatching(final CartProductInventoryEntity cartProductInventory, final UUID itemId) {
+        if (cartProductInventory.getInventoryId() != null) {
+            return cartProductInventoryRepository.findByCartIdAndInventoryId(cartProductInventory.getCartId(), itemId).isPresent();
+        }
 
-    public CartProductInventoryEntity findByCartIdAndInventoryId(final UUID currentCartId, final UUID inventoryId) {
-        return cartProductInventoryRepository.findByCartIdAndInventoryId(currentCartId, inventoryId)
-                .orElseThrow(supplyNotFoundException("This cart is not existed!"));
+        return cartProductInventoryRepository.findByCartIdAndProductId(cartProductInventory.getCartId(), itemId).isPresent();
     }
 
     public CartProductInventoryEntity save(final CartProductInventoryEntity cartProductInventory) {
         return cartProductInventoryRepository.save(cartProductInventory);
     }
 
-//    public List<CartDetailResponseDTO> findCartByCurrentUser() {
-//        final List<CartEntity> carts = cartRepository.findByUserId(authProvider.getCurrentUserId());
-//        final Map<UUID, List<CartProductInventoryEntity>> currentCart = new HashMap<>();
-//
-//        for (final CartEntity cart : carts) {
-//            currentCart.putIfAbsent(cart.getId(), cartProductInventoryRepository.findByCartId(cart.getId()));
-//        }
-//
-//        return new ArrayList<>();
-//    }
+    public List<CartDetailResponseDTO> findCartByCurrentUser() {
+        return toCartDetailResponseDTOs(cartProductInventoryRepository.findByUserId(authProvider.getCurrentUserId()));
+    }
 
     public CartProductInventoryEntity findById(final UUID id) {
         return cartProductInventoryRepository.findById(id)
@@ -82,9 +84,7 @@ public class CartProductInventoryService {
 
     @Transactional
     public void addProductToCart(final CartRequestDTO cartRequestDTO) {
-        if (cartRequestDTO.getInventoryId() == null && cartRequestDTO.getProductId() == null) {
-            throw supplyCartValidation("Your cart is currently empty! Please select some products.").get();
-        }
+        validateCartRequestNotEmpty(cartRequestDTO);
 
         final UserEntity currentUser = userService.findById(authProvider.getCurrentUserId());
 
@@ -92,7 +92,41 @@ public class CartProductInventoryService {
             updateCartIfProductIdAvailable(cartRequestDTO, currentUser);
         }
 
-        updateCartIfInventoryIdAvailable(cartRequestDTO, currentUser);
+        if (cartRequestDTO.getInventoryId() != null) {
+            updateCartIfInventoryIdAvailable(cartRequestDTO, currentUser);
+        }
+    }
+
+    public CartDetailResponseDTO toCartDetailResponseDTO(final CartProductInventoryEntity cartProductInventory) {
+        final UserEntity user = userService.findById(authProvider.getCurrentUserId());
+
+        final CartDetailResponseDTO cartDetailResponseDTO = CartDetailResponseDTO.builder()
+                .id(cartProductInventory.getCartId())
+                .quantity(cartProductInventory.getQuantity())
+                .user(toUserDTO(user))
+                .build();
+
+        if (cartProductInventory.getInventoryId() != null) {
+            final InventoryEntity currentInventory = inventoryService.findById(cartProductInventory.getInventoryId());
+
+            cartDetailResponseDTO.setProduct(toProductDTO(currentInventory.getProduct()));
+            cartDetailResponseDTO.setSeller(toSellerDTO(currentInventory.getProduct().getSeller()));
+        }
+
+        if (cartProductInventory.getProductId() != null) {
+            final ProductEntity currentProduct = commonProductService.findById(cartProductInventory.getProductId());
+
+            cartDetailResponseDTO.setProduct(toProductDTO(currentProduct));
+            cartDetailResponseDTO.setSeller(toSellerDTO(currentProduct.getSeller()));
+        }
+
+        return cartDetailResponseDTO;
+    }
+
+    public List<CartDetailResponseDTO> toCartDetailResponseDTOs(final List<CartProductInventoryEntity> carts) {
+        return carts.stream()
+                .map(this::toCartDetailResponseDTO)
+                .toList();
     }
 
     private void updateCartIfProductIdAvailable(
@@ -110,14 +144,13 @@ public class CartProductInventoryService {
         if (currentCart.isEmpty()) {
             createAndSaveNewCartProduct(currentUser, cartRequestDTO, productSelected);
         } else {
-            final CartProductInventoryEntity cartProductInventory = findByCartIdAndProductId(currentCart.get().getId(), productSelected.getId());
-            final int currentQuantity = cartProductInventory.getQuantity() + cartRequestDTO.getQuantity();
+            final Optional<CartProductInventoryEntity> cartProductInventory = cartProductInventoryRepository.findByCartIdAndProductId(currentCart.get().getId(), productSelected.getId());
 
-            cartProductInventoryRepository.save(cartProductInventory
-                    .withQuantity(currentQuantity));
-
-            cartRepository.save(currentCart.get()
-                    .withTotalPrice(currentQuantity * productSelected.getPrice()));
+            if (cartProductInventory.isPresent()) {
+                updateExistingCartProduct(cartProductInventory.get(), cartRequestDTO, productSelected.getPrice(), currentCart.get());
+            } else {
+                cartProductInventoryRepository.save(buildCartProduct(currentCart.get(), cartRequestDTO));
+            }
         }
     }
 
@@ -136,15 +169,27 @@ public class CartProductInventoryService {
         if (currentCart.isEmpty()) {
             createAndSaveNewCartProductInventory(currentUser, cartRequestDTO, inventorySelected);
         } else {
-            final CartProductInventoryEntity cartProductInventory = findByCartIdAndInventoryId(currentCart.get().getId(), inventorySelected.getId());
-            final int currentQuantity = cartProductInventory.getQuantity() + cartRequestDTO.getQuantity();
+            final Optional<CartProductInventoryEntity> cartProductInventory = cartProductInventoryRepository.findByCartIdAndInventoryId(currentCart.get().getId(), inventorySelected.getId());
 
-            cartProductInventoryRepository.save(cartProductInventory
-                    .withQuantity(currentQuantity));
-
-            cartRepository.save(currentCart.get()
-                    .withTotalPrice(currentQuantity * inventorySelected.getPrice()));
+            if (cartProductInventory.isPresent()) {
+                updateExistingCartProduct(cartProductInventory.get(), cartRequestDTO, inventorySelected.getPrice(), currentCart.get());
+            } else {
+                cartProductInventoryRepository.save(buildCartProduct(currentCart.get(), cartRequestDTO));
+            }
         }
+    }
+
+    private void updateExistingCartProduct(final CartProductInventoryEntity cartProductInventory,
+                                           final CartRequestDTO cartRequestDTO,
+                                           final long priceItemSelected,
+                                           final CartEntity currentCart) {
+        final int currentQuantity = cartProductInventory.getQuantity() + cartRequestDTO.getQuantity();
+
+        cartProductInventoryRepository.save(cartProductInventory
+                .withQuantity(currentQuantity));
+
+        cartRepository.save(currentCart
+                .withTotalPrice(currentQuantity * priceItemSelected));
     }
 
     private void createAndSaveNewCartProduct(final UserEntity currentUser,

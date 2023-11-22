@@ -8,7 +8,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,8 +23,7 @@ public class CartController {
 
     @GetMapping("details")
     public List<CartDetailResponseDTO> findCartByCurrentUser() {
-//        return cartProductInventoryService.findCartByCurrentUser();
-        return new ArrayList<>();
+        return cartProductInventoryService.findCartByCurrentUser();
     }
 
     @GetMapping("{sellerId}/cart-details")
@@ -34,7 +32,7 @@ public class CartController {
     }
 
     @PostMapping("purchase")
-    public void addProductToCart(@RequestBody final CartRequestDTO cartRequestDTO) {
+    public void addProductToCart(final @RequestBody CartRequestDTO cartRequestDTO) {
         cartProductInventoryService.addProductToCart(cartRequestDTO);
     }
 

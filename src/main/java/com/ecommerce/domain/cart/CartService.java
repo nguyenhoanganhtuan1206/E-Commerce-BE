@@ -2,7 +2,6 @@ package com.ecommerce.domain.cart;
 
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.cart.dto.CartDetailResponseDTO;
-import com.ecommerce.domain.cart.mapper.CartDetailResponseDTOMapper;
 import com.ecommerce.domain.cart_product_inventory.CartProductInventoryService;
 import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.domain.product.CommonProductService;
@@ -36,8 +35,6 @@ public class CartService {
 
     private final InventoryService inventoryService;
 
-    private final CartDetailResponseDTOMapper cartMapper;
-
     private final AuthsProvider authsProvider;
 
     public CartEntity findById(final UUID cartId) {
@@ -50,6 +47,13 @@ public class CartService {
                 .orElseThrow(supplyNotFoundException("Your cart is not existed!"));
     }
 
+    @Transactional
+    public void deleteById(final UUID cartId) {
+        final CartEntity cartEntity = findById(cartId);
+
+        cartRepository.delete(cartEntity);
+    }
+
     public List<CartDetailResponseDTO> findDetailsCart(final UUID sellerId) {
         final Optional<CartEntity> currentCart = cartRepository.findByUserIdAndSellerId(authsProvider.getCurrentUserId(), sellerId);
 
@@ -57,7 +61,7 @@ public class CartService {
             return Collections.emptyList();
         }
 
-        return cartMapper.toCartDetailResponseDTOs(cartProductInventoryService.findByCartId(currentCart.get().getId()));
+        return cartProductInventoryService.toCartDetailResponseDTOs(cartProductInventoryService.findByCartId(currentCart.get().getId()));
     }
 
     public CartEntity save(final CartEntity cart) {
@@ -67,7 +71,7 @@ public class CartService {
     @Transactional
     public void increaseQuantity(final UUID currentCartId, final UUID itemId) {
         final CartEntity currentCart = findById(currentCartId);
-        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndInventoryIdOrProductId(currentCartId, itemId);
+        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndItemId(currentCartId, itemId);
         validateCartQuantityLimits(cartProductInventory);
 
         cartProductInventory.setQuantity(cartProductInventory.getQuantity() + 1);
@@ -79,7 +83,7 @@ public class CartService {
     @Transactional
     public void decreaseQuantity(final UUID currentCartId, final UUID itemId) {
         final CartEntity currentCart = findById(currentCartId);
-        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndInventoryIdOrProductId(currentCartId, itemId);
+        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndItemId(currentCartId, itemId);
 
         if (cartProductInventory.getQuantity() < 0) {
             throw supplyCartValidation("You have to select at least 1 unit.").get();
@@ -121,12 +125,5 @@ public class CartService {
         if (cartProductInventory.getQuantity() > inventorySelected.getQuantity()) {
             throw supplyCartValidation("Can't select exceeds current quantity.").get();
         }
-    }
-
-    @Transactional
-    public void deleteById(final UUID cartId) {
-        final CartEntity cartEntity = findById(cartId);
-
-        cartRepository.delete(cartEntity);
     }
 }

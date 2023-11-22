@@ -5,7 +5,6 @@ import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
 import lombok.*;
 
-import java.time.Instant;
 import java.util.UUID;
 
 @Getter
@@ -21,8 +20,6 @@ public class CartDetailResponseDTO {
     private int quantity;
 
     private double totalPrice;
-
-    private Instant createdAt;
 
     private SellerDTO seller;
 

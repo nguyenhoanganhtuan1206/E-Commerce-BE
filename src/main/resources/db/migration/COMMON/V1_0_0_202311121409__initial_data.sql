@@ -108,10 +108,14 @@ VALUES ('fbe25bc9-09d8-463e-a7c6-4ce69d04e8d2', (SELECT id FROM product_style WH
        ('1b87fff1-a469-4220-8968-cfccad5c55e5', (SELECT id FROM product_style WHERE name = 'Plain'));
 
 -- Seed Data for Cart
-INSERT INTO cart(id, created_at, user_id)
-VALUES ('054cbe26-67b7-4ead-b4f7-e72687d5f3ac', NOW(), '9cb2ed6a-1753-4232-9c5c-8c523e32546e');
+INSERT INTO cart(id, total_price, is_payment, created_at, user_id, seller_id)
+VALUES ('054cbe26-67b7-4ead-b4f7-e72687d5f3ac', 100, FALSE, NOW(), '9cb2ed6a-1753-4232-9c5c-8c523e32546e',
+        '759d3c5e-175d-48dd-a0ce-06a2bc20d695'),
+       ('20ee2988-b9c3-4c1c-b5e0-dad5f1a57808', 100, FALSE, NOW(), '054cbe26-67b7-4ead-b4f7-e72687d5f3ac',
+        '759d3c5e-175d-48dd-a0ce-06a2bc20d695');
 
 -- Seed Data for Cart Product Inventory
-INSERT INTO cart_product_inventory(cart_id, quantity, total_price, inventory_id, product_id)
-VALUES ('054cbe26-67b7-4ead-b4f7-e72687d5f3ac', 5, 50, '2dc1f7c9-0439-4071-9f80-9e94721ac35f', NULL);
+INSERT INTO cart_product_inventory(quantity, cart_id, inventory_id, product_id)
+VALUES (5, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '2dc1f7c9-0439-4071-9f80-9e94721ac35f', NULL),
+       (5, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '56066fe4-9b40-47c5-a260-e3f81cd04701', NULL);
 
