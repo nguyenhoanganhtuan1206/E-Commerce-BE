@@ -36,6 +36,8 @@ public class SellerService {
 
     private final AuthsProvider authsProvider;
 
+    private final String ROLE_SELLER = "ROLE_SELLER";
+
     public List<SellerEntity> findAllSortedByCreatedAt() {
         return sellerRepository.findAllSortedByCreatedAt();
     }
@@ -86,7 +88,7 @@ public class SellerService {
         final SellerEntity sellerFound = findById(sellerId);
         final UserEntity userFound = userService.findById(sellerFound.getUser().getId());
 
-        userFound.getRoles().add(roleService.findByName("ROLE_SELLER"));
+        userFound.getRoles().add(roleService.findByName(ROLE_SELLER));
         sellerFound.setSellerApproval(Status.ACTIVE);
 
         userService.save(userFound);

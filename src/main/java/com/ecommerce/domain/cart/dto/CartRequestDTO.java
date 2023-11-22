@@ -11,6 +11,8 @@ import java.util.UUID;
 @NoArgsConstructor
 public class CartRequestDTO {
 
+    private UUID sellerId;
+
     private UUID productId;
 
     private UUID inventoryId;

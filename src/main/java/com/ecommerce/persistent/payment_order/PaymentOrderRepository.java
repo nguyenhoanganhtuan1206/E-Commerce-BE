@@ -9,5 +9,4 @@ import java.util.UUID;
 @Repository
 public interface PaymentOrderRepository extends JpaRepository<PaymentOrderEntity, UUID> {
 
-    List<PaymentOrderEntity> findBySellerId(final UUID sellerId);
 }

@@ -36,8 +36,6 @@ public class UserEntity {
 
     private Instant updatedAt;
 
-    private String address;
-
     private String password;
 
     private boolean sellingEnabled;

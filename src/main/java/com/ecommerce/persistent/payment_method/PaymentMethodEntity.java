@@ -27,9 +27,6 @@ public class PaymentMethodEntity {
     @ManyToMany(mappedBy = "paymentMethods")
     private Set<ProductEntity> products;
 
-    @OneToMany(mappedBy = "paymentMethod")
-    private List<PaymentOrderEntity> paymentOrders;
-
     public PaymentMethodEntity(String name) {
         this.name = name;
     }

@@ -21,10 +21,16 @@ public class CartEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
+    private long totalPrice;
+
+    private boolean isPayment;
+
     @Column(name = "created_at")
     private Instant createdAt;
 
     @ManyToOne
     @JoinColumn(name = "user_id")
     private UserEntity user;
+
+    private UUID sellerId;
 }

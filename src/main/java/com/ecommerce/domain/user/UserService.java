@@ -69,7 +69,6 @@ public class UserService {
                 .createdAt(Instant.now())
                 .phoneNumber(userRequestDTO.getPhoneNumber())
                 .roles(Collections.singleton(role))
-                .address(userRequestDTO.getAddress())
                 .build();
 
         return toUserSignUpResponseDTO(userRepository.save(userCreate));
@@ -121,7 +120,6 @@ public class UserService {
 
         user.setPhoneNumber(userUpdate.getPhoneNumber());
         user.setUsername(userUpdate.getUsername());
-        user.setAddress(userUpdate.getAddress());
         user.setUpdatedAt(Instant.now());
 
         return toUserUpdateResponseDTO(userRepository.save(user));

@@ -21,8 +21,6 @@ public class CartProductInventoryEntity {
 
     private int quantity;
 
-    private long totalPrice;
-
     private UUID cartId;
 
     private UUID inventoryId;

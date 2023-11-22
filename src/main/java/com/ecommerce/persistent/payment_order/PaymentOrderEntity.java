@@ -2,8 +2,6 @@ package com.ecommerce.persistent.payment_order;
 
 import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.payment_status.PaymentStatus;
-import com.ecommerce.persistent.payment_method.PaymentMethodEntity;
-import com.ecommerce.persistent.seller.SellerEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -24,13 +22,13 @@ public class PaymentOrderEntity {
     @GeneratedValue(strategy = GenerationType.AUTO)
     private UUID id;
 
-    private String username;
+    private String emailAddress;
 
-    private String address;
+    private String username;
 
     private String phoneNumber;
 
-    private String emailAddress;
+    private String address;
 
     private String location;
 
@@ -44,11 +42,7 @@ public class PaymentOrderEntity {
 
     private DeliveryStatus deliveryStatus;
 
-    @ManyToOne
-    @JoinColumn(name = "payment_method_id", nullable = false)
-    private PaymentMethodEntity paymentMethod;
+    private String paymentMethodName;
 
-    @ManyToOne
-    @JoinColumn(name = "seller_id", nullable = false)
-    private SellerEntity seller;
+    private UUID cartProductInventoryId;
 }

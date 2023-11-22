@@ -2,14 +2,26 @@ package com.ecommerce.domain.payment_order;
 
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.cart.CartService;
+import com.ecommerce.domain.cart_product_inventory.CartProductInventoryService;
 import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.domain.payment.PaymentMethodService;
+import com.ecommerce.domain.payment_order.dto.PaymentOrderRequestDTO;
 import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.user.UserService;
+import com.ecommerce.persistent.cart_product_inventory.CartProductInventoryEntity;
+import com.ecommerce.persistent.inventory.InventoryEntity;
 import com.ecommerce.persistent.payment_order.PaymentOrderRepository;
+import com.ecommerce.persistent.product.ProductEntity;
 import com.ecommerce.persistent.product.ProductRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
+import java.util.UUID;
+
+import static com.ecommerce.domain.payment_order.PaymentOrderError.supplyExceedsCurrentQuantity;
+import static com.ecommerce.error.CommonError.supplyErrorProcesses;
+import static org.apache.commons.lang3.StringUtils.isBlank;
 
 @Service
 @RequiredArgsConstructor
@@ -17,7 +29,7 @@ public class PaymentOrderService {
 
     private final PaymentOrderRepository paymentOrderRepository;
 
-    private final ProductRepository productRepository;
+    private final CartProductInventoryService cartProductInventoryService;
 
     private final CommonProductService commonProductService;
 
@@ -34,7 +46,7 @@ public class PaymentOrderService {
     private static final long SHIPPING_FEE = 20;
 
 //    public void createPaymentOrder(final PaymentOrderRequestDTO paymentOrder) {
-//        if (paymentOrder.getCartIds().isEmpty()) {
+//        if (paymentOrder.getCartId() == null) {
 //            throw supplyErrorProcesses("You cannot make your cart empty!").get();
 //        }
 //
@@ -42,13 +54,13 @@ public class PaymentOrderService {
 //            throw supplyErrorProcesses("You have to select your payment method!").get();
 //        }
 //
-//        paymentOrder.getCartIds()
+//        cartProductInventoryService.findByCartId(paymentOrder.getCartId())
 //                .forEach(this::verifyWhetherQuantityInStock);
 //
 //        paymentOrderRepository.save(buildPaymentOrder(paymentOrder, paymentOrder.getCartIds()));
 //        updateQuantityProductAfterPaymentSuccessfully(paymentOrder.getCartIds());
 //    }
-
+//
 //    public List<PaymentOrderDetailDTO> findOrdersBySellerId() {
 //        final UUID sellerId = userService.findById(authsProvider.getCurrentUserId()).getSeller().getId();
 //        final List<PaymentOrderEntity> paymentOrders = paymentOrderRepository.findBySellerId(sellerId);
@@ -82,7 +94,7 @@ public class PaymentOrderService {
 //
 //        }
 //    }
-
+//
 //    private void updateQuantityProductAfterPaymentSuccessfully(final List<UUID> cartIds) {
 //        for (final UUID cartId : cartIds) {
 //            final CartEntity currentCart = cartService.findById(cartId);
@@ -100,22 +112,22 @@ public class PaymentOrderService {
 //        }
 //    }
 
-//    private void verifyWhetherQuantityInStock(final UUID cartId) {
-//        final CartEntity cart = cartService.findById(cartId);
-//        final ProductEntity product = cart.getProduct();
-//        final InventoryEntity inventory = cart.getInventory();
-//
-//        if (product != null && cart.getQuantity() > product.getQuantity()) {
-//            throw supplyExceedsCurrentQuantity(product.getName(), product.getQuantity()).get();
-//        }
-//
-//        if (inventory != null && cart.getQuantity() > inventory.getQuantity()) {
-//            final InventoryEntity inventoryProduct = cart.getInventory();
-//            final String preMessage = inventoryProduct.getProduct().getName() + " with " + inventoryProduct.getColorValue() + ", " + inventoryProduct.getSizeValue();
-//
-//            throw supplyExceedsCurrentQuantity(preMessage, inventoryProduct.getQuantity()).get();
-//        }
-//    }
+    private void verifyWhetherQuantityInStock(final CartProductInventoryEntity cartProductInventory) {
+        if (cartProductInventory.getProductId() != null) {
+            final ProductEntity productOrdered = commonProductService.findById(cartProductInventory.getProductId());
+
+            if (cartProductInventory.getQuantity() > productOrdered.getQuantity()) {
+                throw supplyExceedsCurrentQuantity(productOrdered.getName(), productOrdered.getQuantity()).get();
+            }
+        }
+
+        if (cartProductInventory.getInventoryId() != null) {
+            final InventoryEntity inventoryOrdered = inventoryService.findById(cartProductInventory.getInventoryId());
+            final String preMessage = inventoryOrdered.getProduct().getName() + " with " + inventoryOrdered.getColorValue() + ", " + inventoryOrdered.getSizeValue();
+
+            throw supplyExceedsCurrentQuantity(preMessage, inventoryOrdered.getQuantity()).get();
+        }
+    }
 
 //    private long calculateTotalPrice(final List<UUID> cartsId) {
 //        final long totalPrice = cartsId.stream()
@@ -129,7 +141,7 @@ public class PaymentOrderService {
 //
 //        return totalPrice + SHIPPING_FEE;
 //    }
-
+//
 //    private PaymentOrderEntity buildPaymentOrder(final PaymentOrderRequestDTO paymentOrderRequest, final List<UUID> currentCartIds) {
 //        final PaymentOrderEntity paymentOrderCreate = PaymentOrderEntity.builder()
 //                .location(paymentOrderRequest.getLocation())

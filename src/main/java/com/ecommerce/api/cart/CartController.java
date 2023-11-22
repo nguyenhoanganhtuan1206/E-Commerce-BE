@@ -4,11 +4,11 @@ import com.ecommerce.domain.cart.CartService;
 import com.ecommerce.domain.cart.dto.CartDetailResponseDTO;
 import com.ecommerce.domain.cart.dto.CartRequestDTO;
 import com.ecommerce.domain.cart_product_inventory.CartProductInventoryService;
-import com.ecommerce.persistent.cart_product_inventory.CartProductInventoryEntity;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,27 +24,30 @@ public class CartController {
 
     @GetMapping("details")
     public List<CartDetailResponseDTO> findCartByCurrentUser() {
-        return cartProductInventoryService.findCartByCurrentUser();
+//        return cartProductInventoryService.findCartByCurrentUser();
+        return new ArrayList<>();
     }
 
-    @GetMapping("{sellerId}/user/cart-details")
+    @GetMapping("{sellerId}/cart-details")
     public List<CartDetailResponseDTO> findByUserIdAndSellerId(@PathVariable final UUID sellerId) {
-        return cartProductInventoryService.findByUserIdAndSellerId(sellerId);
+        return cartService.findDetailsCart(sellerId);
     }
 
-    @PostMapping("add-to-cart")
-    public CartProductInventoryEntity addProductToCart(@RequestBody final CartRequestDTO cartRequestDTO) {
-        return cartProductInventoryService.addProductToCart(cartRequestDTO);
+    @PostMapping("purchase")
+    public void addProductToCart(@RequestBody final CartRequestDTO cartRequestDTO) {
+        cartProductInventoryService.addProductToCart(cartRequestDTO);
     }
 
-    @PutMapping("{cartId}/increase-quantity")
-    public void increaseQuantity(@PathVariable final UUID cartId) {
-        cartProductInventoryService.increaseQuantity(cartId);
+    @PutMapping("{cartId}/increase-quantity/{itemId}")
+    public void increaseQuantity(@PathVariable final UUID cartId,
+                                 @PathVariable final UUID itemId) {
+        cartService.increaseQuantity(cartId, itemId);
     }
 
-    @PutMapping("{cartId}/decrease-quantity")
-    public void decreaseQuantity(@PathVariable final UUID cartId) {
-        cartProductInventoryService.decreaseQuantity(cartId);
+    @PutMapping("{cartId}/decrease-quantity/{itemId}")
+    public void decreaseQuantity(@PathVariable final UUID cartId,
+                                 @PathVariable final UUID itemId) {
+        cartService.decreaseQuantity(cartId, itemId);
     }
 
     @DeleteMapping("{cartId}")

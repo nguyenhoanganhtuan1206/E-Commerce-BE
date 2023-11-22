@@ -129,25 +129,6 @@ CREATE TABLE product_category
     CONSTRAINT fk_product_category FOREIGN KEY (product_id) REFERENCES products (id)
 );
 
--- CREATE TABLE payment_order
--- (
---     id                UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
---     address           VARCHAR(255)     DEFAULT NULL,
---     delivery_at       TIMESTAMP        DEFAULT NOW(),
---     delivery_status   INT              DEFAULT NULL,
---     email_address     VARCHAR(255)     DEFAULT NULL,
---     location          VARCHAR(255)     DEFAULT NULL,
---     ordered_at        TIMESTAMP        DEFAULT NOW(),
---     payment_status    INT              DEFAULT NULL,
---     phone_number      VARCHAR(255)     DEFAULT NULL,
---     total_price       BIGINT NOT NULL,
---     username          VARCHAR(255)     DEFAULT NULL,
---     payment_method_id UUID   NOT NULL,
---     seller_id         UUID   NOT NULL,
---     CONSTRAINT fk_seller_payment_order FOREIGN KEY (seller_id) REFERENCES sellers (id),
---     CONSTRAINT fk_payment_method_payment_order FOREIGN KEY (payment_method_id) REFERENCES payment_method (id)
--- );
-
 CREATE TABLE product_payment_method
 (
     product_id        UUID NOT NULL,
@@ -159,34 +140,49 @@ CREATE TABLE product_payment_method
 CREATE TABLE location
 (
     id               UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    address          VARCHAR(255)     DEFAULT NULL,
-    commune          VARCHAR(255)     DEFAULT NULL,
+    address          VARCHAR(255) NOT NULL,
+    commune          VARCHAR(255) NOT NULL,
     created_at       TIMESTAMP        DEFAULT NOW(),
-    default_location BOOLEAN NOT NULL,
-    district         VARCHAR(255)     DEFAULT NULL,
-    province         VARCHAR(255)     DEFAULT NULL,
+    default_location BOOLEAN      NOT NULL,
+    district         VARCHAR(255) NOT NULL,
+    province         VARCHAR(255) NOT NULL,
     updated_at       TIMESTAMP        DEFAULT NOW(),
-    user_id          UUID    NOT NULL,
+    user_id          UUID         NOT NULL,
     CONSTRAINT fk_user_location FOREIGN KEY (user_id) REFERENCES users (id)
 );
 
 CREATE TABLE cart
 (
-    id         UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    created_at TIMESTAMP        DEFAULT NULL,
-    user_id    UUID NOT NULL,
-    CONSTRAINT fk_cart_user FOREIGN KEY (user_id) REFERENCES users (id)
+    id          UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    created_at  TIMESTAMP        DEFAULT NULL,
+    is_payment  BOOLEAN NOT NULL DEFAULT FALSE,
+    total_price BIGINT  NOT NULL DEFAULT 0,
+    user_id     UUID    NOT NULL,
+    seller_id   UUID    NOT NULL,
+    CONSTRAINT fk_cart_user FOREIGN KEY (user_id) REFERENCES users (id),
+    CONSTRAINT fk_cart_seller FOREIGN KEY (seller_id) REFERENCES sellers (id)
 );
 
 CREATE TABLE cart_product_inventory
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    cart_id      UUID   NOT NULL,
-    quantity     INT    NOT NULL,
-    total_price  BIGINT NOT NULL,
+    quantity     INT  NOT NULL    DEFAULT 0,
+    cart_id      UUID NOT NULL,
     inventory_id UUID             DEFAULT NULL,
     product_id   UUID             DEFAULT NULL,
     CONSTRAINT fk_cart_product_inventories FOREIGN KEY (cart_id) REFERENCES cart (id) ON DELETE CASCADE,
     CONSTRAINT fk_inventory_product_cart FOREIGN KEY (inventory_id) REFERENCES inventories (id),
     CONSTRAINT fk_product_inventories_cart FOREIGN KEY (product_id) REFERENCES products (id)
-)
+);
+
+CREATE TABLE payment_order
+(
+    id                        UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    payment_method_name       VARCHAR(50) NOT NULL,
+    delivery_at               TIMESTAMP        DEFAULT NOW(),
+    delivery_status           VARCHAR(50)      DEFAULT NULL,
+    ordered_at                TIMESTAMP        DEFAULT NOW(),
+    payment_status            VARCHAR(50)      DEFAULT NULL,
+    cart_product_inventory_id UUID        NOT NULL,
+    CONSTRAINT fk_payment_order_cart_product_inventory FOREIGN KEY (cart_product_inventory_id) REFERENCES cart_product_inventory (id)
+);

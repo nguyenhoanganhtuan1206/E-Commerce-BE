@@ -59,7 +59,4 @@ public class SellerEntity {
 
     @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
     private List<ProductStyleEntity> productStyles;
-
-    @OneToMany(mappedBy = "seller", cascade = CascadeType.ALL)
-    private List<PaymentOrderEntity> paymentOrders;
 }
