@@ -13,13 +13,5 @@ public class PaymentOrderRequestDTO {
 
     private UUID cartId;
 
-    private String username;
-
-    private String email;
-
-    private String phoneNumber;
-
-    private String paymentMethod;
-
-    private UUID locationId;
+    private String paymentMethodName;
 }

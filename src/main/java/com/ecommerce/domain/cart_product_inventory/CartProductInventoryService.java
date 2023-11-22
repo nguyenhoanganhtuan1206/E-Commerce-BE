@@ -151,6 +151,9 @@ public class CartProductInventoryService {
             } else {
                 cartProductInventoryRepository.save(buildCartProduct(currentCart.get(), cartRequestDTO));
             }
+
+            cartRepository.save(currentCart.get()
+                    .withTotalPrice(updateTotalPriceWhenCartExisting(currentCart.get(), productSelected.getPrice(), cartRequestDTO)));
         }
     }
 
@@ -176,7 +179,14 @@ public class CartProductInventoryService {
             } else {
                 cartProductInventoryRepository.save(buildCartProduct(currentCart.get(), cartRequestDTO));
             }
+
+            cartRepository.save(currentCart.get()
+                    .withTotalPrice(updateTotalPriceWhenCartExisting(currentCart.get(), inventorySelected.getPrice(), cartRequestDTO)));
         }
+    }
+
+    private long updateTotalPriceWhenCartExisting(final CartEntity currentCart, final long priceProductSelected, final CartRequestDTO cartRequestDTO) {
+        return currentCart.getTotalPrice() + calculateTotalPrice(priceProductSelected, cartRequestDTO);
     }
 
     private void updateExistingCartProduct(final CartProductInventoryEntity cartProductInventory,

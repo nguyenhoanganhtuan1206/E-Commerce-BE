@@ -19,6 +19,6 @@ public class PaymentOrderController {
     @PreAuthorize("hasAnyRole('ROLE_USER')")
     @PostMapping
     public void createPayment(final @RequestBody PaymentOrderRequestDTO paymentOrderRequestDTO) {
-//        paymentOrderService.createPaymentOrder(paymentOrderRequestDTO);
+        paymentOrderService.createPaymentOrder(paymentOrderRequestDTO);
     }
 }

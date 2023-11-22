@@ -21,7 +21,6 @@ import java.util.UUID;
 
 import static com.ecommerce.domain.cart.CartError.supplyCartNotFound;
 import static com.ecommerce.domain.cart.CartError.supplyCartValidation;
-import static com.ecommerce.error.CommonError.supplyNotFoundException;
 
 @Service
 @RequiredArgsConstructor
@@ -40,11 +39,6 @@ public class CartService {
     public CartEntity findById(final UUID cartId) {
         return cartRepository.findById(cartId)
                 .orElseThrow(supplyCartNotFound(cartId, "id"));
-    }
-
-    public CartEntity findByUserIdAndSellerId(final UUID userId, final UUID sellerId) {
-        return cartRepository.findByUserIdAndSellerId(userId, sellerId)
-                .orElseThrow(supplyNotFoundException("Your cart is not existed!"));
     }
 
     @Transactional
