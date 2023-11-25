@@ -42,10 +42,14 @@ public class CartService {
     }
 
     @Transactional
-    public void deleteById(final UUID cartId) {
-        final CartEntity cartEntity = findById(cartId);
+    public void deleteById(final UUID cartProductInventoryId) {
+        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findById(cartProductInventoryId);
+        final CartEntity currentCart = findById(cartProductInventory.getCartId());
 
-        cartRepository.delete(cartEntity);
+        currentCart.setTotalPrice(currentCart.getTotalPrice() - cartProductInventory.getTotalPrice());
+        cartRepository.save(currentCart);
+        cartProductInventoryService.deleteById(cartProductInventoryId);
+        deleteCartIfProductIsEmpty(currentCart.getId());
     }
 
     public List<CartDetailResponseDTO> findDetailsCart(final UUID sellerId) {
@@ -63,9 +67,10 @@ public class CartService {
     }
 
     @Transactional
-    public void increaseQuantity(final UUID currentCartId, final UUID itemId) {
-        final CartEntity currentCart = findById(currentCartId);
-        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndItemId(currentCartId, itemId);
+    public void increaseQuantity(final UUID cartProductInventoryId) {
+        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findById(cartProductInventoryId);
+        final CartEntity currentCart = findById(cartProductInventory.getCartId());
+
         validateCartQuantityLimits(cartProductInventory);
 
         cartProductInventory.setQuantity(cartProductInventory.getQuantity() + 1);
@@ -75,9 +80,9 @@ public class CartService {
     }
 
     @Transactional
-    public void decreaseQuantity(final UUID currentCartId, final UUID itemId) {
-        final CartEntity currentCart = findById(currentCartId);
-        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findByCartIdAndItemId(currentCartId, itemId);
+    public void decreaseQuantity(final UUID cartProductInventoryId) {
+        final CartProductInventoryEntity cartProductInventory = cartProductInventoryService.findById(cartProductInventoryId);
+        final CartEntity currentCart = findById(cartProductInventory.getCartId());
 
         if (cartProductInventory.getQuantity() < 0) {
             throw supplyCartValidation("You have to select at least 1 unit.").get();
@@ -89,20 +94,31 @@ public class CartService {
         cartProductInventoryService.save(cartProductInventory);
     }
 
+    private void deleteCartIfProductIsEmpty(final UUID cartId) {
+        final List<CartProductInventoryEntity> cartProductInventoryEntities = cartProductInventoryService.findByCartId(cartId);
+
+        if (cartProductInventoryEntities.isEmpty()) {
+            cartRepository.deleteById(cartId);
+        }
+    }
+
     private void updatePriceWhenInteractWithQuantity(final CartEntity currentCart,
                                                      final CartProductInventoryEntity cartProductInventory) {
         if (cartProductInventory.getProductId() != null) {
             final ProductEntity productSelected = commonProductService.findById(cartProductInventory.getProductId());
 
-            currentCart.setTotalPrice(cartProductInventory.getQuantity() * productSelected.getPrice());
+            cartProductInventory.setTotalPrice(cartProductInventory.getQuantity() * productSelected.getPrice());
+            currentCart.setTotalPrice(currentCart.getTotalPrice() + productSelected.getPrice());
         }
 
         if (cartProductInventory.getInventoryId() != null) {
             final InventoryEntity inventorySelected = inventoryService.findById(cartProductInventory.getInventoryId());
 
-            currentCart.setTotalPrice(cartProductInventory.getQuantity() * inventorySelected.getPrice());
+            cartProductInventory.setTotalPrice(cartProductInventory.getQuantity() * inventorySelected.getPrice());
+            currentCart.setTotalPrice(currentCart.getTotalPrice() + inventorySelected.getPrice());
         }
 
+        cartProductInventoryService.save(cartProductInventory);
         cartRepository.save(currentCart);
     }
 

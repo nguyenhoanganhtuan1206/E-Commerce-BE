@@ -166,8 +166,9 @@ CREATE TABLE cart
 CREATE TABLE cart_product_inventory
 (
     id           UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
-    quantity     INT  NOT NULL    DEFAULT 0,
-    cart_id      UUID NOT NULL,
+    quantity     INT    NOT NULL  DEFAULT 0,
+    total_price  BIGINT NOT NULL  DEFAULT 0,
+    cart_id      UUID   NOT NULL,
     inventory_id UUID             DEFAULT NULL,
     product_id   UUID             DEFAULT NULL,
     CONSTRAINT fk_cart_product_inventories FOREIGN KEY (cart_id) REFERENCES cart (id) ON DELETE CASCADE,

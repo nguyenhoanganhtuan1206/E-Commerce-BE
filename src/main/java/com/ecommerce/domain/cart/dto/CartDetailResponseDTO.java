@@ -1,5 +1,6 @@
 package com.ecommerce.domain.cart.dto;
 
+import com.ecommerce.domain.cart_product_inventory.dto.CartProductInventoryDTO;
 import com.ecommerce.domain.product.dto.ProductDTO;
 import com.ecommerce.domain.seller.SellerDTO;
 import com.ecommerce.domain.user.UserDTO;
@@ -17,8 +18,6 @@ public class CartDetailResponseDTO {
 
     private UUID id;
 
-    private int quantity;
-
     private double totalPrice;
 
     private SellerDTO seller;
@@ -26,4 +25,6 @@ public class CartDetailResponseDTO {
     private ProductDTO product;
 
     private UserDTO user;
+
+    private CartProductInventoryDTO cartProductInventory;
 }

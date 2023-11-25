@@ -115,7 +115,7 @@ VALUES ('054cbe26-67b7-4ead-b4f7-e72687d5f3ac', 100, FALSE, NOW(), '9cb2ed6a-175
         '759d3c5e-175d-48dd-a0ce-06a2bc20d695');
 
 -- Seed Data for Cart Product Inventory
-INSERT INTO cart_product_inventory(quantity, cart_id, inventory_id, product_id)
-VALUES (5, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '2dc1f7c9-0439-4071-9f80-9e94721ac35f', NULL),
-       (5, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '56066fe4-9b40-47c5-a260-e3f81cd04701', NULL);
+INSERT INTO cart_product_inventory(quantity, total_price, cart_id, inventory_id, product_id)
+VALUES (5, 100, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '2dc1f7c9-0439-4071-9f80-9e94721ac35f', NULL),
+       (5, 110, '054cbe26-67b7-4ead-b4f7-e72687d5f3ac', '56066fe4-9b40-47c5-a260-e3f81cd04701', NULL);
 

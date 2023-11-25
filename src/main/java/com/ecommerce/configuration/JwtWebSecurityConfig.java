@@ -70,6 +70,7 @@ public class JwtWebSecurityConfig {
                 .anonymous()
                 .and()
                 .csrf().disable()
+                .antMatcher("/api/v1/products")
                 .authorizeRequests()
                 .anyRequest()
                 .authenticated()

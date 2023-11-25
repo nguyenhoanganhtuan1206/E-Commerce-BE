@@ -36,20 +36,18 @@ public class CartController {
         cartProductInventoryService.addProductToCart(cartRequestDTO);
     }
 
-    @PutMapping("{cartId}/increase-quantity/{itemId}")
-    public void increaseQuantity(@PathVariable final UUID cartId,
-                                 @PathVariable final UUID itemId) {
-        cartService.increaseQuantity(cartId, itemId);
+    @PutMapping("{cartProductInventoryId}/increase-quantity")
+    public void increaseQuantity(@PathVariable final UUID cartProductInventoryId) {
+        cartService.increaseQuantity(cartProductInventoryId);
     }
 
-    @PutMapping("{cartId}/decrease-quantity/{itemId}")
-    public void decreaseQuantity(@PathVariable final UUID cartId,
-                                 @PathVariable final UUID itemId) {
-        cartService.decreaseQuantity(cartId, itemId);
+    @PutMapping("{cartProductInventoryId}/decrease-quantity")
+    public void decreaseQuantity(@PathVariable final UUID cartProductInventoryId) {
+        cartService.decreaseQuantity(cartProductInventoryId);
     }
 
-    @DeleteMapping("{cartId}")
-    public void deleteProductFromCart(@PathVariable final UUID cartId) {
-        cartService.deleteById(cartId);
+    @DeleteMapping("{cartProductInventoryId}")
+    public void deleteProductFromCart(@PathVariable final UUID cartProductInventoryId) {
+        cartService.deleteById(cartProductInventoryId);
     }
 }
