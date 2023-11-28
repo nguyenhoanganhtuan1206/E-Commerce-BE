@@ -1,7 +1,10 @@
 package com.ecommerce.domain.payment_order;
 
+import com.ecommerce.api.order.dto.OrderDetailResponseDTO;
+import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.cart.CartService;
 import com.ecommerce.domain.cart_product_inventory.CartProductInventoryService;
+import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.inventory.InventoryService;
 import com.ecommerce.domain.payment_order.dto.PaymentOrderRequestDTO;
 import com.ecommerce.domain.payment_status.PaymentStatus;
@@ -9,17 +12,26 @@ import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.persistent.cart.CartEntity;
 import com.ecommerce.persistent.cart_product_inventory.CartProductInventoryEntity;
 import com.ecommerce.persistent.inventory.InventoryEntity;
+import com.ecommerce.persistent.location.LocationEntity;
 import com.ecommerce.persistent.payment_order.PaymentOrderEntity;
 import com.ecommerce.persistent.payment_order.PaymentOrderRepository;
 import com.ecommerce.persistent.product.ProductEntity;
+import com.ecommerce.persistent.user.UserEntity;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
 import java.util.List;
+import java.util.UUID;
 
+import static com.ecommerce.domain.cart_product_inventory.mapper.CartProductInventoryDTOMapper.toCartProductInventoryDTO;
 import static com.ecommerce.domain.payment_order.PaymentOrderError.supplyExceedsCurrentQuantity;
+import static com.ecommerce.domain.payment_order.PaymentOrderError.supplyPaymentOrderNotFound;
+import static com.ecommerce.domain.payment_order.mapper.PaymentOrderDTOMapper.toPaymentOrderDTO;
+import static com.ecommerce.domain.product.mapper.ProductDTOMapper.toProductDTO;
+import static com.ecommerce.domain.seller.mapper.SellerDTOMapper.toSellerDTO;
+import static com.ecommerce.domain.user.mapper.UserDTOMapper.toUserDTO;
 import static com.ecommerce.error.CommonError.supplyErrorProcesses;
 import static java.time.Instant.now;
 import static org.apache.commons.lang3.StringUtils.isBlank;
@@ -38,16 +50,37 @@ public class PaymentOrderService {
 
     private final CartService cartService;
 
+    private final AuthsProvider authProvider;
+
     private static final long SHIPPING_FEE = 20;
 
     private static final String PAYMENT_WITH_COD = "COD";
     private static final String PAYMENT_WITH_PAYPAL = "Paypal";
+
+    public PaymentOrderEntity findByCartId(final UUID cartId) {
+        return paymentOrderRepository.findByCartId(cartId)
+                .orElseThrow(supplyPaymentOrderNotFound("Cart ID", cartId));
+    }
+
+    public List<OrderDetailResponseDTO> findAllOrdersByCurrentUser() {
+        return toOrderDetailResponseDTOs(cartProductInventoryService.findByUserId(authProvider.getCurrentUserId()));
+    }
+
+    public List<OrderDetailResponseDTO> findByUserIdAndPaidAndPaymentStatusAndDeliveryStatus(final PaymentStatus paymentStatus, final DeliveryStatus deliveryStatus) {
+        return toOrderDetailResponseDTOs(cartProductInventoryService.findByUserIdAndPaidAndPaymentStatusAndDeliveryStatus(authProvider.getCurrentUserId(), paymentStatus, deliveryStatus));
+    }
+
+    public List<OrderDetailResponseDTO> findByUserIdAndPaidAndPaymentStatus(final PaymentStatus paymentStatus) {
+        return toOrderDetailResponseDTOs(cartProductInventoryService.findByUserIdAndPaymentStatus(authProvider.getCurrentUserId(), paymentStatus));
+    }
 
     @Transactional
     public void createPaymentOrder(final PaymentOrderRequestDTO paymentOrderRequest) {
         validatePaymentRequest(paymentOrderRequest);
 
         final CartEntity currentCart = cartService.findById(paymentOrderRequest.getCartId());
+        validatePaymentLocation(currentCart.getUser());
+
         final List<CartProductInventoryEntity> cartProductInventoryEntities = cartProductInventoryService.findByCartId(paymentOrderRequest.getCartId());
 
         cartProductInventoryEntities.forEach(this::verifyWhetherQuantityInStock);
@@ -56,6 +89,19 @@ public class PaymentOrderService {
         updateQuantityProductAfterPaymentSuccessfully(cartProductInventoryEntities);
         cartService.save(currentCart
                 .withPayment(Boolean.TRUE));
+    }
+
+    private void validatePaymentLocation(final UserEntity currentUser) {
+        if (currentUser.getLocations().isEmpty()) {
+            throw supplyErrorProcesses("You have to provide your location!").get();
+        }
+
+        final boolean hasDefaultLocation = currentUser.getLocations().stream()
+                .anyMatch(LocationEntity::isDefaultLocation);
+
+        if (!hasDefaultLocation) {
+            throw supplyErrorProcesses("At least one location must be set as default!").get();
+        }
     }
 
     private void validatePaymentRequest(final PaymentOrderRequestDTO paymentOrderRequest) {
@@ -71,6 +117,41 @@ public class PaymentOrderService {
                 !StringUtils.equals(paymentOrderRequest.getPaymentMethodName(), PAYMENT_WITH_COD)) {
             throw supplyErrorProcesses("Seem this payment method you selected it not existed. Please try again!").get();
         }
+    }
+
+    private OrderDetailResponseDTO toOrderDetailResponseDTO(final CartProductInventoryEntity cartProductInventory) {
+        final CartEntity currentCart = cartService.findById(cartProductInventory.getCartId());
+        final PaymentOrderEntity paymentOrder = findByCartId(currentCart.getId());
+
+        final OrderDetailResponseDTO cartDetailResponseDTO = OrderDetailResponseDTO.builder()
+                .id(cartProductInventory.getCartId())
+                .totalPrice(currentCart.getTotalPrice())
+                .user(toUserDTO(currentCart.getUser()))
+                .cartProductInventory(toCartProductInventoryDTO(cartProductInventory))
+                .paymentOrder(toPaymentOrderDTO(paymentOrder))
+                .build();
+
+        if (cartProductInventory.getInventoryId() != null) {
+            final InventoryEntity currentInventory = inventoryService.findById(cartProductInventory.getInventoryId());
+
+            cartDetailResponseDTO.setProduct(toProductDTO(currentInventory.getProduct()));
+            cartDetailResponseDTO.setSeller(toSellerDTO(currentInventory.getProduct().getSeller()));
+        }
+
+        if (cartProductInventory.getProductId() != null) {
+            final ProductEntity currentProduct = commonProductService.findById(cartProductInventory.getProductId());
+
+            cartDetailResponseDTO.setProduct(toProductDTO(currentProduct));
+            cartDetailResponseDTO.setSeller(toSellerDTO(currentProduct.getSeller()));
+        }
+
+        return cartDetailResponseDTO;
+    }
+
+    private List<OrderDetailResponseDTO> toOrderDetailResponseDTOs(final List<CartProductInventoryEntity> carts) {
+        return carts.stream()
+                .map(this::toOrderDetailResponseDTO)
+                .toList();
     }
 
     private void verifyWhetherQuantityInStock(final CartProductInventoryEntity cartProductInventory) {
@@ -114,6 +195,7 @@ public class PaymentOrderService {
                 .paymentMethodName(paymentOrderRequest.getPaymentMethodName())
                 .cartId(paymentOrderRequest.getCartId())
                 .orderedAt(now())
+                .deliveryStatus(DeliveryStatus.WAITING_CONFIRM)
                 .build();
 
         if (paymentOrderRequest.getPaymentMethodName().equals(PAYMENT_WITH_COD)) {
@@ -137,39 +219,4 @@ public class PaymentOrderService {
 
         return currentCart.getTotalPrice() + SHIPPING_FEE;
     }
-
-//    public List<PaymentOrderDetailDTO> findOrdersBySellerId() {
-//        final UUID sellerId = userService.findById(authsProvider.getCurrentUserId()).getSeller().getId();
-//        final List<PaymentOrderEntity> paymentOrders = paymentOrderRepository.findBySellerId(sellerId);
-//
-//        for (final PaymentOrderEntity paymentOrder : paymentOrders) {
-//            final PaymentOrderDetailDTO paymentOrderDetailDTO = PaymentOrderDetailDTO.builder()
-//                    .id(paymentOrder.getId())
-//                    .orderedAt(paymentOrder.getOrderedAt())
-//                    .totalPrice(paymentOrder.getTotalPrice())
-//                    .deliveryStatus(paymentOrder.getDeliveryStatus())
-//                    .email(paymentOrder.getEmailAddress())
-//                    .phoneNumber(paymentOrder.getPhoneNumber())
-//                    .location(paymentOrder.getLocation())
-//                    .address(paymentOrder.getAddress())
-//                    .paymentMethod(toPaymentMethodDTO(paymentOrder.getPaymentMethod()))
-//                    .build();
-//
-//            final List<InventoryEntity> inventoryEntities = new ArrayList<>();
-//            final List<InventoryEntity> inventoryEntities = new ArrayList<>();
-//
-//            for (final CartEntity cart : paymentOrder.getCarts()) {
-//                paymentOrderDetailDTO.setProductName(cart.getProduct().getName());
-//                paymentOrderDetailDTO.setQuantity(cart.getQuantity());
-//                paymentOrderDetailDTO.setCategories(cart.getProduct().getCategories().stream()
-//                        .map(CategoryEntity::getCategoryName).toList());
-//
-//                if (cart.getInventory() != null) {
-//                    paymentOrderDetailDTO.setInventories();
-//                }
-//            }
-//
-//        }
-//    }
-//
 }

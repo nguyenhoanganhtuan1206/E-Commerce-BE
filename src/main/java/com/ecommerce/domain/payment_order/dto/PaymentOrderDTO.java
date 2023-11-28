@@ -1,20 +1,18 @@
 package com.ecommerce.domain.payment_order.dto;
 
-import com.ecommerce.domain.cart.dto.CartResponseDTO;
 import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.payment_status.PaymentStatus;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import java.time.Instant;
-import java.util.List;
 import java.util.UUID;
 
-@Setter
 @Getter
+@Setter
 @Builder
-public class PaymentOrderResponseDTO {
+@NoArgsConstructor
+@AllArgsConstructor
+public class PaymentOrderDTO {
 
     private UUID id;
 
@@ -28,7 +26,7 @@ public class PaymentOrderResponseDTO {
 
     private DeliveryStatus deliveryStatus;
 
-    private String paymentMethod;
+    private String paymentMethodName;
 
-    private List<CartResponseDTO> carts;
+    private UUID cartId;
 }

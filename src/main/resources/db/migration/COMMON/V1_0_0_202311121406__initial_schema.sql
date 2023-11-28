@@ -182,9 +182,9 @@ CREATE TABLE payment_order
     total_price         BIGINT      NOT NULL,
     payment_method_name VARCHAR(50) NOT NULL,
     delivery_at         TIMESTAMP        DEFAULT NOW(),
-    delivery_status     VARCHAR(50)      DEFAULT NULL,
+    delivery_status     VARCHAR(50) NOT NULL,
     ordered_at          TIMESTAMP        DEFAULT NOW(),
-    payment_status      VARCHAR(50)      DEFAULT NULL,
+    payment_status      VARCHAR(50) NOT NULL,
     cart_id             UUID        NOT NULL,
     CONSTRAINT fk_payment_order_cart_product_inventory FOREIGN KEY (cart_id) REFERENCES cart (id)
 );

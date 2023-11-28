@@ -48,8 +48,25 @@ public class CartService {
 
         currentCart.setTotalPrice(currentCart.getTotalPrice() - cartProductInventory.getTotalPrice());
         cartRepository.save(currentCart);
+        updateQuantityProductWhenDeleteCart(cartProductInventory);
         cartProductInventoryService.deleteById(cartProductInventoryId);
         deleteCartIfProductIsEmpty(currentCart.getId());
+    }
+
+    private void updateQuantityProductWhenDeleteCart(final CartProductInventoryEntity cartRemoved) {
+        if (cartRemoved.getProductId() != null) {
+            final ProductEntity productSelected = commonProductService.findById(cartRemoved.getProductId());
+
+            commonProductService.save(productSelected
+                    .withQuantity(productSelected.getQuantity() + cartRemoved.getQuantity()));
+        }
+
+        if (cartRemoved.getInventoryId() != null) {
+            final InventoryEntity inventorySelected = inventoryService.findById(cartRemoved.getInventoryId());
+
+            inventoryService.save(inventorySelected
+                    .withQuantity(inventorySelected.getQuantity() + cartRemoved.getQuantity()));
+        }
     }
 
     public List<CartDetailResponseDTO> findDetailsCart(final UUID sellerId) {

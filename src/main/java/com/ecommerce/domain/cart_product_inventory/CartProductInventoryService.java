@@ -3,7 +3,9 @@ package com.ecommerce.domain.cart_product_inventory;
 import com.ecommerce.domain.auth.AuthsProvider;
 import com.ecommerce.domain.cart.dto.CartDetailResponseDTO;
 import com.ecommerce.domain.cart.dto.CartRequestDTO;
+import com.ecommerce.domain.delivery_status.DeliveryStatus;
 import com.ecommerce.domain.inventory.InventoryService;
+import com.ecommerce.domain.payment_status.PaymentStatus;
 import com.ecommerce.domain.product.CommonProductService;
 import com.ecommerce.domain.user.UserService;
 import com.ecommerce.persistent.cart.CartEntity;
@@ -50,20 +52,26 @@ public class CartProductInventoryService {
         return cartProductInventoryRepository.findByCartId(cartId);
     }
 
-    private boolean isCartMatching(final CartProductInventoryEntity cartProductInventory, final UUID itemId) {
-        if (cartProductInventory.getInventoryId() != null) {
-            return cartProductInventoryRepository.findByCartIdAndInventoryId(cartProductInventory.getCartId(), itemId).isPresent();
-        }
-
-        return cartProductInventoryRepository.findByCartIdAndProductId(cartProductInventory.getCartId(), itemId).isPresent();
-    }
-
     public CartProductInventoryEntity save(final CartProductInventoryEntity cartProductInventory) {
         return cartProductInventoryRepository.save(cartProductInventory);
     }
 
     public List<CartDetailResponseDTO> findCartByCurrentUser() {
-        return toCartDetailResponseDTOs(cartProductInventoryRepository.findByUserId(authProvider.getCurrentUserId()));
+        return toCartDetailResponseDTOs(cartProductInventoryRepository.findByUserIdAndStatusPayment(authProvider.getCurrentUserId(), Boolean.FALSE));
+    }
+
+    public List<CartProductInventoryEntity> findByUserId(final UUID userId) {
+        return cartProductInventoryRepository.findByUserId(userId);
+    }
+
+    public List<CartProductInventoryEntity> findByUserIdAndPaymentStatus(final UUID userId, final PaymentStatus paymentStatus) {
+        return cartProductInventoryRepository.findByUserIdAndPaidAndPaymentStatus(userId, paymentStatus);
+    }
+
+    public List<CartProductInventoryEntity> findByUserIdAndPaidAndPaymentStatusAndDeliveryStatus(final UUID userId,
+                                                                                                 final PaymentStatus paymentStatus,
+                                                                                                 final DeliveryStatus deliveryStatus) {
+        return cartProductInventoryRepository.findByUserIdAndPaidAndPaymentStatusAndDeliveryStatus(userId, paymentStatus, deliveryStatus);
     }
 
     public CartProductInventoryEntity findById(final UUID id) {
@@ -135,9 +143,11 @@ public class CartProductInventoryService {
         }
 
         updateProductQuantity(productSelected, cartRequestDTO);
-        if (currentCart.isEmpty()) {
+        if (currentCart.isEmpty() || currentCart.get().isPayment()) {
             createAndSaveNewCartProduct(currentUser, cartRequestDTO, productSelected);
-        } else {
+        }
+
+        if (currentCart.isPresent() && !currentCart.get().isPayment()) {
             final Optional<CartProductInventoryEntity> cartProductInventory = cartProductInventoryRepository.findByCartIdAndProductId(currentCart.get().getId(), productSelected.getId());
 
             if (cartProductInventory.isPresent()) {
@@ -164,9 +174,11 @@ public class CartProductInventoryService {
         }
 
         updateInventoryQuantity(inventorySelected, cartRequestDTO);
-        if (currentCart.isEmpty()) {
+        if (currentCart.isEmpty() || currentCart.get().isPayment()) {
             createAndSaveNewCartProductInventory(currentUser, cartRequestDTO, inventorySelected);
-        } else {
+        }
+
+        if (currentCart.isPresent() && !currentCart.get().isPayment()) {
             final Optional<CartProductInventoryEntity> cartProductInventory = cartProductInventoryRepository.findByCartIdAndInventoryId(currentCart.get().getId(), inventorySelected.getId());
 
             if (cartProductInventory.isPresent()) {

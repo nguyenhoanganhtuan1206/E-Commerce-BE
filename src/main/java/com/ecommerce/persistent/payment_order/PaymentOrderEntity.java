@@ -28,8 +28,10 @@ public class PaymentOrderEntity {
 
     private Instant deliveryAt;
 
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
 
+    @Enumerated(EnumType.STRING)
     private DeliveryStatus deliveryStatus;
 
     private String paymentMethodName;

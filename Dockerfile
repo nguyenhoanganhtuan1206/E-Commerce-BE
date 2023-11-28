@@ -18,4 +18,4 @@ COPY --from=builder /build/libs/e-commerce-0.0.1-SNAPSHOT.jar /app/app.jar
 
 EXPOSE 80
 
-CMD ["java", "-jar", "app.jar", "--spring.profiles.active=DEV"]
+CMD ["java", "-jar", "app.jar"]
