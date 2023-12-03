@@ -4,5 +4,6 @@ public enum DeliveryStatus {
     DELIVERED,
     SHIPPING,
     WAITING_PICKUP,
-    WAITING_CONFIRM
+    WAITING_CONFIRM,
+    COMPLETED
 }

@@ -19,9 +19,11 @@ public interface CartProductInventoryRepository extends JpaRepository<CartProduc
 
     Optional<CartProductInventoryEntity> findByCartIdAndInventoryId(final UUID cartId, final UUID inventoryId);
 
-    @Query("SELECT cpi FROM CartProductInventoryEntity cpi " +
-            "WHERE cpi.cartId IN (SELECT c.id FROM CartEntity c WHERE c.user.id = :userId)")
-    List<CartProductInventoryEntity> findByUserId(final UUID userId);
+    @Query("SELECT cpi FROM CartProductInventoryEntity cpi WHERE cpi.cartId IN (SELECT c.id FROM CartEntity c WHERE c.sellerId = :sellerId)")
+    List<CartProductInventoryEntity> findBySellerId(final UUID sellerId);
+
+    @Query("SELECT cpi FROM CartProductInventoryEntity cpi WHERE cpi.cartId IN (SELECT p.cartId FROM PaymentOrderEntity p WHERE p.id = :paymentOrderId)")
+    List<CartProductInventoryEntity> findByPaymentOrderId(final UUID paymentOrderId);
 
     @Query("SELECT cpi FROM CartProductInventoryEntity cpi " +
             "WHERE cpi.cartId IN (SELECT c.id FROM CartEntity c WHERE c.user.id = :userId AND c.isPayment = :isPayment)")

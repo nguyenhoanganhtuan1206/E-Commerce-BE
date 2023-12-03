@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 @UtilityClass
@@ -18,9 +17,9 @@ public class CategoryDTOMapper {
         return modelMapper.map(category, CategoryDTO.class);
     }
 
-    public static Set<CategoryDTO> toCategoryDTOs(final List<CategoryEntity> categoryEntities) {
+    public static List<CategoryDTO> toCategoryDTOs(final List<CategoryEntity> categoryEntities) {
         return categoryEntities.stream()
                 .map(CategoryDTOMapper::toCategoryDTO)
-                .collect(Collectors.toSet());
+                .toList();
     }
 }

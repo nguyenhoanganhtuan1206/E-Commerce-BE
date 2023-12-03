@@ -60,12 +60,20 @@ public class CartProductInventoryService {
         return toCartDetailResponseDTOs(cartProductInventoryRepository.findByUserIdAndStatusPayment(authProvider.getCurrentUserId(), Boolean.FALSE));
     }
 
-    public List<CartProductInventoryEntity> findByUserId(final UUID userId) {
-        return cartProductInventoryRepository.findByUserId(userId);
+    public List<CartProductInventoryEntity> findByUserIdAndStatusPayment(final UUID userId, final boolean statusPayment) {
+        return cartProductInventoryRepository.findByUserIdAndStatusPayment(userId, statusPayment);
     }
 
     public List<CartProductInventoryEntity> findByUserIdAndPaymentStatus(final UUID userId, final PaymentStatus paymentStatus) {
         return cartProductInventoryRepository.findByUserIdAndPaidAndPaymentStatus(userId, paymentStatus);
+    }
+
+    public List<CartProductInventoryEntity> findBySellerId(final UUID sellerId) {
+        return cartProductInventoryRepository.findBySellerId(sellerId);
+    }
+
+    public List<CartProductInventoryEntity> findByPaymentOrderId(final UUID paymentOrderId) {
+        return cartProductInventoryRepository.findByPaymentOrderId(paymentOrderId);
     }
 
     public List<CartProductInventoryEntity> findByUserIdAndPaidAndPaymentStatusAndDeliveryStatus(final UUID userId,

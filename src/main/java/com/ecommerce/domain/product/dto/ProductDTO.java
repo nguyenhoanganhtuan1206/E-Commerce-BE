@@ -44,7 +44,7 @@ public class ProductDTO {
 
     private BrandDTO brand;
 
-    private InventoryDTO inventory;
+    private List<InventoryDTO> inventories;
 
     private CategoryVariantDTO categoryVariant;
 
