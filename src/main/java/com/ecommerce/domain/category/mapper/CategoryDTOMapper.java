@@ -6,7 +6,6 @@ import lombok.experimental.UtilityClass;
 import org.modelmapper.ModelMapper;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @UtilityClass
 public class CategoryDTOMapper {
